@@ -12,3 +12,5 @@ SoundBytes is a music sharing platform that users can use to discover new music 
 - genius
 - sound cloud
 - apple music
+- amazon music
+- ticketmaster
