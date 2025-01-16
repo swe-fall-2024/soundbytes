@@ -1,6 +1,6 @@
 # Sound Bytes
 
-Project Group Members: Cameron Santiago, Katherine H, Juan Veliz, Mary Hanson
+Project Group Members: Cameron Santiago, Katherine Hartley, Juan Veliz, Mary Hanson
 
 # Description
 
