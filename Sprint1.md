@@ -33,13 +33,12 @@ Mux Router: Set up the Mux router to manage navigation routing across different 
 RESTful API Structure: Ensure the API follows RESTful conventions with routes like /users, /posts, /feed, and others to handle necessary data retrieval and interaction.
 
 Route Handlers: Plan and implement route handlers for key functionalities such as user profile data, song/concert sharing, and feed retrieval.
-Authentication with Firebase:
 
 Firebase Authentication: Implement email/password authentication as well as support for social logins through Firebase.
 
 Secure API Endpoints: Protect API endpoints by validating Firebase tokens to ensure authorized access.
 
-Spotify API Setup: Set up a system to interact with the Spotify API to fetch user-specific music data (via Spotify Developer Documentation).
+Spotify API Setup: Set up a system to interact with the Spotify API to fetch user-specific music data.
 
 OAuth Authentication: Implement OAuth for user authentication to access their specific Spotify data.
 
