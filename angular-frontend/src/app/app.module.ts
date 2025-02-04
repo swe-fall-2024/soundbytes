@@ -1,14 +1,11 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http'; // ✅ Required
+import { provideHttpClient } from '@angular/common/http';
 
-import { AppComponent } from './app.component';
-import { ApiService } from './api.service'; // ✅ Import service
+//import { ApiService } from './api.service'; // ✅ Import service
 
 @NgModule({
-  declarations: [AppComponent],
-  imports: [BrowserModule, HttpClientModule], // ✅ Provide HttpClient
-  providers: [ApiService], // ✅ Register service
-  bootstrap: [AppComponent]
+  imports: [BrowserModule], 
+  providers: [provideHttpClient()], // ✅ Use `provideHttpClient()`
 })
 export class AppModule {}

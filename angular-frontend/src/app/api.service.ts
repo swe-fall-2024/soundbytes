@@ -1,18 +1,17 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-interface MessageResponse {
+export interface MessageResponse {
   message: string;
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root' // ✅ Global service
 })
 export class ApiService {
-  private apiUrl = 'http://localhost:8080/'; // ✅ Ensure this matches your Go backend
-
-  constructor(private http: HttpClient) {}
+  private readonly apiUrl = 'http://localhost:4201/'; // ✅ Readonly to prevent modifications
+  private http = inject(HttpClient); // ✅ Use `inject` instead of constructor DI
 
   getMessage(): Observable<MessageResponse> {
     return this.http.get<MessageResponse>(this.apiUrl);
