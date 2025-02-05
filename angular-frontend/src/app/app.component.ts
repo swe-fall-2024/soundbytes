@@ -28,14 +28,20 @@
 
 
 import { Component } from '@angular/core';
+import { FeedComponent } from './views/feed/feed.component';
 
 @Component({
   selector: 'app-root',
+  imports: [FeedComponent],
   template: `
-    <div>
-      <label for="textbox">Enter something:</label>
-      <input id="textbox" type="text" />
-    </div>
+    <main>
+      <header>
+        <h1>FEED</h1>
+      </header>
+      <section class="content">
+        <app-feed></app-feed>
+      </section>
+    </main>
   `,
   styleUrls: ['./app.component.css']
 })
