@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -7,13 +7,15 @@ export interface MessageResponse {
 }
 
 @Injectable({
-  providedIn: 'root' // ✅ Global service
+  providedIn: 'root',
 })
 export class ApiService {
-  private readonly apiUrl = 'http://localhost:4201/'; // ✅ Readonly to prevent modifications
-  private http = inject(HttpClient); // ✅ Use `inject` instead of constructor DI
+  private readonly apiUrl = 'http://localhost:4201/';
 
+  constructor(private http: HttpClient) {}
+
+  // Use Observable instead of Promise
   getMessage(): Observable<MessageResponse> {
-    return this.http.get<MessageResponse>(this.apiUrl);
+    return this.http.get<MessageResponse>(this.apiUrl); // HttpClient directly returns an Observable
   }
 }
