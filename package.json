@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@angular/common": "^19.1.4"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
