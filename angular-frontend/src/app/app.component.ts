@@ -1,47 +1,47 @@
-// src/app/app.component.ts
-import { Component, OnInit } from '@angular/core';
-import { ApiService } from './api.service'; // Import the ApiService
+  // `// src/app/app.component.ts
+  // import { Component, OnInit } from '@angular/core';
+  // import { ApiService } from './api.service'; // Import the ApiService
+
+  // @Component({
+  //   selector: 'app-root',
+  //   templateUrl: './app.component.html',
+  //   styleUrls: ['./app.component.css'],
+  // })
+  // export class AppComponent implements OnInit {
+  //   title = 'angular-frontend';
+  //   message: string = '';
+
+  //   constructor(private apiService: ApiService) {} // Inject ApiService
+
+  //   ngOnInit() {
+  //     this.apiService.getMessage().subscribe({
+  //       next: (data) => {
+  //         this.message = data.message; // Set the message from the backend
+  //       },
+  //       error: (err) => {
+  //         console.error('Error fetching data:', err);
+  //       },
+  //     });
+  //   }
+  // }`
+
+
+
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
+  template: `
+    <div>
+      <label for="textbox">Enter something:</label>
+      <input id="textbox" type="text" />
+    </div>
+  `,
+  styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
-  title = 'angular-frontend';
-  message: string = '';
-
-  constructor(private apiService: ApiService) {} // Inject ApiService
-
-  ngOnInit() {
-    this.apiService.getMessage().subscribe({
-      next: (data) => {
-        this.message = data.message; // Set the message from the backend
-      },
-      error: (err) => {
-        console.error('Error fetching data:', err);
-      },
-    });
-  }
+export class AppComponent {
+  title = 'textbox-app';
 }
-
-
-
-// import { Component } from '@angular/core';
-
-// @Component({
-//   selector: 'app-root',
-//   template: `
-//     <div>
-//       <label for="textbox">Enter something:</label>
-//       <input id="textbox" type="text" />
-//     </div>
-//   `,
-//   styleUrls: ['./app.component.css']
-// })
-// export class AppComponent {
-//   title = 'textbox-app';
-// }
 
 
 
