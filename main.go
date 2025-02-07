@@ -18,6 +18,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/crypto/bcrypt"
+
+	"github.com/zmb3/spotify"
+	"golang.org/x/oauth2/clientcredentials"
 )
 
 // MongoDB setup
@@ -25,13 +28,22 @@ var client *mongo.Client
 var userCollection *mongo.Collection
 
 const dbName = "testdb"
-const collectionName = "users"
+const userCollectionName = "users"
+const albumCollectionName = "albums"
 const secretKey = "The_Dark_Side_Of_The_Moon"
 
 // User struct
 type User struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+}
+
+type Album struct {
+	Id          string `json:"id"`
+	Name        string `json:"name"`
+	Artist      string `json:"artist"`
+	Genre       string `json:"genre"`
+	ReleaseDate string `json:"release_date"`
 }
 
 // JWT Claims
@@ -41,7 +53,8 @@ type Claims struct {
 }
 
 func main() {
-	host := "127.0.0.1:4201"
+
+	host := "127.0.0.1:4202"
 
 	fmt.Println("Starting server on " + host)
 
@@ -50,12 +63,56 @@ func main() {
 
 	client, _ = mongo.Connect(context.TODO(), clientOptions)
 
-	userCollection = client.Database(dbName).Collection(collectionName)
-
 	// Start server
 	if err := http.ListenAndServe(host, httpHandler()); err != nil {
 		log.Fatalf("Failed to listen on %s: %v", host, err)
 	}
+
+}
+func registerAlbumHandler(w http.ResponseWriter, r *http.Request) {
+
+	userCollection = client.Database(dbName).Collection(albumCollectionName)
+
+	authConfig := &clientcredentials.Config{
+		ClientID:     "3bd23353135d447b80b5e0c9d70775dc",
+		ClientSecret: "05454a9a1a2b48a19769e51b025798c4",
+		TokenURL:     spotify.TokenURL,
+	}
+
+	accessToken, err := authConfig.Token(context.Background())
+	if err != nil {
+		log.Fatalf("error retrieve access token: %v", err)
+	}
+
+	client := spotify.Authenticator{}.NewClient(accessToken)
+
+	albumID := spotify.ID("78bpIziExqiI9qztvNFlQu")
+	album, err := client.GetAlbum(albumID)
+	if err != nil {
+		log.Fatalf("error retrieve playlist data: %v", err)
+	}
+
+	var album1 Album
+	json.NewDecoder(r.Body).Decode(&album1)
+
+	// Store user in MongoDB
+	_, err1 := userCollection.InsertOne(context.TODO(), album1)
+
+	if err1 != nil {
+		http.Error(w, "Error registering user", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+
+	json.NewEncoder(w).Encode(map[string]string{"message": "Album Post registered successfully"})
+
+	log.Println("Album ID: ", album.ID)
+	log.Println("Album Name: ", album.Name)
+	log.Println("Artist: ", album.Artists)
+	log.Println("Genre: ", album.Genres)
+	log.Println("Cover Art: ", album.Images)
+	log.Println("Release Date: ", album.ReleaseDate)
 }
 
 // httpHandler creates the backend HTTP router
@@ -65,8 +122,9 @@ func httpHandler() http.Handler {
 	// Authentication routes
 	router.HandleFunc("/register", registerHandler).Methods("POST")
 	router.HandleFunc("/login", loginHandler).Methods("POST")
+	router.HandleFunc("/postAlbum", registerAlbumHandler).Methods("POST")
 
-	// Protect this route with JWT middleware (Example)
+	// Protect this route with JWT middleware
 	router.HandleFunc("/protected", jwtMiddleware(protectedHandler)).Methods("GET")
 
 	// Serve Angular app
@@ -83,6 +141,9 @@ func httpHandler() http.Handler {
 
 // Register handler
 func registerHandler(w http.ResponseWriter, r *http.Request) {
+
+	userCollection = client.Database(dbName).Collection(userCollectionName)
+
 	var user User
 	json.NewDecoder(r.Body).Decode(&user)
 
@@ -104,6 +165,9 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 
 // Login handler
 func loginHandler(w http.ResponseWriter, r *http.Request) {
+
+	userCollection = client.Database(dbName).Collection(userCollectionName)
+
 	var user User
 	json.NewDecoder(r.Body).Decode(&user)
 
