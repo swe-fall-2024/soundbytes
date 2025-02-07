@@ -28,14 +28,17 @@
 
 
 import { Component } from '@angular/core';
+import { ProfileComponent } from './views/profile/profile.component';
 
 @Component({
   selector: 'app-root',
+  imports: [ProfileComponent],
   template: `
-    <div>
-      <label for="textbox">Enter something:</label>
-      <input id="textbox" type="text" />
-    </div>
+    <main>
+      <section class="content">
+        <app-profile></app-profile>
+      </section>
+    </main>
   `,
   styleUrls: ['./app.component.css']
 })
