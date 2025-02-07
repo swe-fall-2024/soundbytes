@@ -54,7 +54,7 @@ type Claims struct {
 
 func main() {
 
-	host := "127.0.0.1:4202"
+	host := "127.0.0.1:8080"
 
 	fmt.Println("Starting server on " + host)
 
@@ -69,6 +69,7 @@ func main() {
 	}
 
 }
+
 func registerAlbumHandler(w http.ResponseWriter, r *http.Request) {
 
 	userCollection = client.Database(dbName).Collection(albumCollectionName)
@@ -86,14 +87,22 @@ func registerAlbumHandler(w http.ResponseWriter, r *http.Request) {
 
 	client := spotify.Authenticator{}.NewClient(accessToken)
 
-	albumID := spotify.ID("78bpIziExqiI9qztvNFlQu")
+	var album1 Album
+
+	json.NewDecoder(r.Body).Decode(&album1)
+
+	albumID := spotify.ID(album1.Id)
+
 	album, err := client.GetAlbum(albumID)
+
 	if err != nil {
 		log.Fatalf("error retrieve playlist data: %v", err)
 	}
 
-	var album1 Album
-	json.NewDecoder(r.Body).Decode(&album1)
+	album1.Artist = album.Artists[0].Name
+	album1.Name = album.Name
+	//album1.Genre = album.Genres[0]
+	album1.ReleaseDate = album.ReleaseDate
 
 	// Store user in MongoDB
 	_, err1 := userCollection.InsertOne(context.TODO(), album1)
