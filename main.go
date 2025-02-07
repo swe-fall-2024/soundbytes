@@ -30,6 +30,7 @@ var userCollection *mongo.Collection
 const dbName = "testdb"
 const userCollectionName = "users"
 const albumCollectionName = "albums"
+const songCollectionName = "songs"
 const secretKey = "The_Dark_Side_Of_The_Moon"
 
 // User struct
@@ -44,6 +45,13 @@ type Album struct {
 	Artist      string `json:"artist"`
 	Genre       string `json:"genre"`
 	ReleaseDate string `json:"release_date"`
+}
+
+type Song struct {
+	Id         string `json:"id"`
+	Name       string `json:"name"`
+	Artist     string `json:"artist"`
+	Popularity string `json:"popularity"`
 }
 
 // JWT Claims
@@ -124,6 +132,58 @@ func registerAlbumHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Release Date: ", album.ReleaseDate)
 }
 
+func registerSongHandler(w http.ResponseWriter, r *http.Request) {
+
+	userCollection = client.Database(dbName).Collection(songCollectionName)
+
+	authConfig := &clientcredentials.Config{
+		ClientID:     "3bd23353135d447b80b5e0c9d70775dc",
+		ClientSecret: "05454a9a1a2b48a19769e51b025798c4",
+		TokenURL:     spotify.TokenURL,
+	}
+
+	accessToken, err := authConfig.Token(context.Background())
+	if err != nil {
+		log.Fatalf("error retrieve access token: %v", err)
+	}
+
+	client := spotify.Authenticator{}.NewClient(accessToken)
+
+	var song1 Song
+
+	json.NewDecoder(r.Body).Decode(&song1)
+
+	log.Println(song1.Id)
+
+	songID := spotify.ID(song1.Id)
+
+	song, err := client.GetTrack(songID)
+
+	if err != nil {
+		log.Fatalf("error retrieve playlist data: %v", err)
+	}
+
+	song1.Artist = song.Artists[0].Name
+	song1.Name = song.Name
+	song1.Popularity = string(song.Popularity)
+
+	// Store user in MongoDB
+	_, err1 := userCollection.InsertOne(context.TODO(), song1)
+
+	if err1 != nil {
+		http.Error(w, "Error registering user", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+
+	json.NewEncoder(w).Encode(map[string]string{"message": "Song Post registered successfully"})
+
+	log.Println("Song ID: ", song.ID)
+	log.Println("Song Name: ", song.Name)
+	log.Println("Song Artist: ", song.Artists)
+}
+
 // httpHandler creates the backend HTTP router
 func httpHandler() http.Handler {
 	router := mux.NewRouter()
@@ -132,6 +192,7 @@ func httpHandler() http.Handler {
 	router.HandleFunc("/register", registerHandler).Methods("POST")
 	router.HandleFunc("/login", loginHandler).Methods("POST")
 	router.HandleFunc("/postAlbum", registerAlbumHandler).Methods("POST")
+	router.HandleFunc("/postSong", registerSongHandler).Methods("POST")
 
 	// Protect this route with JWT middleware
 	router.HandleFunc("/protected", jwtMiddleware(protectedHandler)).Methods("GET")
