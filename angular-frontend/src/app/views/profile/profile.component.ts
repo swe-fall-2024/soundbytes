@@ -5,11 +5,12 @@ import {MatChipsModule} from '@angular/material/chips';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatIconModule} from '@angular/material/icon';
 import {MatGridListModule} from '@angular/material/grid-list';
-
+import {MatListModule} from '@angular/material/list';
+import {MatDividerModule} from '@angular/material/divider';
 
 @Component({
   selector: 'app-profile',
-  imports: [MatCardModule, MatButtonModule, MatChipsModule, MatProgressBarModule, MatIconModule, MatGridListModule],
+  imports: [MatDividerModule, MatListModule, MatCardModule, MatButtonModule, MatChipsModule, MatProgressBarModule, MatIconModule, MatGridListModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -8,3 +8,25 @@
   background-size: cover;
   background-position: center;
 }
+
+mat-list-item {
+  display: flex;
+  align-items: center;  /* Vertically centers the items */
+  gap: 8px; /* Adds some space between the avatar and text */
+}
+
+span {
+  white-space: nowrap;  /* Prevents text from wrapping onto the next line */
+}
+
+.icon-text {
+  display: flex;
+  align-items: center;
+}
+
+.icon-image {
+  margin-right: 8px; /* Space between the image and text */
+  height: 40px; /* Set a fixed height for the image */
+  width: 40px;  /* Set a fixed width for the image */
+  border-radius: 50%; /* Optional: makes the image round, like an avatar */
+}
