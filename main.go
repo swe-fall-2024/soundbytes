@@ -186,28 +186,33 @@ func registerSongHandler(w http.ResponseWriter, r *http.Request) {
 
 // httpHandler creates the backend HTTP router
 func httpHandler() http.Handler {
-	router := mux.NewRouter()
+    fmt.Print("inside of httpHandler in Go")
+    
+    router := mux.NewRouter()
 
-	// Authentication routes
-	router.HandleFunc("/register", registerHandler).Methods("POST")
-	router.HandleFunc("/login", loginHandler).Methods("POST")
-	router.HandleFunc("/postAlbum", registerAlbumHandler).Methods("POST")
-	router.HandleFunc("/postSong", registerSongHandler).Methods("POST")
+    // ✅ Define /api/message endpoint
+    router.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusOK)
+        w.Write([]byte(`{"message": "Hello from Go!"}`))
+    }).Methods("GET")
 
-	// Protect this route with JWT middleware
-	router.HandleFunc("/protected", jwtMiddleware(protectedHandler)).Methods("GET")
-
-	// Serve Angular app
-	router.PathPrefix("/").Handler(AngularHandler).Methods("GET")
-
-	return handlers.LoggingHandler(os.Stdout,
-		handlers.CORS(
-			handlers.AllowCredentials(),
-			handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
-			handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}),
-			handlers.AllowedOrigins([]string{"http://localhost:4200"}),
-		)(router))
+    return handlers.LoggingHandler(os.Stdout,
+        handlers.CORS(
+            handlers.AllowCredentials(),
+            handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization",
+                "DNT", "Keep-Alive", "User-Agent", "X-Requested-With", "If-Modified-Since",
+                "Cache-Control", "Content-Range", "Range"}),
+            handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}),
+            handlers.AllowedOrigins([]string{"http://localhost:4200"}),
+            handlers.ExposedHeaders([]string{"DNT", "Keep-Alive", "User-Agent",
+                "X-Requested-With", "If-Modified-Since", "Cache-Control",
+                "Content-Type", "Content-Range", "Range", "Content-Disposition"}),
+            handlers.MaxAge(86400),
+        )(router))
 }
+
+
 
 // Register handler
 func registerHandler(w http.ResponseWriter, r *http.Request) {
@@ -308,8 +313,11 @@ func protectedHandler(w http.ResponseWriter, r *http.Request) {
 
 // Reverse proxy for Angular app
 func getOrigin() *url.URL {
-	origin, _ := url.Parse("http://localhost:4200")
-	return origin
+    origin, err := url.Parse("http://localhost:4200")
+    if err != nil {
+        log.Fatalf("Failed to parse origin URL: %v", err)
+    }
+    return origin
 }
 
 var origin = getOrigin()
