@@ -37,6 +37,7 @@ const secretKey = "The_Dark_Side_Of_The_Moon"
 type User struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+	Following []string `json:"following"` // List of usernames the user follows
 }
 
 type Album struct {
@@ -62,7 +63,7 @@ type Claims struct {
 
 func main() {
 
-	host := "127.0.0.1:8080"
+	host := "127.0.0.1:4201"
 
 	fmt.Println("Starting server on " + host)
 
@@ -203,6 +204,10 @@ func httpHandler() http.Handler {
 	router.HandleFunc("/postAlbum", registerAlbumHandler).Methods("POST")
 	router.HandleFunc("/postSong", registerSongHandler).Methods("POST")
 
+	// Follow Friends routes
+	router.HandleFunc("/follow", followUserHandler).Methods("POST")
+	router.HandleFunc("/following/{username}", getFollowingHandler).Methods("GET")
+
 	// Protect this route with JWT middleware
 	router.HandleFunc("/protected", jwtMiddleware(protectedHandler)).Methods("GET")
 
@@ -322,6 +327,56 @@ func jwtMiddleware(next http.HandlerFunc) http.HandlerFunc {
 func protectedHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"message": "Welcome to the protected route!"})
 }
+
+func followUserHandler(w http.ResponseWriter, r *http.Request) {
+	userCollection = client.Database(dbName).Collection(userCollectionName)
+
+	// Decode request body
+	var request struct {
+		Follower string `json:"follower"`
+		Followee string `json:"followee"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	// Update the follower's document in MongoDB to add the followee to the "Following" list
+	filter := bson.M{"username": request.Follower}
+	update := bson.M{"$addToSet": bson.M{"following": request.Followee}} // Ensure no duplicates
+
+	_, err = userCollection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		http.Error(w, "Error updating follow list", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "User followed successfully"})
+}
+
+func getFollowingHandler(w http.ResponseWriter, r *http.Request) {
+	userCollection = client.Database(dbName).Collection(userCollectionName)
+
+	// Extract username from URL parameters
+	vars := mux.Vars(r)
+	username := vars["username"]
+
+	// Find user
+	var user User
+	err := userCollection.FindOne(context.TODO(), bson.M{"username": username}).Decode(&user)
+	if err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	// Return the list of followed users
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string][]string{"following": user.Following})
+}
+
 
 // Reverse proxy for Angular app
 func getOrigin() *url.URL {
