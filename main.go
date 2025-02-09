@@ -33,35 +33,39 @@ func main() {
 // httpHandler creates the backend HTTP router for queries, types,
 // and serving the Angular frontend.
 func httpHandler() http.Handler {
+    fmt.Print("inside of httpHandler in Go")
+    
+    router := mux.NewRouter()
 
-	fmt.Print("inside of httpHandler in Go")
-	router := mux.NewRouter()
-	// Your REST API requests go here
+    // ✅ Define /api/message endpoint
+    router.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusOK)
+        w.Write([]byte(`{"message": "Hello from Go!"}`))
+    }).Methods("GET")
 
-
-	// WARNING: this route must be the last route defined.
-
-	router.PathPrefix("/").Handler(AngularHandler).Methods("GET")
-
-	 
-	return handlers.LoggingHandler(os.Stdout,
-		handlers.CORS(
-			handlers.AllowCredentials(),
-			handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization",
-				"DNT", "Keep-Alive", "User-Agent", "X-Requested-With", "If-Modified-Since",
-				"Cache-Control", "Content-Range", "Range"}),
-			handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}),
-			handlers.AllowedOrigins([]string{"http://localhost:4200"}), // maybe should be 4020???
-			handlers.ExposedHeaders([]string{"DNT", "Keep-Alive", "User-Agent",
-				"X-Requested-With", "If-Modified-Since", "Cache-Control",
-				"Content-Type", "Content-Range", "Range", "Content-Disposition"}),
-			handlers.MaxAge(86400),
-		)(router))
+    return handlers.LoggingHandler(os.Stdout,
+        handlers.CORS(
+            handlers.AllowCredentials(),
+            handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization",
+                "DNT", "Keep-Alive", "User-Agent", "X-Requested-With", "If-Modified-Since",
+                "Cache-Control", "Content-Range", "Range"}),
+            handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}),
+            handlers.AllowedOrigins([]string{"http://localhost:4200"}),
+            handlers.ExposedHeaders([]string{"DNT", "Keep-Alive", "User-Agent",
+                "X-Requested-With", "If-Modified-Since", "Cache-Control",
+                "Content-Type", "Content-Range", "Range", "Content-Disposition"}),
+            handlers.MaxAge(86400),
+        )(router))
 }
 
+
 func getOrigin() *url.URL {
-	origin, _ := url.Parse("http://localhost:4200")
-	return origin
+    origin, err := url.Parse("http://localhost:4200")
+    if err != nil {
+        log.Fatalf("Failed to parse origin URL: %v", err)
+    }
+    return origin
 }
 
 var origin = getOrigin()
