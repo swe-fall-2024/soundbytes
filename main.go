@@ -197,6 +197,18 @@ func httpHandler() http.Handler {
         w.Write([]byte(`{"message": "Hello from Go!"}`))
     }).Methods("GET")
 
+	// Authentication routes
+	router.HandleFunc("/register", registerHandler).Methods("POST")
+	router.HandleFunc("/login", loginHandler).Methods("POST")
+	router.HandleFunc("/postAlbum", registerAlbumHandler).Methods("POST")
+	router.HandleFunc("/postSong", registerSongHandler).Methods("POST")
+
+	// Protect this route with JWT middleware
+	router.HandleFunc("/protected", jwtMiddleware(protectedHandler)).Methods("GET")
+
+	// Serve Angular app
+	router.PathPrefix("/").Handler(AngularHandler).Methods("GET")
+
     return handlers.LoggingHandler(os.Stdout,
         handlers.CORS(
             handlers.AllowCredentials(),
