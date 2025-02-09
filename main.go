@@ -38,7 +38,7 @@ func httpHandler() http.Handler {
     router := mux.NewRouter()
 
     // ✅ Define /api/message endpoint
-    router.HandleFunc("/api/message", func(w http.ResponseWriter, r *http.Request) {
+    router.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
         w.Header().Set("Content-Type", "application/json")
         w.WriteHeader(http.StatusOK)
         w.Write([]byte(`{"message": "Hello from Go!"}`))
