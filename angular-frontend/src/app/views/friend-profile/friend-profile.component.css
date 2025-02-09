@@ -1,0 +1,46 @@
+.profile-card {
+    width: 100%;
+    display: flex; 
+    justify-content: center;
+    margin: 0 auto;
+  }
+  
+  .example-header-image {
+    background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+    background-size: cover;
+    background-position: center;
+  }
+  
+  mat-list-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  span {
+    white-space: nowrap;
+  }
+  
+  .icon-text {
+    display: flex;
+    align-items: center;
+  }
+  
+  .icon-image {
+    margin-right: 8px;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+  }
+
+  .example-card {
+    flex: 1;
+    margin: 16px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .example-spacer {
+    flex: 1 1 auto;
+  }

@@ -1,5 +1,7 @@
-.example-card {
-  width: 95%;  
+.profile-card {
+  width: 100%;
+  display: flex; 
+  justify-content: center;
   margin: 0 auto;
 }
 
@@ -11,12 +13,12 @@
 
 mat-list-item {
   display: flex;
-  align-items: center;  /* Vertically centers the items */
-  gap: 8px; /* Adds some space between the avatar and text */
+  align-items: center;
+  gap: 8px;
 }
 
 span {
-  white-space: nowrap;  /* Prevents text from wrapping onto the next line */
+  white-space: nowrap;
 }
 
 .icon-text {
@@ -25,8 +27,36 @@ span {
 }
 
 .icon-image {
-  margin-right: 8px; /* Space between the image and text */
-  height: 40px; /* Set a fixed height for the image */
-  width: 40px;  /* Set a fixed width for the image */
-  border-radius: 50%; /* Optional: makes the image round, like an avatar */
+  margin-right: 8px;
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+}
+
+.container {
+  width: 98%;
+  display: flex;
+  margin: 0 auto;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+
+.example-card {
+  flex: 1;
+  margin: 16px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.left-card {
+  flex: 2;
+}
+
+.right-card {
+  flex: 1;
+}
+
+.example-spacer {
+  flex: 1 1 auto;
 }
