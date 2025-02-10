@@ -48,11 +48,11 @@ Sharing Functionality: Allow users to share songs, albums, and playlists with ot
 
 Song, Album, Playlist Info: Retrieve detailed information about songs, albums, and playlists for sharing and display purposes.
 
-** Backend Video Link **
+**Backend Video Link**
 
 https://youtu.be/vRQUZ1wKv5c
 
-** Items Successfully Completed Backend
+**Items Successfully Completed Backend**
 
 Basic Backend API Setup: Establish a foundational backend API to handle connections with the frontend.
 
@@ -64,7 +64,7 @@ Implement a way to retrieve song, album or playlist Info from the Spotify API fo
 
 Basic Login Auth Setup: Basic Login Auth was set up, but we're still working on getting email and or google auth up and running as well. 
 
-** Which Issues did not get completed and Why ** 
+**Which Issues did not get completed and Why** 
 
 Firebase Authentication: Implement email/password authentication as well as support for social logins through Firebase.
 
