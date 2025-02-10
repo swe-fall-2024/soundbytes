@@ -87,6 +87,7 @@ https://www.youtube.com/watch?v=KyJ_jJHyZSE
 - Feed visualization and Profile visualization.
 
 **Frontend: Which Issues did not get completed and Why** 
+
 Login and sign up pages
 - Why: Prioritized website core functionalities and plan to complete at the start of the next sprint.
 
