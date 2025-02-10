@@ -83,12 +83,17 @@ Fetch User’s Current Track: Enable the backend to retrieve the currently playi
 https://www.youtube.com/watch?v=KyJ_jJHyZSE
 
 **Frontend: Items Successfully Completed**
-- Wireframes: Completed wireframes to follow for profile and feed pages.
-- Feed visualization and Profile visualization.
+
+- Wireframes: Developed and finalized wireframes to outline the structure and layout for key pages, including login, signup, profile, post creation, and feed.
+
+- Profile Visualization: Designed and integrated an improved user profile visualization to enhance the clarity and accessibility of user information.
+
+- Feed Visualization: Created and structured basic feed page. Optimized the feed layout for a more intuitive and engaging display of content.
 
 **Frontend: Which Issues did not get completed and Why** 
 
 Login and sign up pages
+
 - Why: Prioritized website core functionalities and plan to complete at the start of the next sprint.
 
 
