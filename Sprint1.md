@@ -48,6 +48,42 @@ Sharing Functionality: Allow users to share songs, albums, and playlists with ot
 
 Song, Album, Playlist Info: Retrieve detailed information about songs, albums, and playlists for sharing and display purposes.
 
+** Backend Video Link **
+
+https://youtu.be/vRQUZ1wKv5c
+
+** Items Successfully Completed Backend
+
+Basic Backend API Setup: Establish a foundational backend API to handle connections with the frontend.
+
+Initial Routing Logic Developed: Developed the initial logic to handle almost all navigation routing, using Gorilla Mux.
+
+Basic Database Implementation: Set up a basic database structure to account for users, albums, songs ,artists , friends and how to interconnect them.
+
+Implement a way to retrieve song, album or playlist Info from the Spotify API for sharing and display purposes.
+
+Basic Login Auth Setup: Basic Login Auth was set up, but we're still working on getting email and or google auth up and running as well. 
+
+** Which Issues did not get completed and Why ** 
+
+Firebase Authentication: Implement email/password authentication as well as support for social logins through Firebase.
+
+Why: Did not have time to get to this issue, we wanted to get the basic authentification through MongoDB finished before we looked at Firebase Email Based Authentification. 
+
+Secure API Endpoints: Protect API endpoints by validating Firebase tokens to ensure authorized access.
+
+Why: Have not gotten around to the Firebase Auth Ticket so this will naturally follow suit after that other ticket gets finished. 
+
+Fetch User’s Current Track: Enable the backend to retrieve the currently playing track of the user.
+
+Why: Currently working the fine tunings of friends/followers logic , once that's done then this will get priority. 
+
+
+
+
+
+
+
 
 
 
