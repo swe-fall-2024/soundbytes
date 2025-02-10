@@ -52,7 +52,7 @@ Song, Album, Playlist Info: Retrieve detailed information about songs, albums, a
 
 https://youtu.be/vRQUZ1wKv5c
 
-**Items Successfully Completed Backend**
+**Backend: Items Successfully Completed**
 
 Basic Backend API Setup: Establish a foundational backend API to handle connections with the frontend.
 
@@ -64,7 +64,7 @@ Implement a way to retrieve song, album or playlist Info from the Spotify API fo
 
 Basic Login Auth Setup: Basic Login Auth was set up, but we're still working on getting email and or google auth up and running as well. 
 
-**Which Issues did not get completed and Why** 
+**Backend: Which Issues did not get completed and Why** 
 
 Firebase Authentication: Implement email/password authentication as well as support for social logins through Firebase.
 
@@ -77,6 +77,15 @@ Why: Have not gotten around to the Firebase Auth Ticket so this will naturally f
 Fetch User’s Current Track: Enable the backend to retrieve the currently playing track of the user.
 
 Why: Currently working the fine tunings of friends/followers logic , once that's done then this will get priority. 
+
+**Frontend Video Link**
+
+https://www.youtube.com/watch?v=KyJ_jJHyZSE
+
+**Frontend: Items Successfully Completed**
+
+
+**Frontend: Which Issues did not get completed and Why** 
 
 
 
