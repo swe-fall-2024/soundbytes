@@ -29,19 +29,18 @@
 
 import { Component } from '@angular/core';
 import { FeedComponent } from './views/feed/feed.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { NavbarComponent } from './components/navbar/navbar.component';
 
 @Component({
   selector: 'app-root',
-  imports: [FeedComponent],
+  imports: [FeedComponent, NavbarComponent],
   template: `
-    <main>
-      <header>
-        <h1>FEED</h1>
-      </header>
-      <section class="content">
-        <app-feed></app-feed>
-      </section>
-    </main>
+  <div class="page">
+    <app-navbar></app-navbar>
+    <app-feed></app-feed>
+  </div>
+    
   `,
   styleUrls: ['./app.component.css']
 })
