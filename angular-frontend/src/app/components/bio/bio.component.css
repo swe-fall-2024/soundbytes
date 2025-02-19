@@ -32,7 +32,15 @@
     width: 40px;
     border-radius: 50%;
   }
-
+  
+  .container {
+    width: 98%;
+    display: flex;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+  
   .example-card {
     flex: 1;
     margin: 16px;
@@ -40,7 +48,15 @@
     flex-direction: column;
     height: 100%;
   }
-
+  
+  .left-card {
+    flex: 2;
+  }
+  
+  .right-card {
+    flex: 1;
+  }
+  
   .example-spacer {
     flex: 1 1 auto;
   }

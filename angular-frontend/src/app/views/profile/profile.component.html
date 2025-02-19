@@ -1,77 +1,36 @@
-<!-- temporary BAR -->
 <app-navbar></app-navbar>
 
 <!-- PROFILE -->
-<mat-card class="profile-card" >
-    <mat-card-header>
-      <div mat-card-avatar class="example-header-image"></div>
-      <mat-card-title>Shiba Inu</mat-card-title>
-      <mat-card-subtitle>Current Favorite Artist: COIN</mat-card-subtitle>
-      <mat-card-actions align="end">
-        <button mat-button>Edit</button>
-      </mat-card-actions>
-    </mat-card-header>
-    <mat-card-content>
-      <p>
-        
-      </p>
-      <mat-chip-set aria-label="Chihuahua traits">
-        <mat-chip>indie</mat-chip>
-        <mat-chip>pop</mat-chip>
-        <mat-chip>hyperpop</mat-chip>
-      </mat-chip-set>
-      <br>
-      <div fxLayout="row" fxLayoutAlign="start center">
-          <mat-icon>music_note</mat-icon>
-          <span>stupid horse</span>
-          &nbsp;
-          <mat-icon>person</mat-icon>
-          <span>100 gecs</span>
-        </div>    
-    </mat-card-content>
-    </mat-card>
+<div *ngFor="let profile of profiles">
+  <app-bio [profile]="profile"></app-bio>
+  </div>
 
-    <div class="container">
-    <br>
-      <!-- POSTS -->
-      <mat-card class="example-card left-card" appearance="outlined">
-        <mat-card-header>
-          <mat-card-title>Your Posts</mat-card-title>
-        </mat-card-header>
-        <app-playlist-card></app-playlist-card>
-        <app-review-card></app-review-card>
-        <app-song-card></app-song-card>
-      
-        <br>
-      </mat-card>
+<div class="container">
+  <br>
+    <!-- POSTS -->
+    <mat-card class="example-card left-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>Your Posts</mat-card-title>
+      </mat-card-header>
+      <div *ngFor="let post of posts;let myProfile = odd">
+        <app-song-card *ngIf="post.type === 'favorite-song'" [post]="post"></app-song-card>
+        <app-review-card *ngIf="post.type === 'album-review'" [post]="post"></app-review-card>
+        <app-playlist-card *ngIf="post.type === 'playlist'" [post]="post"></app-playlist-card>
+      </div>
     
-      <!-- FRIENDS -->
-      <mat-card class="example-card" appearance="outlined">
-        <mat-card-header>
-          <mat-card-title>Your Friends</mat-card-title>
-        </mat-card-header>
-        <mat-list>
-          <mat-list-item>
-            <div fxLayout="row" fxLayoutAlign="start center" class="icon-text">
-              <img src="assets/download.jpg" alt="Item 1" class="icon-image">
-              <span>Friend 1</span>
-            </div>
-          </mat-list-item>
-          <mat-divider></mat-divider>
-          <mat-list-item>
-            <div fxLayout="row" fxLayoutAlign="start center" class="icon-text">
-              <img src="assets/download.jpg" alt="Item 1" class="icon-image">
-              <span>Friend 1</span>
-            </div>
-          </mat-list-item>
-          <mat-divider></mat-divider>
-          <mat-list-item>
-            <div fxLayout="row" fxLayoutAlign="start center" class="icon-text">
-              <img src="assets/download.jpg" alt="Item 1" class="icon-image">
-              <span>Friend 1</span>
-            </div>
-          </mat-list-item>
-        </mat-list>
-      </mat-card>
-    </div>
-    
+      <br>
+    </mat-card>
+  
+    <!-- FRIENDS -->
+    <mat-card class="example-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>Your Friends</mat-card-title>
+      </mat-card-header>
+      <mat-list>
+          <div *ngFor="let friend of friends">
+            <app-friends [friend]="friend"></app-friends>
+          </div>
+      </mat-list>
+    </mat-card>
+</div>
+  
