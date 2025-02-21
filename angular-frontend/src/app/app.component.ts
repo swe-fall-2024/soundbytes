@@ -28,15 +28,15 @@
 
 
 import { Component } from '@angular/core';
-import { ProfileComponent } from './views/profile/profile.component';
+import { EditProfileComponent } from './views/edit-profile/edit-profile.component';
 
 @Component({
   selector: 'app-root',
-  imports: [ProfileComponent],
+  imports: [EditProfileComponent],
   template: `
     <main>
       <section class="content">
-        <app-profile></app-profile>
+        <app-edit-profile></app-edit-profile>
       </section>
     </main>
   `,
