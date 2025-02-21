@@ -70,6 +70,7 @@ export class ProfileComponent {
   profiles = [
     {
       name: 'Shiba Inu',
+      username: '@shiba',
       currentFavType: 'Current Favorite Artist',
       currentFav: 'COIN',
       genres: {one:'indie',two:'pop',three:'hyperpop'},

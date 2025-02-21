@@ -9,7 +9,7 @@ import {MatCardModule} from '@angular/material/card';
   <mat-card class="profile-card" >
     <mat-card-header>
       <div mat-card-avatar class="example-header-image"></div>
-      <mat-card-title>{{profile.name}}</mat-card-title>
+      <mat-card-title>{{profile.name}} {{profile.username}}</mat-card-title>
       <mat-card-subtitle>{{profile.currentFavType}}: {{profile.currentFav}}</mat-card-subtitle>
       <mat-card-actions align="end">
             <button class="btn btn-outline-success search-button" type="submit">Edit</button>
