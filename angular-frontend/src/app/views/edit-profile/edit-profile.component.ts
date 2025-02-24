@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import {MatCardModule} from '@angular/material/card';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -10,7 +10,8 @@ import {MatSelectModule} from '@angular/material/select';
   selector: 'app-edit-profile',
   imports: [MatSelectModule, NgFor, CommonModule, MatCardModule, MatInputModule, MatFormFieldModule, FormsModule],
   templateUrl: './edit-profile.component.html',
-  styleUrl: './edit-profile.component.css'
+  styleUrl: './edit-profile.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditProfileComponent {
   bio = [

@@ -29,15 +29,17 @@
 
 
 import { Component } from '@angular/core';
-import { EditProfileComponent } from './views/edit-profile/edit-profile.component';
+//import { EditProfileComponent } from './views/edit-profile/edit-profile.component';
+//import { LoginComponent } from './views/login/login.component';
+import { SignupComponent } from './views/signup/signup.component';
 
 @Component({
   selector: 'app-root',
-  imports: [EditProfileComponent],
+  imports: [SignupComponent],
   template: `
     <main>
       <section class="content">
-        <app-edit-profile></app-edit-profile>
+        <app-signup></app-signup>
       </section>
     </main>
   `,
