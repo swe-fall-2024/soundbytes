@@ -15,6 +15,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/crypto/bcrypt"
@@ -26,19 +27,13 @@ import (
 // MongoDB setup
 var client *mongo.Client
 var userCollection *mongo.Collection
-
+var friendCollection *mongo.Collection 
+var postCollection *mongo.Collection
 const dbName = "testdb"
 const userCollectionName = "users"
 const albumCollectionName = "albums"
 const songCollectionName = "songs"
 const secretKey = "The_Dark_Side_Of_The_Moon"
-
-// User struct
-type User struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Following []string `json:"following"` // List of usernames the user follows
-}
 
 type Album struct {
 	Id          string `json:"id"`
@@ -53,6 +48,37 @@ type Song struct {
 	Name       string `json:"name"`
 	Artist     string `json:"artist"`
 	Popularity string `json:"popularity"`
+}
+
+// Friend struct
+type Friend struct {
+	ID             primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	Username       string             `bson:"username" json:"username"`
+	FriendUsername string             `bson:"friend_username" json:"friend_username"`
+}
+
+// Post struct
+type Post struct {
+	PostID    primitive.ObjectID `bson:"_id,omitempty" json:"post_id"`
+	PostType  string             `bson:"post_type" json:"post_type"`
+	Link      string             `bson:"link" json:"link"`
+	Title     string             `bson:"title" json:"title"`
+	Content   string             `bson:"content" json:"content"`
+	LikeCount int                `bson:"like_count" json:"like_count"`
+}
+
+// User struct
+type User struct {
+	UserID        primitive.ObjectID `bson:"_id,omitempty" json:"user_id"`
+	Username      string             `bson:"username" json:"username"`
+	Password      string             `json:"password"`
+	TopArtist     string             `bson:"top_artist" json:"top_artist"`
+	TopSong       string             `bson:"top_song" json:"top_song"`
+	FavSongs      []string           `bson:"favorite_songs" json:"favorite_songs"`
+	FavGenres     []string           `bson:"favorite_genres" json:"favorite_genres"`
+	Posts         []Post             `bson:"posts" json:"posts"`
+	Following     []string           `json:"following"` // List of usernames the user follows
+
 }
 
 // JWT Claims
@@ -77,6 +103,48 @@ func main() {
 		log.Fatalf("Failed to listen on %s: %v", host, err)
 	}
 
+}
+
+// Function to create a new friend entry
+func addFriend(w http.ResponseWriter, r *http.Request) {
+
+	friendCollection = client.Database(dbName).Collection("friends")
+
+	var friend Friend
+	if err := json.NewDecoder(r.Body).Decode(&friend); err != nil {
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+		return
+	}
+
+	_, err := friendCollection.InsertOne(context.TODO(), friend)
+	if err != nil {
+		http.Error(w, "Failed to add friend", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Friend added successfully"})
+}
+
+// Function to create a new post
+func addPost(w http.ResponseWriter, r *http.Request) {
+
+	postCollection   = client.Database(dbName).Collection("posts")
+
+	var post Post
+	if err := json.NewDecoder(r.Body).Decode(&post); err != nil {
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+		return
+	}
+
+	_, err := postCollection.InsertOne(context.TODO(), post)
+	if err != nil {
+		http.Error(w, "Failed to create post", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Post created successfully"})
 }
 
 func registerAlbumHandler(w http.ResponseWriter, r *http.Request) {
@@ -208,6 +276,10 @@ func httpHandler() http.Handler {
 	router.HandleFunc("/follow", followUserHandler).Methods("POST")
 	router.HandleFunc("/following/{username}", getFollowingHandler).Methods("GET")
 
+	// Table Routes
+	router.HandleFunc("/addFriend", addFriend).Methods("POST")
+	router.HandleFunc("/addPost", addPost).Methods("POST")
+
 	// Protect this route with JWT middleware
 	router.HandleFunc("/protected", jwtMiddleware(protectedHandler)).Methods("GET")
 
@@ -230,6 +302,7 @@ func httpHandler() http.Handler {
 }
 
 
+// TODO: Fix this so it accounts for all of the fields in our USER TABLE 
 
 // Register handler
 func registerHandler(w http.ResponseWriter, r *http.Request) {
