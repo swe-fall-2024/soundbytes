@@ -234,6 +234,46 @@ func deletePost(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"message": "Post deleted successfully"})
 }
 
+// Function to update a post
+func updatePost(w http.ResponseWriter, r *http.Request) {
+	postCollection := client.Database(dbName).Collection("posts")
+
+	// Extract PostID from URL parameters
+	vars := mux.Vars(r)
+	postIDHex := vars["post_id"]
+	postID, err := primitive.ObjectIDFromHex(postIDHex)
+	if err != nil {
+		http.Error(w, "Invalid Post ID", http.StatusBadRequest)
+		return
+	}
+
+	var updatedPost Post
+	// Decode the request body into the Post struct
+	if err := json.NewDecoder(r.Body).Decode(&updatedPost); err != nil {
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+		return
+	}
+
+	// Prepare the update
+	update := bson.M{
+		"$set": bson.M{
+			"title":   updatedPost.Title,
+			"content": updatedPost.Content,
+			"link":    updatedPost.Link,
+		},
+	}
+
+	// Update the post in the database
+	_, err = postCollection.UpdateOne(context.TODO(), bson.M{"_id": postID}, update)
+	if err != nil {
+		http.Error(w, "Failed to update post", http.StatusInternalServerError)
+		return
+	}
+
+	// Respond with a success message
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Post updated successfully"})
+}
 
 func registerAlbumHandler(w http.ResponseWriter, r *http.Request) {
 
@@ -373,6 +413,9 @@ func httpHandler() http.Handler {
 
 	// Delete Post route
 	router.HandleFunc("/deletePost", deletePost).Methods("DELETE")
+
+	// Inside the httpHandler function
+	router.HandleFunc("/updatePost/{post_id}", updatePost).Methods("PUT")
 
 	// Protect this route with JWT middleware
 	router.HandleFunc("/protected", jwtMiddleware(protectedHandler)).Methods("GET")
