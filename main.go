@@ -107,8 +107,7 @@ func main() {
 
 // Function to create a new friend entry
 func addFriend(w http.ResponseWriter, r *http.Request) {
-
-	friendCollection = client.Database(dbName).Collection("friends")
+	friendCollection := client.Database(dbName).Collection("friends")
 
 	var friend Friend
 	if err := json.NewDecoder(r.Body).Decode(&friend); err != nil {
@@ -116,36 +115,69 @@ func addFriend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := friendCollection.InsertOne(context.TODO(), friend)
+	// Check if the user exists
+	var user User // Make sure to define the User struct accordingly
+	err := userCollection.FindOne(context.TODO(), bson.M{"username": friend.Username}).Decode(&user)
+	if err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	// Check if the friend exists
+	var friendUser User // Use a different variable to avoid shadowing
+	err = userCollection.FindOne(context.TODO(), bson.M{"username": friend.FriendUsername}).Decode(&friendUser)
+	if err != nil {
+		http.Error(w, "Friend not found", http.StatusNotFound)
+		return
+	}
+
+	// Check if the user is trying to add themselves
+	if friend.Username == friend.FriendUsername {
+		http.Error(w, "Cannot add yourself as a friend", http.StatusBadRequest)
+		return
+	}
+
+	// Insert the friend entry into the database
+	_, err = friendCollection.InsertOne(context.TODO(), friend)
 	if err != nil {
 		http.Error(w, "Failed to add friend", http.StatusInternalServerError)
 		return
 	}
 
+	// Respond with a success message
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]string{"message": "Friend added successfully"})
 }
 
 // Function to create a new post
 func addPost(w http.ResponseWriter, r *http.Request) {
-
-	postCollection   = client.Database(dbName).Collection("posts")
+	postCollection := client.Database(dbName).Collection("posts") // Use := to define a new variable
 
 	var post Post
+	// Decode the request body into the Post struct
 	if err := json.NewDecoder(r.Body).Decode(&post); err != nil {
 		http.Error(w, "Invalid input", http.StatusBadRequest)
 		return
 	}
 
+	// Check for required fields in the post (assuming title and content are required)
+	if post.Title == "" || post.Content == "" {
+		http.Error(w, "Title and content are required", http.StatusBadRequest)
+		return
+	}
+
+	// Insert the post into the database
 	_, err := postCollection.InsertOne(context.TODO(), post)
 	if err != nil {
 		http.Error(w, "Failed to create post", http.StatusInternalServerError)
 		return
 	}
 
+	// Set the response header and encode the success message
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]string{"message": "Post created successfully"})
 }
+
 
 func registerAlbumHandler(w http.ResponseWriter, r *http.Request) {
 
