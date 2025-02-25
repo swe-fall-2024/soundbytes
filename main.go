@@ -149,6 +149,34 @@ func addFriend(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"message": "Friend added successfully"})
 }
 
+// Function to delete a friendship
+func deleteFriend(w http.ResponseWriter, r *http.Request) {
+	friendCollection := client.Database(dbName).Collection("friends")
+
+	var friend Friend
+	if err := json.NewDecoder(r.Body).Decode(&friend); err != nil {
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+		return
+	}
+
+	// Delete the friend entry from the database
+	filter := bson.M{
+		"username":       friend.Username,
+		"friend_username": friend.FriendUsername,
+	}
+
+	_, err := friendCollection.DeleteOne(context.TODO(), filter)
+	if err != nil {
+		http.Error(w, "Failed to delete friend", http.StatusInternalServerError)
+		return
+	}
+
+	// Respond with a success message
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Friend deleted successfully"})
+}
+
+
 // Function to create a new post
 func addPost(w http.ResponseWriter, r *http.Request) {
 	postCollection := client.Database(dbName).Collection("posts") // Use := to define a new variable
@@ -176,6 +204,34 @@ func addPost(w http.ResponseWriter, r *http.Request) {
 	// Set the response header and encode the success message
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]string{"message": "Post created successfully"})
+}
+
+// Function to delete a post
+func deletePost(w http.ResponseWriter, r *http.Request) {
+	postCollection := client.Database(dbName).Collection("posts")
+
+	var post Post
+	if err := json.NewDecoder(r.Body).Decode(&post); err != nil {
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+		return
+	}
+
+	// Delete the post from the database using its ID
+	filter := bson.M{"_id": post.PostID}
+	result, err := postCollection.DeleteOne(context.TODO(), filter)
+	if err != nil {
+		http.Error(w, "Failed to delete post", http.StatusInternalServerError)
+		return
+	}
+
+	if result.DeletedCount == 0 {
+		http.Error(w, "Post not found", http.StatusNotFound)
+		return
+	}
+
+	// Respond with a success message
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Post deleted successfully"})
 }
 
 
@@ -311,6 +367,12 @@ func httpHandler() http.Handler {
 	// Table Routes
 	router.HandleFunc("/addFriend", addFriend).Methods("POST")
 	router.HandleFunc("/addPost", addPost).Methods("POST")
+
+	// Delete Friend route
+	router.HandleFunc("/deleteFriend", deleteFriend).Methods("DELETE")
+
+	// Delete Post route
+	router.HandleFunc("/deletePost", deletePost).Methods("DELETE")
 
 	// Protect this route with JWT middleware
 	router.HandleFunc("/protected", jwtMiddleware(protectedHandler)).Methods("GET")
