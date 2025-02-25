@@ -12,7 +12,11 @@ import {MatCardModule} from '@angular/material/card';
     <mat-card class="example-card" appearance="outlined">
       <mat-card-header>
         <mat-card-title>{{post.title}}</mat-card-title>
-        <mat-card-subtitle>{{post.user}}</mat-card-subtitle>
+        <script> 
+          if(!myProfile) { 
+          <mat-card-subtitle>{{post.user}}</mat-card-subtitle>
+          }
+          </script>
         <div mat-card-avatar class="example-header-image"></div>
       </mat-card-header>
       <mat-card-content>
@@ -27,13 +31,16 @@ import {MatCardModule} from '@angular/material/card';
         </mat-card>
       </div>
         
-        
-      </mat-card-content>
+    <script> 
+    if(!myProfile) { 
+    </mat-card-content>
       <mat-card-actions>
         <button mat-button>LIKE</button>
         <button mat-button>SHARE</button>
       </mat-card-actions>
     </mat-card>
+    }
+    </script>
   `,
   styleUrl: './song-card.component.css',
   imports: [MatCardModule, MatButtonModule],

@@ -1,52 +1,71 @@
-  // `// src/app/app.component.ts
-  // import { Component, OnInit } from '@angular/core';
-  // import { ApiService } from './api.service'; // Import the ApiService
+//   // src/app/app.component.ts
+//   import { Component, OnInit } from '@angular/core';
+//   import { ApiService } from './api.service'; // Import the ApiService
 
-  // @Component({
-  //   selector: 'app-root',
-  //   templateUrl: './app.component.html',
-  //   styleUrls: ['./app.component.css'],
-  // })
-  // export class AppComponent implements OnInit {
-  //   title = 'angular-frontend';
-  //   message: string = '';
+//   @Component({
+//     selector: 'app-root',
+//     templateUrl: './app.component.html',
+//     styleUrls: ['./app.component.css'],
+//   })
+//   export class AppComponent implements OnInit {
+//     title = 'angular-frontend';
+//     message: string = '';
 
-  //   constructor(private apiService: ApiService) {} // Inject ApiService
+//     constructor(private apiService: ApiService) {} // Inject ApiService
 
-  //   ngOnInit() {
-  //     this.apiService.getMessage().subscribe({
-  //       next: (data) => {
-  //         this.message = data.message; // Set the message from the backend
-  //       },
-  //       error: (err) => {
-  //         console.error('Error fetching data:', err);
-  //       },
-  //     });
-  //   }
-  // }`
+//     ngOnInit() {
+//       this.apiService.getMessage().subscribe({
+//         next: (data) => {
+//           this.message = data.message; // Set the message from the backend
+//         },
+//         error: (err) => {
+//           console.error('Error fetching data:', err);
+//         },
+//       });
+//     }
+//   }
+
 
 
 
 import { Component } from '@angular/core';
-import { FeedComponent } from './views/feed/feed.component';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { NavbarComponent } from './components/navbar/navbar.component';
+//import { EditProfileComponent } from './views/edit-profile/edit-profile.component';
+//import { LoginComponent } from './views/login/login.component';
+import { SignupComponent } from './views/signup/signup.component';
 
 @Component({
   selector: 'app-root',
-  imports: [FeedComponent, NavbarComponent],
+  imports: [SignupComponent],
   template: `
-  <div class="page">
-    <app-navbar></app-navbar>
-    <app-feed></app-feed>
-  </div>
-    
+    <main>
+      <section class="content">
+        <app-signup></app-signup>
+      </section>
+    </main>
   `,
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
   title = 'textbox-app';
 }
+
+
+// import { Component } from '@angular/core';
+
+// @Component({
+//   selector: 'app-root',
+//   template: `
+//     <div>
+//       <label for="textbox">Enter something:</label>
+//       <input id="textbox" type="text" />
+//     </div>
+//   `,
+//   styleUrls: ['./app.component.css']
+// })
+// export class AppComponent {
+//   title = 'textbox-app';
+// }
+
 
 
 

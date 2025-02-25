@@ -10,7 +10,8 @@ export interface MessageResponse {
   providedIn: 'root',
 })
 export class ApiService {
-  private readonly apiUrl = 'http://localhost:4201/';
+//  private readonly apiUrl = 'http://localhost:4201/';
+  private readonly apiUrl = 'http://localhost:4201/api';
 
   constructor(private http: HttpClient) {}
 

@@ -10,7 +10,7 @@ import { NgIf, NgFor, CommonModule } from '@angular/common';
   template: `
   <div class="page-container"> 
     <div class="feed-container">
-      <div *ngFor="let post of posts">
+      <div *ngFor="let post of posts";let myProfile = even">
         <app-song-card *ngIf="post.type === 'favorite-song'" [post]="post"></app-song-card>
         <app-review-card *ngIf="post.type === 'album-review'" [post]="post"></app-review-card>
         <app-playlist-card *ngIf="post.type === 'playlist'" [post]="post"></app-playlist-card>
