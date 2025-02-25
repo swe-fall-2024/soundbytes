@@ -2,6 +2,7 @@ import {Component, Input} from '@angular/core';
 import {MatIconModule} from '@angular/material/icon';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatCardModule} from '@angular/material/card';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-bio',
@@ -12,7 +13,7 @@ import {MatCardModule} from '@angular/material/card';
       <mat-card-title>{{profile.name}} {{profile.username}}</mat-card-title>
       <mat-card-subtitle>{{profile.currentFavType}}: {{profile.currentFav}}</mat-card-subtitle>
       <mat-card-actions align="end">
-            <button class="btn btn-outline-success search-button" type="submit">Edit</button>
+            <button class="btn btn-outline-success search-button" routerLink="/edit-profile" type="submit">Edit</button>
       </mat-card-actions>
     </mat-card-header>
     <mat-card-content>
@@ -34,8 +35,9 @@ import {MatCardModule} from '@angular/material/card';
         </div>    
     </mat-card-content>
     </mat-card>
+    <router-outlet></router-outlet>
     `,
-  imports: [MatCardModule, MatIconModule, MatChipsModule],
+  imports: [MatCardModule, MatIconModule, MatChipsModule, RouterModule],
   styleUrl: './bio.component.css'
 })
 export class BioComponent {

@@ -6,22 +6,14 @@
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-    
-      <form class="form-inline search">
-        <input class="form-control search-input" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success my-2 my-sm-0 search-button" type="submit">Search</button>
-      </form>
-
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Feed <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Create</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Profile</a>
-      </li>
+      <li class="nav-item"><a  class="nav-link" routerLink="/feed" >Feed</a></li> 
+      <li class="nav-item"><a class="nav-link" routerLink="/login" >Login</a></li> 
+      <li class="nav-item"><a class="nav-link" routerLink="/signup" >Signup</a></li> 
+      <li class="nav-item"><a class="nav-link" routerLink="/profile" >Profile</a></li> 
+      <li class="nav-item"><a class="nav-link" routerLink="/post" >Post</a></li> 
     </ul>
-    
   </div>
 </nav>
+<router-outlet></router-outlet>
+
+

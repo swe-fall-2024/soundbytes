@@ -13,12 +13,11 @@ import { ReviewCardComponent } from '../../components/review-card/review-card.co
 import { SongCardComponent } from '../../components/song-card/song-card.component';
 import { NgIf, NgFor, CommonModule } from '@angular/common';
 import { FriendsComponent } from '../../components/friends/friends.component';
-import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { BioComponent } from '../../components/bio/bio.component';
 
 @Component({
   selector: 'app-profile',
-  imports: [BioComponent, NavbarComponent, FriendsComponent, NgIf, NgFor, CommonModule, SongCardComponent, ReviewCardComponent, PlaylistCardComponentComponent, MatToolbarModule, MatDividerModule, MatListModule, MatCardModule, MatButtonModule, MatChipsModule, MatProgressBarModule, MatIconModule, MatGridListModule],
+  imports: [BioComponent, FriendsComponent, NgIf, NgFor, CommonModule, SongCardComponent, ReviewCardComponent, PlaylistCardComponentComponent, MatToolbarModule, MatDividerModule, MatListModule, MatCardModule, MatButtonModule, MatChipsModule, MatProgressBarModule, MatIconModule, MatGridListModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
