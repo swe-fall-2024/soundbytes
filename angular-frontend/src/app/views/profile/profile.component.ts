@@ -77,4 +77,6 @@ export class ProfileComponent {
       topArtist: "100 gecs",
     }
   ];
+  me = true;
+  following = false;
 }
