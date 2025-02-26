@@ -1,4 +1,3 @@
-
 <!-- PROFILE -->
 <div *ngFor="let profile of profiles">
   <app-bio [profile]="profile"></app-bio>
@@ -11,7 +10,7 @@
       <mat-card-header>
         <mat-card-title>Your Posts</mat-card-title>
       </mat-card-header>
-      <div *ngFor="let post of posts;let myProfile = odd">
+      <div *ngFor="let post of posts">
         <app-song-card *ngIf="post.type === 'favorite-song'" [post]="post"></app-song-card>
         <app-review-card *ngIf="post.type === 'album-review'" [post]="post"></app-review-card>
         <app-playlist-card *ngIf="post.type === 'playlist'" [post]="post"></app-playlist-card>

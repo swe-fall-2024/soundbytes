@@ -11,6 +11,7 @@ import { SignupComponent } from './views/signup/signup.component';
 import { ProfileComponent } from './views/profile/profile.component';
 import { PostCreationComponent } from './views/post-creation/post-creation.component';
 import { provideRouter, RouterModule } from '@angular/router';
+import { FriendProfileComponent } from './friend-profile/friend-profile.component';
 //import { ApiService } from './api.service'; // ✅ Import service
 
 @NgModule({
@@ -21,7 +22,8 @@ import { provideRouter, RouterModule } from '@angular/router';
     LoginComponent,
     SignupComponent,
     ProfileComponent,
-    PostCreationComponent
+    PostCreationComponent,
+    FriendProfileComponent
   ],
   imports: [BrowserModule, RouterModule ], 
   providers: [provideHttpClient(),

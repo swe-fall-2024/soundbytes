@@ -1,0 +1,21 @@
+<!-- PROFILE -->
+<div *ngFor="let profile of profiles">
+    <app-bio [profile]="profile" [me]="me" [following]="following"></app-bio>
+    </div>
+  
+      <!-- POSTS -->
+      <div class="posts">
+
+        <div class="page-container"> 
+            <div class="feed-container">
+              <div *ngFor="let post of posts">
+                <app-song-card *ngIf="post.type === 'favorite-song'" [post]="post"></app-song-card>
+                <app-review-card *ngIf="post.type === 'album-review'" [post]="post"></app-review-card>
+                <app-playlist-card *ngIf="post.type === 'playlist'" [post]="post"></app-playlist-card>
+              </div>
+            </div>
+          </div>
+
+    </div> 
+      
+    

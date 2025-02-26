@@ -6,6 +6,7 @@ import { SignupComponent } from './views/signup/signup.component';
 import { ProfileComponent } from './views/profile/profile.component';
 import { PostCreationComponent } from './views/post-creation/post-creation.component';
 import { LandingPageComponent } from './views/landing-page/landing-page.component';
+import { FriendProfileComponent } from './friend-profile/friend-profile.component';
 
 export const routes: Routes = [
   { path: '', component: LandingPageComponent}, 
@@ -15,5 +16,6 @@ export const routes: Routes = [
   { path: 'profile', component: ProfileComponent }, 
   { path: 'edit-profile', component: EditProfileComponent }, 
   { path: 'post', component: PostCreationComponent },
+  { path: 'friend-profile', component: FriendProfileComponent}
   //{ path: '', redirectTo: 'landing', pathMatch: 'full' }
 ];

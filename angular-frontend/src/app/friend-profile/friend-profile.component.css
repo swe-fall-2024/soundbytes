@@ -1,0 +1,76 @@
+.profile-card {
+    width: 100%;
+    display: flex; 
+    justify-content: center;
+    margin: 0 auto;
+  }
+
+  .page-container{
+    height: 80vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .feed-container{
+    width: 60vw;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: top;
+    padding: 20px;
+    scroll-behavior: auto;
+    align-items: center;
+  
+  }
+
+  .example-header-image {
+    background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+    background-size: cover;
+    background-position: center;
+  }
+  
+  mat-list-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  span {
+    white-space: nowrap;
+  }
+  
+  .icon-text {
+    display: flex;
+    align-items: center;
+  }
+  
+  .icon-image {
+    margin-right: 8px;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+  }
+  
+  .container {
+    width: 98%;
+    display: flex;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+  
+  .example-card {
+    margin: 16px;
+    height: 100%;
+    align-items: center;
+  }
+  
+  .example-spacer {
+    flex: 1 1 auto;
+  }
+  
+  .search-buttn{
+    border-radius: 5px 5px 5px 5px;
+  }
