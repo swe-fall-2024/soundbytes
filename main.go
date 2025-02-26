@@ -35,8 +35,8 @@ const secretKey = "The_Dark_Side_Of_The_Moon"
 
 // User struct
 type User struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username  string   `json:"username"`
+	Password  string   `json:"password"`
 	Following []string `json:"following"` // List of usernames the user follows
 }
 
@@ -187,16 +187,16 @@ func registerSongHandler(w http.ResponseWriter, r *http.Request) {
 
 // httpHandler creates the backend HTTP router
 func httpHandler() http.Handler {
-    fmt.Print("inside of httpHandler in Go")
-    
-    router := mux.NewRouter()
+	fmt.Print("inside of httpHandler in Go")
 
-    // ✅ Define /api/message endpoint
-    router.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("Content-Type", "application/json")
-        w.WriteHeader(http.StatusOK)
-        w.Write([]byte(`{"message": "Hello from Go!"}`))
-    }).Methods("GET")
+	router := mux.NewRouter()
+
+	// ✅ Define /api/message endpoint
+	router.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(`{"message": "Hello from Go!"}`))
+	}).Methods("GET")
 
 	// Authentication routes
 	router.HandleFunc("/register", registerHandler).Methods("POST")
@@ -207,29 +207,27 @@ func httpHandler() http.Handler {
 	// Follow Friends routes
 	router.HandleFunc("/follow", followUserHandler).Methods("POST")
 	router.HandleFunc("/following/{username}", getFollowingHandler).Methods("GET")
-
+	router.HandleFunc("/setUpProfile", setUpProfile).Methods("PUT")
 	// Protect this route with JWT middleware
 	router.HandleFunc("/protected", jwtMiddleware(protectedHandler)).Methods("GET")
 
 	// Serve Angular app
 	router.PathPrefix("/").Handler(AngularHandler).Methods("GET")
 
-    return handlers.LoggingHandler(os.Stdout,
-        handlers.CORS(
-            handlers.AllowCredentials(),
-            handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization",
-                "DNT", "Keep-Alive", "User-Agent", "X-Requested-With", "If-Modified-Since",
-                "Cache-Control", "Content-Range", "Range"}),
-            handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}),
-            handlers.AllowedOrigins([]string{"http://localhost:4200"}),
-            handlers.ExposedHeaders([]string{"DNT", "Keep-Alive", "User-Agent",
-                "X-Requested-With", "If-Modified-Since", "Cache-Control",
-                "Content-Type", "Content-Range", "Range", "Content-Disposition"}),
-            handlers.MaxAge(86400),
-        )(router))
+	return handlers.LoggingHandler(os.Stdout,
+		handlers.CORS(
+			handlers.AllowCredentials(),
+			handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization",
+				"DNT", "Keep-Alive", "User-Agent", "X-Requested-With", "If-Modified-Since",
+				"Cache-Control", "Content-Range", "Range"}),
+			handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}),
+			handlers.AllowedOrigins([]string{"http://localhost:4200"}),
+			handlers.ExposedHeaders([]string{"DNT", "Keep-Alive", "User-Agent",
+				"X-Requested-With", "If-Modified-Since", "Cache-Control",
+				"Content-Type", "Content-Range", "Range", "Content-Disposition"}),
+			handlers.MaxAge(86400),
+		)(router))
 }
-
-
 
 // Register handler
 func registerHandler(w http.ResponseWriter, r *http.Request) {
@@ -338,6 +336,7 @@ func followUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err := json.NewDecoder(r.Body).Decode(&request)
+
 	if err != nil {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
 		return
@@ -377,14 +376,13 @@ func getFollowingHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string][]string{"following": user.Following})
 }
 
-
 // Reverse proxy for Angular app
 func getOrigin() *url.URL {
-    origin, err := url.Parse("http://localhost:4200")
-    if err != nil {
-        log.Fatalf("Failed to parse origin URL: %v", err)
-    }
-    return origin
+	origin, err := url.Parse("http://localhost:4200")
+	if err != nil {
+		log.Fatalf("Failed to parse origin URL: %v", err)
+	}
+	return origin
 }
 
 var origin = getOrigin()
@@ -396,3 +394,60 @@ var director = func(req *http.Request) {
 }
 
 var AngularHandler = &httputil.ReverseProxy{Director: director}
+
+func setUpProfile(w http.ResponseWriter, r *http.Request) {
+
+	userCollection = client.Database(dbName).Collection(userCollectionName)
+
+	// Extract username from request (Modify this part based on your authentication method)
+	username := r.Header.Get("Username") // Assuming username is sent in the request header
+
+	if username == "" {
+		http.Error(w, "Unauthorized: No username provided", http.StatusUnauthorized)
+		return
+	}
+
+	// Decode request body
+	var request struct {
+		Name             string   `json:"name"`
+		TopArtist        string   `json:"top_artist"`
+		TopSong          string   `json:"top_song"`
+		TopGenre         string   `json:"top_genre"`
+		Top3Genres       []string `json:"top_3_genres"`
+		AllTimeFavSong   string   `json:"all_time_fav_song"`
+		AllTimeFavArtist string   `json:"all_time_fav_artist"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	// Define filter to find the user
+	filter := bson.M{"username": username}
+
+	// Define update operation (set new values)
+	update := bson.M{
+		"$set": bson.M{
+			"name":                request.Name,
+			"top_artist":          request.TopArtist,
+			"top_song":            request.TopSong,
+			"top_genre":           request.TopGenre,
+			"top_3_genres":        request.Top3Genres,
+			"all_time_fav_song":   request.AllTimeFavSong,
+			"all_time_fav_artist": request.AllTimeFavArtist,
+		},
+	}
+
+	// Perform the update
+	_, err = userCollection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		http.Error(w, "Error updating profile", http.StatusInternalServerError)
+		return
+	}
+
+	// Send success response
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Profile updated successfully"})
+}

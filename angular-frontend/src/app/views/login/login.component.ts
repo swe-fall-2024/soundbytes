@@ -6,6 +6,7 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {merge} from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +21,7 @@ export class LoginComponent {
 
   errorMessage = signal('');
 
-  constructor() {
+  constructor(private http: HttpClient) {
     merge(this.email.statusChanges, this.email.valueChanges)
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.updateErrorMessage());
@@ -48,5 +49,29 @@ export class LoginComponent {
   clickEvent(event: MouseEvent) {
     this.hide.set(!this.hide());
     event.stopPropagation();
+  }
+
+
+  // New method to handle signup
+  login() {
+    if (this.email.valid && this.password.valid) {
+      const user = {
+        username: this.email.value,
+        password: this.password.value,
+      };
+
+      this.http.post('http://127.0.0.1:4201/login', user).subscribe({
+        next: (response) => {
+          console.log('Login successful', response);
+          alert('Login successful!');
+        },
+        error: (error) => {
+          console.error('Registration failed', error);
+          this.errorMessage.set('Registration failed. Please try again.');
+        }
+      });
+    } else {
+      this.updateErrorMessage();
+    }
   }
 }
