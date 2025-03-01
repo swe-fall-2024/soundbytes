@@ -429,6 +429,7 @@ func setUpProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err := json.NewDecoder(r.Body).Decode(&request)
+
 	if err != nil {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
 		return
@@ -621,4 +622,145 @@ func setUpProfileForTesting(w http.ResponseWriter, r *http.Request, client *mong
 	// Send success response
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"message": "Profile updated successfully"})
+
+}
+
+func getProfileHandlerForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Client, userCollection *mongo.Collection) {
+
+	userCollection = client.Database(dbName).Collection(userCollectionName)
+
+	username := r.URL.Query().Get("username")
+	if username == "" {
+		http.Error(w, "Username is required", http.StatusBadRequest)
+		return
+	}
+
+	// Find user in MongoDB
+	var user struct {
+		Username         string   `json:"username"`
+		Name             string   `json:"name"`
+		TopArtist        string   `json:"top_artist"`
+		TopSong          string   `json:"top_song"`
+		TopGenre         string   `json:"top_genre"`
+		Top3Genres       []string `json:"top_3_genres"`
+		AllTimeFavSong   string   `json:"all_time_fav_song"`
+		AllTimeFavArtist string   `json:"all_time_fav_artist"`
+	}
+
+	err := userCollection.FindOne(context.TODO(), bson.M{"username": username}).Decode(&user)
+	if err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	// Return the user's profile
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(user)
+}
+
+func registerSongHandlerForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Client, userCollection *mongo.Collection) {
+
+	userCollection = client.Database(dbName).Collection(songCollectionName)
+
+	authConfig := &clientcredentials.Config{
+		ClientID:     "3bd23353135d447b80b5e0c9d70775dc",
+		ClientSecret: "05454a9a1a2b48a19769e51b025798c4",
+		TokenURL:     spotify.TokenURL,
+	}
+
+	accessToken, err := authConfig.Token(context.Background())
+	if err != nil {
+		log.Fatalf("error retrieve access token: %v", err)
+	}
+
+	client1 := spotify.Authenticator{}.NewClient(accessToken)
+
+	var song1 Song
+
+	json.NewDecoder(r.Body).Decode(&song1)
+
+	log.Println(song1.Id)
+
+	songID := spotify.ID(song1.Id)
+
+	song, err := client1.GetTrack(songID)
+
+	if err != nil {
+		log.Fatalf("error retrieve playlist data: %v", err)
+	}
+
+	song1.Artist = song.Artists[0].Name
+	song1.Name = song.Name
+	song1.Popularity = string(rune(song.Popularity))
+
+	// Store user in MongoDB
+	_, err1 := userCollection.InsertOne(context.TODO(), song1)
+
+	if err1 != nil {
+		http.Error(w, "Error registering user", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+
+	json.NewEncoder(w).Encode(map[string]string{"message": "Song Post registered successfully"})
+
+	log.Println("Song ID: ", song.ID)
+	log.Println("Song Name: ", song.Name)
+	log.Println("Song Artist: ", song.Artists)
+}
+
+func registerAlbumHandlerForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Client, userCollection *mongo.Collection) {
+
+	userCollection = client.Database(dbName).Collection(albumCollectionName)
+
+	authConfig := &clientcredentials.Config{
+		ClientID:     "3bd23353135d447b80b5e0c9d70775dc",
+		ClientSecret: "05454a9a1a2b48a19769e51b025798c4",
+		TokenURL:     spotify.TokenURL,
+	}
+
+	accessToken, err := authConfig.Token(context.Background())
+	if err != nil {
+		log.Fatalf("error retrieve access token: %v", err)
+	}
+
+	client1 := spotify.Authenticator{}.NewClient(accessToken)
+
+	var album1 Album
+
+	json.NewDecoder(r.Body).Decode(&album1)
+
+	albumID := spotify.ID(album1.Id)
+
+	album, err := client1.GetAlbum(albumID)
+
+	if err != nil {
+		log.Fatalf("error retrieve playlist data: %v", err)
+	}
+
+	album1.Artist = album.Artists[0].Name
+	album1.Name = album.Name
+	//album1.Genre = album.Genres[0]
+	album1.ReleaseDate = album.ReleaseDate
+
+	// Store user in MongoDB
+	_, err1 := userCollection.InsertOne(context.TODO(), album1)
+
+	if err1 != nil {
+		http.Error(w, "Error registering user", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+
+	json.NewEncoder(w).Encode(map[string]string{"message": "Album Post registered successfully"})
+
+	log.Println("Album ID: ", album.ID)
+	log.Println("Album Name: ", album.Name)
+	log.Println("Artist: ", album.Artists)
+	log.Println("Genre: ", album.Genres)
+	log.Println("Cover Art: ", album.Images)
+	log.Println("Release Date: ", album.ReleaseDate)
+
 }

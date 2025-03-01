@@ -241,3 +241,147 @@ func TestSetUpProfileHandler(t *testing.T) {
 	assert.JSONEq(t, expectedMessage, w.Body.String())
 
 }
+
+func TestGetProfileHandler(t *testing.T) {
+	// Setup the test environment
+	setup()
+
+	testUserCollection = testClient.Database("testdb").Collection("users")
+
+	// Define the test username
+	testUsername := "testuser"
+
+	// Create a new HTTP GET request with the username as a query parameter
+	req := httptest.NewRequest(http.MethodGet, "/getProfile?username="+testUsername, nil)
+
+	w := httptest.NewRecorder()
+
+	// Call the handler
+	getProfileHandlerForTesting(w, req, testClient, testUserCollection)
+
+	// Check the response status code
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	// Check the response body message
+	expectedMessage := `{"username":"testuser","name":"testname","top_artist":"testtopartist","top_song":"testtopsong","top_genre":"testtopgenre","top_3_genres":["testtopgenre1","testtopgenre2","testtopgenre3"],"all_time_fav_song":"testalltimefavsong","all_time_fav_artist":"testalltimefavartist"}`
+
+	assert.JSONEq(t, expectedMessage, w.Body.String())
+}
+
+func TestRegisterSongHandler(t *testing.T) {
+	// Setup the test environment
+	setup()
+
+	testUserCollection = testClient.Database("testdb").Collection("songs")
+
+	// Define the test song
+	testSong := Song{
+		Id:     "4pNiE4LCVV74vfIBaUHm1b",
+		Name:   "",
+		Artist: "",
+	}
+
+	// Convert testSong to JSON
+	songJSON, err := json.Marshal(testSong)
+
+	println(string(songJSON))
+
+	if err != nil {
+		t.Fatalf("Failed to marshal test song: %v", err)
+	}
+
+	// Create a new HTTP POST request with the test song data
+	req := httptest.NewRequest(http.MethodPost, "/registerSong", bytes.NewReader(songJSON))
+
+	println(req)
+
+	w := httptest.NewRecorder()
+
+	println(w)
+
+	// Call the register handler
+
+	registerSongHandlerForTesting(w, req, testClient, testUserCollection)
+
+	// Check the response status code
+
+	assert.Equal(t, http.StatusCreated, w.Code)
+
+	// Check the response body message
+
+	expectedMessage := `{"message": "Song Post registered successfully"}`
+
+	assert.JSONEq(t, expectedMessage, w.Body.String())
+
+	// Verify that the song was actually added to the database
+
+	var storedSong Song
+
+	err = testUserCollection.FindOne(context.TODO(), bson.M{"id": testSong.Id}).Decode(&storedSong)
+
+	if err != nil {
+
+		t.Fatalf("Failed to find the registered song in the database: %v", err)
+
+	}
+}
+
+func TestRegisterAlbumHandler(t *testing.T) {
+	// Setup the test environment
+	setup()
+
+	testUserCollection = testClient.Database("testdb").Collection("albums")
+
+	// Define the test song
+	testAlbum := Album{
+		Id:          "50o7kf2wLwVmOTVYJOTplm",
+		Name:        "",
+		Artist:      "",
+		Genre:       "",
+		ReleaseDate: "",
+	}
+
+	// Convert testSong to JSON
+	albumJSON, err := json.Marshal(testAlbum)
+
+	println(string(albumJSON))
+
+	if err != nil {
+		t.Fatalf("Failed to marshal test album: %v", err)
+	}
+
+	// Create a new HTTP POST request with the test song data
+	req := httptest.NewRequest(http.MethodPost, "/registerAlbum", bytes.NewReader(albumJSON))
+
+	println(req)
+
+	w := httptest.NewRecorder()
+
+	println(w)
+
+	// Call the register handler
+
+	registerAlbumHandlerForTesting(w, req, testClient, testUserCollection)
+
+	// Check the response status code
+
+	assert.Equal(t, http.StatusCreated, w.Code)
+
+	// Check the response body message
+
+	expectedMessage := `{"message": "Album Post registered successfully"}`
+
+	assert.JSONEq(t, expectedMessage, w.Body.String())
+
+	// Verify that the song was actually added to the database
+
+	var storedAlbum Song
+
+	err = testUserCollection.FindOne(context.TODO(), bson.M{"id": testAlbum.Id}).Decode(&storedAlbum)
+
+	if err != nil {
+
+		t.Fatalf("Failed to find the registered song in the database: %v", err)
+
+	}
+}
