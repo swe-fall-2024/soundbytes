@@ -385,3 +385,49 @@ func TestRegisterAlbumHandler(t *testing.T) {
 
 	}
 }
+
+func TestUnfollowUserHandler(t *testing.T) {
+
+	// Setup the test environment
+	setup()
+
+	testUserCollection = testClient.Database("testdb").Collection("users")
+
+	// Decode request body
+	var request struct {
+		Follower string `json:"follower"`
+		Followee string `json:"followee"`
+	}
+
+	request.Follower = "testuser"
+	request.Followee = "testuser234"
+
+	// Convert testUser to JSON
+	requestJSON, err := json.Marshal(request)
+
+	println(string(requestJSON))
+
+	if err != nil {
+		t.Fatalf("Failed to marshal test user: %v", err)
+	}
+
+	// Create a new HTTP POST request with the test user data
+	req := httptest.NewRequest(http.MethodPost, "/unfollow", bytes.NewReader(requestJSON))
+
+	println(req)
+
+	w := httptest.NewRecorder()
+
+	println(w)
+
+	// Call the register handler
+	unfollowUserHandlerForTesting(w, req, testClient, testUserCollection)
+
+	// Check the response status code
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	// Check the response body message
+	expectedMessage := `{"message": "User unfollowed successfully"}`
+	assert.JSONEq(t, expectedMessage, w.Body.String())
+
+}

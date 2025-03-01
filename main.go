@@ -203,11 +203,12 @@ func httpHandler() http.Handler {
 	router.HandleFunc("/login", loginHandler).Methods("POST")
 	router.HandleFunc("/postAlbum", registerAlbumHandler).Methods("POST")
 	router.HandleFunc("/postSong", registerSongHandler).Methods("POST")
+	router.HandleFunc("/setUpProfile", setUpProfile).Methods("PUT")
 
 	// Follow Friends routes
 	router.HandleFunc("/follow", followUserHandler).Methods("POST")
 	router.HandleFunc("/following/{username}", getFollowingHandler).Methods("GET")
-	router.HandleFunc("/setUpProfile", setUpProfile).Methods("PUT")
+	router.HandleFunc("/unfollow", unfollowUserHandler).Methods("POST")
 	// Protect this route with JWT middleware
 	router.HandleFunc("/protected", jwtMiddleware(protectedHandler)).Methods("GET")
 
@@ -368,6 +369,44 @@ func followUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"message": "User followed successfully"})
+}
+
+func unfollowUserHandler(w http.ResponseWriter, r *http.Request) {
+
+	userCollection = client.Database(dbName).Collection(userCollectionName)
+
+	// Decode request body
+	var request struct {
+		Follower string `json:"follower"`
+		Followee string `json:"followee"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&request)
+
+	if err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	// Update the follower's document in MongoDB to add the followee to the "Following" list
+	filter := bson.M{"username": request.Follower}
+
+	log.Println("filter: ", filter)
+
+	update := bson.M{"$pull": bson.M{"following": request.Followee}} // Ensure no duplicates
+
+	log.Println("update: ", update)
+
+	_, err = userCollection.UpdateOne(context.TODO(), filter, update)
+
+	if err != nil {
+		http.Error(w, "Error updating follow list", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "User unfollowed successfully"})
+
 }
 
 func getFollowingHandler(w http.ResponseWriter, r *http.Request) {
@@ -762,5 +801,39 @@ func registerAlbumHandlerForTesting(w http.ResponseWriter, r *http.Request, clie
 	log.Println("Genre: ", album.Genres)
 	log.Println("Cover Art: ", album.Images)
 	log.Println("Release Date: ", album.ReleaseDate)
+
+}
+
+func unfollowUserHandlerForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Client, userCollection *mongo.Collection) {
+
+	userCollection = client.Database(dbName).Collection(userCollectionName)
+
+	// Decode request body
+	var request struct {
+		Follower string `json:"follower"`
+		Followee string `json:"followee"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&request)
+
+	if err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	// Update the follower's document in MongoDB to add the followee to the "Following" list
+	filter := bson.M{"username": request.Follower}
+
+	update := bson.M{"$pull": bson.M{"following": request.Followee}} // Ensure no duplicates
+
+	_, err = userCollection.UpdateOne(context.TODO(), filter, update)
+
+	if err != nil {
+		http.Error(w, "Error updating follow list", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "User unfollowed successfully"})
 
 }
