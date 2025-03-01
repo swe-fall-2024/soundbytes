@@ -6,10 +6,11 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {merge} from 'rxjs';
+import { RouterLink, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-login',
-  imports: [MatCardModule, MatInputModule, MatFormFieldModule, FormsModule, ReactiveFormsModule,MatIconModule],
+  imports: [MatCardModule, MatInputModule, MatFormFieldModule, FormsModule, ReactiveFormsModule,MatIconModule, RouterOutlet, RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,6 +47,7 @@ export class LoginComponent {
 
   hide = signal(true);
   clickEvent(event: MouseEvent) {
+    console.log("on submit i guess")
     this.hide.set(!this.hide());
     event.stopPropagation();
   }

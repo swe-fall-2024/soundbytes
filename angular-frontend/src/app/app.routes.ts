@@ -15,5 +15,8 @@ export const routes: Routes = [
   { path: 'profile', component: ProfileComponent }, 
   { path: 'edit-profile', component: EditProfileComponent }, 
   { path: 'post', component: PostCreationComponent },
-  //{ path: '', redirectTo: 'landing', pathMatch: 'full' }
+  //{ path: '', redirectTo: '', pathMatch: 'full' }
 ];
+
+//if logged out -> redirect to login for base path, prevent access to other paths like feed
+//if logged in -> redirect to feed on base path, redirect on navigate to login/signup
