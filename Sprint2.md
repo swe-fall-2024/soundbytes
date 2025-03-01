@@ -3,6 +3,7 @@
 ## Work Completed in Sprint 2
 During Sprint 2, we successfully integrated the front-end and back-end of our application. Additionally, we implemented several key features in the backend, including:
 - A function to follow a friend within the app.
+- A function to unfollow a friend within the app.
 - A function to create a user profile and store it in the MongoDB database.
 - Unit tests for each of our previously created backend functions.
 
@@ -21,6 +22,10 @@ Below is the list of unit tests implemented for backend functionality:
 ### TestFollowUserHandler
 - Ensures that a user can follow another user successfully.
 - Checks response status and success message.
+
+### TestUnfollowUserHandler
+-  Ensures that a user can unfollow another user successfully.
+-  Checks response status and success message.
 
 ### TestSetUpProfileHandler
 - Verifies that a user's profile can be created and updated.
@@ -41,6 +46,7 @@ The backend API includes the following endpoints:
 - **POST /register**: Registers a new user.
 - **POST /login**: Authenticates a user.
 - **POST /follow**: Allows a user to follow another user.
+- **POST /unfollow**: Allows a user to unfollow another user.
 - **PUT /setUpProfile**: Creates or updates a user profile.
 - **GET /getProfile**: Retrieves user profile information.
 - **POST /registerSong**: Registers a song post.
