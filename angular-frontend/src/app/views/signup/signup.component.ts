@@ -9,14 +9,17 @@ import { merge } from 'rxjs';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/signup.component'; // Import the service
+import { NgIf } from '@angular/common';
+import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [MatCardModule, MatInputModule, MatFormFieldModule, FormsModule, ReactiveFormsModule, MatIconModule, HttpClientModule],
+  imports: [MatCardModule, MatInputModule, MatFormFieldModule, FormsModule, ReactiveFormsModule, MatIconModule, HttpClientModule, NgIf],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class SignupComponent {
   readonly email = new FormControl('', [Validators.required, Validators.email]);

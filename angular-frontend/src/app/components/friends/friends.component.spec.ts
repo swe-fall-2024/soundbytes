@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientModule } from '@angular/common/http';
 import { FriendsComponent } from './friends.component';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 
 describe('FriendsComponent', () => {
   let component: FriendsComponent;
@@ -8,7 +10,13 @@ describe('FriendsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FriendsComponent]
+      imports: [FriendsComponent, HttpClientModule],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: { params: of({ id: 123 }) }
+        }
+      ]
     })
     .compileComponents();
 

@@ -12,11 +12,11 @@ import { BioComponent } from '../components/bio/bio.component';
 import { NgIf, NgFor, CommonModule } from '@angular/common';
 import { SongCardComponent } from '../components/song-card/song-card.component';
 import { ReviewCardComponent } from '../components/review-card/review-card.component';
-import { PlaylistCardComponentComponent } from '../components/playlist-card/playlist-card.component';
+import { PlaylistCardComponent } from '../components/playlist-card/playlist-card.component';
 
 @Component({
   selector: 'app-friend-profile',
-  imports: [BioComponent, NgIf, NgFor, CommonModule, SongCardComponent, ReviewCardComponent, PlaylistCardComponentComponent, MatToolbarModule, MatDividerModule, MatListModule, MatCardModule, MatButtonModule, MatChipsModule, MatProgressBarModule, MatIconModule, MatGridListModule],
+  imports: [BioComponent, NgIf, NgFor, CommonModule, SongCardComponent, ReviewCardComponent, PlaylistCardComponent, MatToolbarModule, MatDividerModule, MatListModule, MatCardModule, MatButtonModule, MatChipsModule, MatProgressBarModule, MatIconModule, MatGridListModule],
   templateUrl: './friend-profile.component.html',
   styleUrl: './friend-profile.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush

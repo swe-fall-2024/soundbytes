@@ -8,16 +8,16 @@ import {MatCardModule} from '@angular/material/card';
     template: `
       <mat-card class="example-card" appearance="outlined">
         <mat-card-header>
-          <mat-card-title>{{post.title}}</mat-card-title>
-          <mat-card-subtitle>{{post.user}}</mat-card-subtitle>
+          <mat-card-title>{{post?.title}}</mat-card-title>
+          <mat-card-subtitle>{{post?.user}}</mat-card-subtitle>
           <div mat-card-avatar class="example-header-image"></div>
         </mat-card-header>
         <mat-card-content>
         <div>
           <mat-card appearance="outlined" class="song-player">
             <mat-card-content class="content">
-              {{post.content.playlist_title}}
-              <a href={{post.content.playlist_url}} target="_blank"  mat-button>
+              {{post?.content.playlist_title}}
+              <a href={{post?.content.playlist_url}} target="_blank"  mat-button>
               <span class="material-icons">play_circle</span>
               </a>
             </mat-card-content>
@@ -34,11 +34,12 @@ import {MatCardModule} from '@angular/material/card';
     imports: [MatCardModule, MatButtonModule],
     changeDetection: ChangeDetectionStrategy.OnPush,
   })
-  export class PlaylistCardComponentComponent {
+  export class PlaylistCardComponent {
     constructor() {
       console.log('myCustomComponent');
     }
     @Input() post: any;
+
   }
 
   /*

@@ -6,11 +6,21 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {merge} from 'rxjs';
+import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { NgIf } from '@angular/common';
+import {
+  trigger,
+  state,
+  style,
+  animate,
+  transition,
+  // ...
+} from '@angular/animations';
 
 @Component({
   selector: 'app-login',
-  imports: [MatCardModule, MatInputModule, MatFormFieldModule, FormsModule, ReactiveFormsModule,MatIconModule],
+  imports: [MatCardModule, MatInputModule, MatFormFieldModule, FormsModule, ReactiveFormsModule,MatIconModule, NgIf],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,7 +31,7 @@ export class LoginComponent {
 
   errorMessage = signal('');
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private router: Router) {
     merge(this.email.statusChanges, this.email.valueChanges)
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.updateErrorMessage());
@@ -52,7 +62,7 @@ export class LoginComponent {
   }
 
 
-  // New method to handle signup
+  // New method to handle login
   login() {
     if (this.email.valid && this.password.valid) {
       const user = {
@@ -64,6 +74,7 @@ export class LoginComponent {
         next: (response) => {
           console.log('Login successful', response);
           alert('Login successful!');
+          this.router.navigate(['/profile']);
         },
         error: (error) => {
           console.error('Registration failed', error);

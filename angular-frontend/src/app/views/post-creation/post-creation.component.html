@@ -1,1 +1,33 @@
-<p>post-creation works!</p>
+<mat-card class="profile-card" >
+  <mat-card-header>
+    <mat-card-title>Post Creation</mat-card-title>
+  </mat-card-header>
+  <br>
+  <mat-card-content>
+      <form class="example-form">
+          <div class="example-container">
+              <mat-form-field>
+                <mat-label>Select Post Type:</mat-label>
+                <mat-select [formControl]="selectedType" required>
+                  <mat-option>--</mat-option>
+                  <mat-option value="favorite-song">Favorite Song</mat-option>
+                  <mat-option value="album-review">Album Review</mat-option>
+                  <mat-option value="playlist">Playlist</mat-option>
+                </mat-select>
+                @if (selectedType.invalid) {
+                  <mat-error>{{errorMessage()}}</mat-error>
+                }
+              </mat-form-field>
+            </div>
+
+            
+
+          </form>
+    
+          <div class="wrapper">
+              <button class="btn btn-outline-success search-button" type="button" (click)="submit()">Post</button>
+          </div>
+      <br>
+      
+  </mat-card-content>
+</mat-card>

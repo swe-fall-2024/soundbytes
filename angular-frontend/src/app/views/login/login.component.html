@@ -15,9 +15,7 @@
                     (blur)="updateErrorMessage()"
                     required
                   />
-                  @if (email.invalid) {
-                    <mat-error>{{errorMessage()}}</mat-error>
-                  }
+                  <mat-error *ngIf="email.invalid">{{ errorMessage() }}</mat-error>
                 </mat-form-field>
               </div>
 
@@ -29,9 +27,7 @@
                     required
                     [formControl]="password"
                 />
-                @if (password.invalid) {
-                    <mat-error>{{errorMessage()}}</mat-error>
-                }
+                <mat-error *ngIf="password.invalid">{{errorMessage()}}</mat-error>
               </mat-form-field>
 
             </form>

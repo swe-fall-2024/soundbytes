@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientModule } from '@angular/common/http';
 import { SongCardComponent } from './song-card.component';
 
 describe('SongCardComponent', () => {
@@ -8,7 +8,7 @@ describe('SongCardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SongCardComponent]
+      imports: [SongCardComponent, HttpClientModule]
     })
     .compileComponents();
 
@@ -18,6 +18,22 @@ describe('SongCardComponent', () => {
   });
 
   it('should create', () => {
+    //set data to test
+    component.post = 
+    {
+      user: 'Jackie',
+      profile_img: 'url',
+      type: 'favorite-song',
+      title: 'MY FAVORITE SONG',
+      content:{
+        song_title: 'Engagement Party',
+        song_url: 'https://open.spotify.com/track/5PYPCxyWltRIyPkhSsnWIk',
+        song_embed: "https://open.spotify.com/embed/track/6LxcPUqx6noURdA5qc4BAT?utm_source=generator",
+        //song_embed
+      }
+    };
+    
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 });
