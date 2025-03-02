@@ -7,7 +7,7 @@ import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { MatIconModule } from '@angular/material/icon';
 import { merge } from 'rxjs';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { UserService } from '../../services/signup.component'; // Import the service
 import { NgIf } from '@angular/common';
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
@@ -15,7 +15,7 @@ import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-br
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [MatCardModule, MatInputModule, MatFormFieldModule, FormsModule, ReactiveFormsModule, MatIconModule, HttpClientModule, NgIf],
+  imports: [MatCardModule, MatInputModule, MatFormFieldModule, FormsModule, ReactiveFormsModule, MatIconModule, HttpClientModule, NgIf, RouterLink, RouterOutlet],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
