@@ -9,6 +9,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -104,6 +105,63 @@ func main() {
 	}
 
 }
+
+// Search functionality 
+
+// var posts = []Post{
+// 	{"Link", "https://example.com", "Post One", "Content One", 10},
+// 	{"Text", "", "Post Two", "Content Two", 5},
+// }
+
+// var users = []User{
+// 	{"User One", "password123", "Artist One", "Song One", []string{"Song A", "Song B"}, []string{"Rock", "Pop"}, nil, nil},
+// 	{"User Two", "password456", "Artist Two", "Song Two", []string{"Song C", "Song D"}, []string{"Jazz", "Classical"}, nil, nil},
+// }
+
+
+// func getPost(query string) []Post {
+// 	var result []Post
+// 	for _, post := range posts {
+// 		if strings.Contains(strings.ToLower(post.Title), strings.ToLower(query)) ||
+// 			strings.Contains(strings.ToLower(post.Body), strings.ToLower(query)) {
+// 			result = append(result, post)
+// 		}
+// 	}
+// 	return result
+// }
+
+// func getUser(query string) []User {
+// 	var result []User
+// 	for _, user := range users {
+// 		if strings.Contains(strings.ToLower(user.Name), strings.ToLower(query)) ||
+// 			strings.Contains(strings.ToLower(user.Username), strings.ToLower(query)) {
+// 			result = append(result, user)
+// 		}
+// 	}
+// 	return result
+// }
+
+// func searchPosts(w http.ResponseWriter, r *http.Request) {
+// 	query := r.URL.Query().Get("query")
+// 	if query == "" {
+// 		http.Error(w, "Query parameter is required", http.StatusBadRequest)
+// 		return
+// 	}
+// 	result := getPost(query)
+// 	w.Header().Set("Content-Type", "application/json")
+// 	json.NewEncoder(w).Encode(result)
+// }
+
+// func searchUsers(w http.ResponseWriter, r *http.Request) {
+// 	query := r.URL.Query().Get("query")
+// 	if query == "" {
+// 		http.Error(w, "Query parameter is required", http.StatusBadRequest)
+// 		return
+// 	}
+// 	result := getUser(query)
+// 	w.Header().Set("Content-Type", "application/json")
+// 	json.NewEncoder(w).Encode(result)
+// }
 
 // Function to create a new friend entry
 func addFriend(w http.ResponseWriter, r *http.Request) {
@@ -393,6 +451,10 @@ func httpHandler() http.Handler {
         w.WriteHeader(http.StatusOK)
         w.Write([]byte(`{"message": "Hello from Go!"}`))
     }).Methods("GET")
+
+	// Search Functionality routes 
+	http.HandleFunc("/search/users", searchUsers)
+	http.HandleFunc("/search/posts", searchPosts)
 
 	// Authentication routes
 	router.HandleFunc("/register", registerHandler).Methods("POST")
