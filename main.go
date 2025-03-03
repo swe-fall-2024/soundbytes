@@ -15,6 +15,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/crypto/bcrypt"
@@ -26,19 +27,14 @@ import (
 // MongoDB setup
 var client *mongo.Client
 var userCollection *mongo.Collection
+var friendCollection *mongo.Collection
+var postCollection *mongo.Collection
 
 const dbName = "testdb"
 const userCollectionName = "users"
 const albumCollectionName = "albums"
 const songCollectionName = "songs"
 const secretKey = "The_Dark_Side_Of_The_Moon"
-
-// User struct
-type User struct {
-	Username  string   `json:"username"`
-	Password  string   `json:"password"`
-	Following []string `json:"following"` // List of usernames the user follows
-}
 
 type Album struct {
 	Id          string `json:"id"`
@@ -53,6 +49,37 @@ type Song struct {
 	Name       string `json:"name"`
 	Artist     string `json:"artist"`
 	Popularity string `json:"popularity"`
+}
+
+// Friend struct
+type Friend struct {
+	ID             primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	Username       string             `bson:"username" json:"username"`
+	FriendUsername string             `bson:"friend_username" json:"friend_username"`
+}
+
+// Post struct
+type Post struct {
+	PostID    primitive.ObjectID `bson:"_id,omitempty" json:"post_id"`
+	PostType  string             `bson:"post_type" json:"post_type"`
+	Link      string             `bson:"link" json:"link"`
+	Title     string             `bson:"title" json:"title"`
+	Content   string             `bson:"content" json:"content"`
+	LikeCount int                `bson:"like_count" json:"like_count"`
+}
+
+// User struct
+type User struct {
+	UserID    primitive.ObjectID `bson:"_id,omitempty" json:"user_id"`
+	Username  string             `bson:"username" json:"username"`
+	Password  string             `json:"password"`
+	TopArtist string             `bson:"top_artist" json:"top_artist"`
+	TopSong   string             `bson:"top_song" json:"top_song"`
+	FavSongs  []string           `bson:"favorite_songs" json:"favorite_songs"`
+	FavGenres []string           `bson:"favorite_genres" json:"favorite_genres"`
+	Posts     []Post             `bson:"posts" json:"posts"`
+	Following []string           `json:"following"` // List of usernames the user follows
+
 }
 
 // JWT Claims
@@ -77,6 +104,79 @@ func main() {
 		log.Fatalf("Failed to listen on %s: %v", host, err)
 	}
 
+}
+
+// Function to create a new friend entry
+func addFriend(w http.ResponseWriter, r *http.Request) {
+	friendCollection := client.Database(dbName).Collection("friends")
+
+	var friend Friend
+	if err := json.NewDecoder(r.Body).Decode(&friend); err != nil {
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+		return
+	}
+
+	// Check if the user exists
+	var user User // Make sure to define the User struct accordingly
+	err := userCollection.FindOne(context.TODO(), bson.M{"username": friend.Username}).Decode(&user)
+	if err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	// Check if the friend exists
+	var friendUser User // Use a different variable to avoid shadowing
+	err = userCollection.FindOne(context.TODO(), bson.M{"username": friend.FriendUsername}).Decode(&friendUser)
+	if err != nil {
+		http.Error(w, "Friend not found", http.StatusNotFound)
+		return
+	}
+
+	// Check if the user is trying to add themselves
+	if friend.Username == friend.FriendUsername {
+		http.Error(w, "Cannot add yourself as a friend", http.StatusBadRequest)
+		return
+	}
+
+	// Insert the friend entry into the database
+	_, err = friendCollection.InsertOne(context.TODO(), friend)
+	if err != nil {
+		http.Error(w, "Failed to add friend", http.StatusInternalServerError)
+		return
+	}
+
+	// Respond with a success message
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Friend added successfully"})
+}
+
+// Function to create a new post
+func addPost(w http.ResponseWriter, r *http.Request) {
+	postCollection := client.Database(dbName).Collection("posts") // Use := to define a new variable
+
+	var post Post
+	// Decode the request body into the Post struct
+	if err := json.NewDecoder(r.Body).Decode(&post); err != nil {
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+		return
+	}
+
+	// Check for required fields in the post (assuming title and content are required)
+	if post.Title == "" || post.Content == "" {
+		http.Error(w, "Title and content are required", http.StatusBadRequest)
+		return
+	}
+
+	// Insert the post into the database
+	_, err := postCollection.InsertOne(context.TODO(), post)
+	if err != nil {
+		http.Error(w, "Failed to create post", http.StatusInternalServerError)
+		return
+	}
+
+	// Set the response header and encode the success message
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Post created successfully"})
 }
 
 func registerAlbumHandler(w http.ResponseWriter, r *http.Request) {
@@ -166,7 +266,7 @@ func registerSongHandler(w http.ResponseWriter, r *http.Request) {
 
 	song1.Artist = song.Artists[0].Name
 	song1.Name = song.Name
-	song1.Popularity = string(song.Popularity)
+	song1.Popularity = string(rune(song.Popularity))
 
 	// Store user in MongoDB
 	_, err1 := userCollection.InsertOne(context.TODO(), song1)
@@ -203,11 +303,17 @@ func httpHandler() http.Handler {
 	router.HandleFunc("/login", loginHandler).Methods("POST")
 	router.HandleFunc("/postAlbum", registerAlbumHandler).Methods("POST")
 	router.HandleFunc("/postSong", registerSongHandler).Methods("POST")
+	router.HandleFunc("/setUpProfile", setUpProfile).Methods("PUT")
 
 	// Follow Friends routes
 	router.HandleFunc("/follow", followUserHandler).Methods("POST")
 	router.HandleFunc("/following/{username}", getFollowingHandler).Methods("GET")
-	router.HandleFunc("/setUpProfile", setUpProfile).Methods("PUT")
+	router.HandleFunc("/unfollow", unfollowUserHandler).Methods("POST")
+
+	// Table Routes
+	router.HandleFunc("/addFriend", addFriend).Methods("POST")
+	router.HandleFunc("/addPost", addPost).Methods("POST")
+
 	// Protect this route with JWT middleware
 	router.HandleFunc("/protected", jwtMiddleware(protectedHandler)).Methods("GET")
 
@@ -229,13 +335,22 @@ func httpHandler() http.Handler {
 		)(router))
 }
 
+// TODO: Fix this so it accounts for all of the fields in our USER TABLE
+
 // Register handler
 func registerHandler(w http.ResponseWriter, r *http.Request) {
 
+	println("inside of registerHandler")
+
 	userCollection = client.Database(dbName).Collection(userCollectionName)
 
+	println("userCollection: ", userCollection)
+
 	var user User
+
 	json.NewDecoder(r.Body).Decode(&user)
+
+	println("Here is the user: json.NewDecoder(r.Body).Decode(&user) ")
 
 	// Hash password
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
@@ -327,6 +442,7 @@ func protectedHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func followUserHandler(w http.ResponseWriter, r *http.Request) {
+
 	userCollection = client.Database(dbName).Collection(userCollectionName)
 
 	// Decode request body
@@ -344,9 +460,15 @@ func followUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Update the follower's document in MongoDB to add the followee to the "Following" list
 	filter := bson.M{"username": request.Follower}
+
+	log.Println("filter: ", filter)
+
 	update := bson.M{"$addToSet": bson.M{"following": request.Followee}} // Ensure no duplicates
 
+	log.Println("update: ", update)
+
 	_, err = userCollection.UpdateOne(context.TODO(), filter, update)
+
 	if err != nil {
 		http.Error(w, "Error updating follow list", http.StatusInternalServerError)
 		return
@@ -354,6 +476,44 @@ func followUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"message": "User followed successfully"})
+}
+
+func unfollowUserHandler(w http.ResponseWriter, r *http.Request) {
+
+	userCollection = client.Database(dbName).Collection(userCollectionName)
+
+	// Decode request body
+	var request struct {
+		Follower string `json:"follower"`
+		Followee string `json:"followee"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&request)
+
+	if err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	// Update the follower's document in MongoDB to add the followee to the "Following" list
+	filter := bson.M{"username": request.Follower}
+
+	log.Println("filter: ", filter)
+
+	update := bson.M{"$pull": bson.M{"following": request.Followee}} // Ensure no duplicates
+
+	log.Println("update: ", update)
+
+	_, err = userCollection.UpdateOne(context.TODO(), filter, update)
+
+	if err != nil {
+		http.Error(w, "Error updating follow list", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "User unfollowed successfully"})
+
 }
 
 func getFollowingHandler(w http.ResponseWriter, r *http.Request) {
@@ -399,13 +559,9 @@ func setUpProfile(w http.ResponseWriter, r *http.Request) {
 
 	userCollection = client.Database(dbName).Collection(userCollectionName)
 
-	// Extract username from request (Modify this part based on your authentication method)
-	username := r.Header.Get("Username") // Assuming username is sent in the request header
+	// Extract username from response header
 
-	if username == "" {
-		http.Error(w, "Unauthorized: No username provided", http.StatusUnauthorized)
-		return
-	}
+	username := r.Header.Get("username")
 
 	// Decode request body
 	var request struct {
@@ -419,6 +575,7 @@ func setUpProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err := json.NewDecoder(r.Body).Decode(&request)
+
 	if err != nil {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
 		return
@@ -450,4 +607,340 @@ func setUpProfile(w http.ResponseWriter, r *http.Request) {
 	// Send success response
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"message": "Profile updated successfully"})
+}
+
+func getProfileHandler(w http.ResponseWriter, r *http.Request) {
+	userCollection = client.Database(dbName).Collection(userCollectionName)
+
+	// Extract username from URL parameters
+	vars := mux.Vars(r)
+	username := vars["username"]
+
+	// Find user
+	var user User
+	err := userCollection.FindOne(context.TODO(), bson.M{"username": username}).Decode(&user)
+	if err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	// Return the user's profile
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(user)
+}
+
+func registerHandlerForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Client, userCollection *mongo.Collection) {
+
+	userCollection = client.Database(dbName).Collection(userCollectionName)
+
+	var user User
+
+	json.NewDecoder(r.Body).Decode(&user)
+
+	// Hash password
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	user.Password = string(hashedPassword)
+
+	// Store user in MongoDB
+	_, err := userCollection.InsertOne(context.TODO(), user)
+
+	if err != nil {
+		http.Error(w, "Error registering user", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+
+	json.NewEncoder(w).Encode(map[string]string{"message": "User registered successfully"})
+
+}
+
+// Login handler
+func loginHandlerForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Client, userCollection *mongo.Collection) {
+
+	userCollection = client.Database(dbName).Collection(userCollectionName)
+
+	var user User
+	json.NewDecoder(r.Body).Decode(&user)
+
+	// Fetch user from MongoDB
+	var foundUser User
+	err := userCollection.FindOne(context.TODO(), bson.M{"username": user.Username}).Decode(&foundUser)
+	if err != nil {
+		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
+		return
+	}
+
+	// Compare password
+	err = bcrypt.CompareHashAndPassword([]byte(foundUser.Password), []byte(user.Password))
+	if err != nil {
+		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
+		return
+	}
+
+	// Generate JWT token
+	token := generateJWT(user.Username)
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"token": token})
+}
+
+func followUserHandlerForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Client, userCollection *mongo.Collection) {
+
+	userCollection = client.Database(dbName).Collection(userCollectionName)
+
+	// Decode request body
+	var request struct {
+		Follower string `json:"follower"`
+		Followee string `json:"followee"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&request)
+
+	if err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	// Update the follower's document in MongoDB to add the followee to the "Following" list
+	filter := bson.M{"username": request.Follower}
+	update := bson.M{"$addToSet": bson.M{"following": request.Followee}} // Ensure no duplicates
+
+	_, err = userCollection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		http.Error(w, "Error updating follow list", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "User followed successfully"})
+
+}
+
+func setUpProfileForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Client, userCollection *mongo.Collection) {
+
+	userCollection = client.Database(dbName).Collection(userCollectionName)
+
+	// Decode request body
+	var request struct {
+		Username         string   `json:"username"`
+		Name             string   `json:"name"`
+		TopArtist        string   `json:"top_artist"`
+		TopSong          string   `json:"top_song"`
+		TopGenre         string   `json:"top_genre"`
+		Top3Genres       []string `json:"top_3_genres"`
+		AllTimeFavSong   string   `json:"all_time_fav_song"`
+		AllTimeFavArtist string   `json:"all_time_fav_artist"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&request)
+
+	if err != nil {
+
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+
+	}
+
+	filter := bson.M{"username": request.Username}
+
+	// Define update operation (set new values)
+	update := bson.M{
+		"$set": bson.M{
+			"name":                request.Name,
+			"top_artist":          request.TopArtist,
+			"top_song":            request.TopSong,
+			"top_genre":           request.TopGenre,
+			"top_3_genres":        request.Top3Genres,
+			"all_time_fav_song":   request.AllTimeFavSong,
+			"all_time_fav_artist": request.AllTimeFavArtist,
+		},
+	}
+
+	// Perform the update
+	_, err = userCollection.UpdateOne(context.TODO(), filter, update)
+
+	if err != nil {
+		http.Error(w, "Error updating profile", http.StatusInternalServerError)
+		return
+	}
+
+	// Send success response
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Profile updated successfully"})
+
+}
+
+func getProfileHandlerForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Client, userCollection *mongo.Collection) {
+
+	userCollection = client.Database(dbName).Collection(userCollectionName)
+
+	username := r.URL.Query().Get("username")
+	if username == "" {
+		http.Error(w, "Username is required", http.StatusBadRequest)
+		return
+	}
+
+	// Find user in MongoDB
+	var user struct {
+		Username         string   `json:"username"`
+		Name             string   `json:"name"`
+		TopArtist        string   `json:"top_artist"`
+		TopSong          string   `json:"top_song"`
+		TopGenre         string   `json:"top_genre"`
+		Top3Genres       []string `json:"top_3_genres"`
+		AllTimeFavSong   string   `json:"all_time_fav_song"`
+		AllTimeFavArtist string   `json:"all_time_fav_artist"`
+	}
+
+	err := userCollection.FindOne(context.TODO(), bson.M{"username": username}).Decode(&user)
+	if err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	// Return the user's profile
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(user)
+}
+
+func registerSongHandlerForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Client, userCollection *mongo.Collection) {
+
+	userCollection = client.Database(dbName).Collection(songCollectionName)
+
+	authConfig := &clientcredentials.Config{
+		ClientID:     "3bd23353135d447b80b5e0c9d70775dc",
+		ClientSecret: "05454a9a1a2b48a19769e51b025798c4",
+		TokenURL:     spotify.TokenURL,
+	}
+
+	accessToken, err := authConfig.Token(context.Background())
+	if err != nil {
+		log.Fatalf("error retrieve access token: %v", err)
+	}
+
+	client1 := spotify.Authenticator{}.NewClient(accessToken)
+
+	var song1 Song
+
+	json.NewDecoder(r.Body).Decode(&song1)
+
+	log.Println(song1.Id)
+
+	songID := spotify.ID(song1.Id)
+
+	song, err := client1.GetTrack(songID)
+
+	if err != nil {
+		log.Fatalf("error retrieve playlist data: %v", err)
+	}
+
+	song1.Artist = song.Artists[0].Name
+	song1.Name = song.Name
+	song1.Popularity = string(rune(song.Popularity))
+
+	// Store user in MongoDB
+	_, err1 := userCollection.InsertOne(context.TODO(), song1)
+
+	if err1 != nil {
+		http.Error(w, "Error registering user", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+
+	json.NewEncoder(w).Encode(map[string]string{"message": "Song Post registered successfully"})
+
+	log.Println("Song ID: ", song.ID)
+	log.Println("Song Name: ", song.Name)
+	log.Println("Song Artist: ", song.Artists)
+}
+
+func registerAlbumHandlerForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Client, userCollection *mongo.Collection) {
+
+	userCollection = client.Database(dbName).Collection(albumCollectionName)
+
+	authConfig := &clientcredentials.Config{
+		ClientID:     "3bd23353135d447b80b5e0c9d70775dc",
+		ClientSecret: "05454a9a1a2b48a19769e51b025798c4",
+		TokenURL:     spotify.TokenURL,
+	}
+
+	accessToken, err := authConfig.Token(context.Background())
+	if err != nil {
+		log.Fatalf("error retrieve access token: %v", err)
+	}
+
+	client1 := spotify.Authenticator{}.NewClient(accessToken)
+
+	var album1 Album
+
+	json.NewDecoder(r.Body).Decode(&album1)
+
+	albumID := spotify.ID(album1.Id)
+
+	album, err := client1.GetAlbum(albumID)
+
+	if err != nil {
+		log.Fatalf("error retrieve playlist data: %v", err)
+	}
+
+	album1.Artist = album.Artists[0].Name
+	album1.Name = album.Name
+	//album1.Genre = album.Genres[0]
+	album1.ReleaseDate = album.ReleaseDate
+
+	// Store user in MongoDB
+	_, err1 := userCollection.InsertOne(context.TODO(), album1)
+
+	if err1 != nil {
+		http.Error(w, "Error registering user", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+
+	json.NewEncoder(w).Encode(map[string]string{"message": "Album Post registered successfully"})
+
+	log.Println("Album ID: ", album.ID)
+	log.Println("Album Name: ", album.Name)
+	log.Println("Artist: ", album.Artists)
+	log.Println("Genre: ", album.Genres)
+	log.Println("Cover Art: ", album.Images)
+	log.Println("Release Date: ", album.ReleaseDate)
+
+}
+
+func unfollowUserHandlerForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Client, userCollection *mongo.Collection) {
+
+	userCollection = client.Database(dbName).Collection(userCollectionName)
+
+	// Decode request body
+	var request struct {
+		Follower string `json:"follower"`
+		Followee string `json:"followee"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&request)
+
+	if err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	// Update the follower's document in MongoDB to add the followee to the "Following" list
+	filter := bson.M{"username": request.Follower}
+
+	update := bson.M{"$pull": bson.M{"following": request.Followee}} // Ensure no duplicates
+
+	_, err = userCollection.UpdateOne(context.TODO(), filter, update)
+
+	if err != nil {
+		http.Error(w, "Error updating follow list", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "User unfollowed successfully"})
+
 }
