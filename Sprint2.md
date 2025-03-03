@@ -114,5 +114,9 @@ The backend API includes the following endpoints:
 - **GET /getProfile**: Retrieves user profile information.
 - **POST /registerSong**: Registers a song post.
 
+We are utilizing Golang for the API and MongoDB for our database purposes. 
+
+We decided to go with a NoSQL model since we are going to be dealing with a wide variety of input datatypes and wanted to leverage the flexibility that this model provides.
+
 Each API endpoint is tested using unit tests to ensure functionality and reliability.
 
