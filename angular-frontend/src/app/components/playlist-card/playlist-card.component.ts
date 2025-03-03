@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
+import { RouterModule } from '@angular/router';
 
 
 @Component({
@@ -9,7 +10,7 @@ import {MatCardModule} from '@angular/material/card';
       <mat-card class="example-card" appearance="outlined">
         <mat-card-header>
           <mat-card-title>{{post?.title}}</mat-card-title>
-          <mat-card-subtitle>{{post?.user}}</mat-card-subtitle>
+          <mat-card-subtitle id="user" routerLink="/friend-profile">{{post?.user}}</mat-card-subtitle>
           <div mat-card-avatar class="example-header-image"></div>
         </mat-card-header>
         <mat-card-content>
@@ -29,9 +30,10 @@ import {MatCardModule} from '@angular/material/card';
               <button mat-button>SHARE</button>
             </mat-card-actions>
           </mat-card>
+          <router-outlet></router-outlet>
     `,
     styleUrl: './playlist-card.component.css',
-    imports: [MatCardModule, MatButtonModule],
+    imports: [MatCardModule, MatButtonModule, RouterModule],
     changeDetection: ChangeDetectionStrategy.OnPush,
   })
   export class PlaylistCardComponent {

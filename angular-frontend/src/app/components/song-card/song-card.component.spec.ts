@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { SongCardComponent } from './song-card.component';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 
 describe('SongCardComponent', () => {
   let component: SongCardComponent;
@@ -8,7 +10,13 @@ describe('SongCardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SongCardComponent, HttpClientModule]
+      imports: [SongCardComponent, HttpClientModule],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: { params: of({ id: 123 }) }
+        }
+      ]
     })
     .compileComponents();
 

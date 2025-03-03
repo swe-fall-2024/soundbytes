@@ -25,7 +25,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     SignupComponent,
     ProfileComponent,
     PostCreationComponent,
-    FriendProfileComponent
+    FriendProfileComponent,
   ],
   imports: [BrowserModule, RouterModule,  BrowserAnimationsModule], 
   providers: [provideHttpClient(),

@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { ReviewCardComponent } from './review-card.component';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 
 describe('ReviewCardComponent', () => {
   let component: ReviewCardComponent;
@@ -8,7 +10,13 @@ describe('ReviewCardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ReviewCardComponent, HttpClientModule]
+      imports: [ReviewCardComponent, HttpClientModule],
+      providers: [
+            {
+              provide: ActivatedRoute,
+              useValue: { params: of({ id: 123 }) }
+            }
+      ]
     })
     .compileComponents();
 
