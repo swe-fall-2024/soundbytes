@@ -5,6 +5,8 @@ During Sprint 2, we successfully integrated the front-end and back-end of our ap
 - A function to follow a friend within the app.
 - A function to unfollow a friend within the app.
 - A function to create a user profile and store it in the MongoDB database.
+- A function to add/delete/update posts.
+- Start for search bar functionality (backend).
 - Unit tests for each of our previously created backend functions.
 
 And, for frontend, the key features include:
@@ -99,6 +101,42 @@ Below is the list of unit tests implemented for backend functionality:
 - Retrieves user profile details based on the username.
 - Verifies the correctness of returned profile information.
 
+### TestCreatePostHandler
+- Verifies that a new post is successfully created and added to the database.
+- Confirms that the correct response status and success message are returned.
+- Ensures that the post data is stored accurately in the database.
+
+### TestDeletePostHandler
+- Ensures that a post is successfully deleted from the database.
+- Verifies that the correct response status and success message are returned.
+- Checks that the post no longer exists in the database after deletion.
+
+### TestUpdatePostHandler
+- Verifies that an existing post can be successfully updated with new data.
+- Confirms that the correct response status and success message are returned.
+- Ensures that the updated post data is correctly reflected in the database.
+
+### TestUpdateNonExistentPost
+- Ensures that attempting to update a non-existent post results in an appropriate error.
+- Verifies that the correct response status (HTTP StatusNotFound) and error message are returned.
+
+### TestUpdatePostWithNoFields
+- Verifies that when no fields are provided for a post update, the request is rejected with a BadRequest status.
+- Ensures that the correct error message is returned indicating that there are no fields to update.
+
+### TestDeleteNonExistentPost
+- Ensures that attempting to delete a non-existent post results in an appropriate error.
+- Verifies that the correct response status (HTTP StatusNotFound) and error message are returned.
+
+### TestAddDuplicatePost
+- Verifies that attempting to add a post that already exists (based on unique post ID) results in an error.
+- Confirms that the correct response status (HTTP StatusInternalServerError) and error message are returned.
+
+### TestDeleteExistingPost
+- Verifies that a post is successfully deleted from the database when it exists.
+- Ensures that the correct response status and success message are returned.
+- Confirms that the post no longer exists in the database after deletion.
+
 ### TestRegisterSongHandler
 - Ensures that a song post can be registered successfully.
 - Checks response status and success message.
@@ -113,6 +151,11 @@ The backend API includes the following endpoints:
 - **PUT /setUpProfile**: Creates or updates a user profile.
 - **GET /getProfile**: Retrieves user profile information.
 - **POST /registerSong**: Registers a song post.
+- **POST /addPost**: Adds a post.
+- **PUT /updatePost/{post_id}**: Updates a post.
+- **DELETE /deletePost/{post_id}**: Deletes a post.
+- **GET /getPost/{post_id}**: Gets a post.
+
 
 We are utilizing Golang for the API and MongoDB for our database purposes. 
 
