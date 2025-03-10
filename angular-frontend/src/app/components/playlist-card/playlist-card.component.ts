@@ -44,7 +44,7 @@ import {MatCardModule} from '@angular/material/card';
   })
   export class PlaylistCardComponentComponent {
     constructor() {
-      console.log('myCustomComponent');
+      //console.log('myCustomComponent');
     }
     @Input() post: any;
   }

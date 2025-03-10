@@ -79,7 +79,6 @@ type User struct {
 	FavGenres []string           `bson:"favorite_genres" json:"favorite_genres"`
 	Posts     []Post             `bson:"posts" json:"posts"`
 	Following []string           `json:"following"` // List of usernames the user follows
-
 }
 
 // JWT Claims
@@ -311,6 +310,7 @@ func httpHandler() http.Handler {
 	// Table Routes
 	router.HandleFunc("/addFriend", addFriend).Methods("POST")
 	router.HandleFunc("/addPost", addPost).Methods("POST")
+	router.HandleFunc("/profile", getUserProfile).Methods("GET")
 
 	// Protect this route with JWT middleware
 	router.HandleFunc("/protected", jwtMiddleware(protectedHandler)).Methods("GET")
@@ -479,6 +479,35 @@ func getFollowingHandler(w http.ResponseWriter, r *http.Request) {
 	// Return the list of followed users
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string][]string{"following": user.Following})
+}
+
+// Handler to fetch user profile by ID
+func getUserProfile(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	// Assume user ID is passed as a query parameter (e.g., /profile?userId=123)
+	userID := r.URL.Query().Get("userId")
+	if userID == "" {
+		http.Error(w, "User ID is required", http.StatusBadRequest)
+		return
+	}
+
+	// Access the users collection
+	collection := client.Database(dbName).Collection("users")
+
+	// Find user by ID
+	var user bson.M
+	err := collection.FindOne(context.TODO(), bson.M{"username": userID}).Decode(&user)
+	if err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	} else {
+		fmt.Print("User found")
+	}
+
+	fmt.Print("what is being encoded: ", user)
+	// Convert user data to JSON and send response
+	json.NewEncoder(w).Encode(user)
 }
 
 // Reverse proxy for Angular app

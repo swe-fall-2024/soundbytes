@@ -45,7 +45,7 @@ import {MatCardModule} from '@angular/material/card';
 })
 export class ReviewCardComponent {
   constructor() {
-    console.log('myCustomComponent');
+    //console.log('myCustomComponent');
   }
   @Input() post: any;
 }
