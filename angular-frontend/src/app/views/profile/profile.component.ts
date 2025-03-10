@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnInit, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, SimpleChanges} from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {MatChipsModule} from '@angular/material/chips';
@@ -16,6 +16,7 @@ import { FriendsComponent } from '../../components/friends/friends.component';
 import { BioComponent } from '../../components/bio/bio.component';
 import { ProfileService } from '../../profile.service';
 import { Profile } from '../../models/profile.model';  // Import the User interface from profile.model.ts
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-profile',
@@ -31,40 +32,7 @@ export class ProfileComponent implements OnInit {
   userID = 'cam123@gmail.com'; // Example user ID (Replace with dynamic value)
 
   // Static data for posts and friends
-  posts = [
-    {
-      user: 'Shiba Inu',
-      profile_img: 'url',
-      type: 'favorite-song',
-      title: 'MY FAVORITE SONG',
-      content: {
-        song_title: 'Engagement Party',
-        song_url: 'https://open.spotify.com/track/5PYPCxyWltRIyPkhSsnWIk',
-        song_embed: "https://open.spotify.com/embed/track/6LxcPUqx6noURdA5qc4BAT?utm_source=generator",
-      }
-    },
-    {
-      user: 'Shiba Inu',
-      profile_img: 'url',
-      type: 'album-review',
-      title: 'ALBUM REVIEW',
-      content: {
-        album_title: "Short n' Sweet",
-        review: "Sabrina Carpenter's latest album, Short n' Sweet, released on August 23, 2024, marks her sixth studio endeavor and showcases a refreshingly lighthearted and cheeky approach to pop music. The album has been lauded for its cleverness and effortless execution, setting a high bar for contemporary pop.",
-      }
-    },
-    {
-      user: 'Shiba Inu',
-      profile_img: 'url',
-      type: 'playlist',
-      title: 'MY NEW PLAYLIST',
-      content: {
-        playlist_title: "Study playlist",
-        playlist_url: "https://open.spotify.com/playlist/1yJb4XCnM4KfeO2UkMAYnp?si=945e25fe87034d38",
-        playlist_embed: "https://open.spotify.com/embed/playlist/1yJb4XCnM4KfeO2UkMAYnp?utm_source=generator",
-      }
-    },
-  ];
+  posts: any[] = [];
 
   // Static friends list
   friends = [
@@ -85,9 +53,10 @@ export class ProfileComponent implements OnInit {
     }
   ];
 
-  constructor(private profileService: ProfileService) {}
+  constructor(private profileService: ProfileService, private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
+
     this.profileService.getUserProfile(this.userID).subscribe({
       next: (data) => {
         console.log('Data from API:', data); // Log to check if the data looks correct
@@ -107,6 +76,10 @@ export class ProfileComponent implements OnInit {
         console.error('Error fetching user data:', error);
       }
     });
+
+    // Fetch posts data
+    this.fetchPosts();
+
   }
 
   updateProfiles() {
@@ -131,4 +104,18 @@ export class ProfileComponent implements OnInit {
       this.friends = this.user.following?.map((name: string) => ({ name })) || [];    }
       console.log("friends: ", this.friends)
     }
+  fetchPosts() {
+
+    this.http.get<any[]>('http://127.0.0.1:4201/getPosts/testuser').subscribe(
+      (data) => {
+        this.posts = data; // Store the posts data in the component
+        //alert(`${this.posts.length} posts fetched`); 
+        this.cdr.markForCheck();
+      },
+      (error) => {
+        console.error('Error fetching posts', error);
+      }
+    );
+  
+  }
 }
