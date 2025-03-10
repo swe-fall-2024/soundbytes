@@ -506,8 +506,22 @@ func getUserProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Print("what is being encoded: ", user)
-	// Convert user data to JSON and send response
-	json.NewEncoder(w).Encode(user)
+
+	// Manually map fields to the desired format
+	response := map[string]interface{}{
+		"userID":    user["_id"],           // map _id to userID
+		"username":  user["username"],      // map username to username
+		"password":  user["password"],      // map password to password
+		"topArtist": user["top_artist"],    // rename top_artist to topArtist
+		"topSong":   user["top_song"],      // rename top_song to topSong
+		"favSongs":  user["favorite_songs"], // rename favorite_songs to favSongs
+		"favGenres": user["favorite_genres"], // rename favorite_genres to favGenres
+		"posts":     user["posts"],         // posts can stay the same
+		"following": user["following"],     // following can stay the same
+	}
+
+	// Encode the response and send it to the client
+	json.NewEncoder(w).Encode(response)
 }
 
 // Reverse proxy for Angular app

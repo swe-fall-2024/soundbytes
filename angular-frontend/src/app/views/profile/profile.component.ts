@@ -27,51 +27,28 @@ import { Profile } from '../../models/profile.model';  // Import the User interf
 
 
 export class ProfileComponent implements OnInit {
-  user: Profile | null = null;  // Use the User interface for the user object
+  user: Profile | null = null;
   userID = 'camerons3700@gmail.com'; // Example user ID (Replace with dynamic value)
 
-  constructor(private profileService: ProfileService) {}
-
-  ngOnInit(): void {
-    this.profileService.getUserProfile(this.userID).subscribe({
-      next: (data) => {
-        console.log('Data from API:', data); // Log to check if the data looks correct
-        this.user = data;
-        console.log('User Info:', this.user);
-        if (this.user) {
-          console.log("Cam's top Song:", this.user.topSong);
-        }      },
-      error: (error) => {
-        console.error('Error fetching user data:', error);
-      }
-    });
-  }
-
-  // ngOnChanges(changes: SimpleChanges): void {
-  //   if (changes['user'] && this.user) {
-  //     console.log("This top Song:", this.user.topSong);
-  //   }
-  // }
-
+  // Static data for posts and friends
   posts = [
-  {
-    user: 'Shiba Inu',
-    profile_img: 'url',
-    type: 'favorite-song',
-    title: 'MY FAVORITE SONG',
-    content:{
-      song_title: 'Engagement Party',
-      song_url: 'https://open.spotify.com/track/5PYPCxyWltRIyPkhSsnWIk',
-      song_embed: "https://open.spotify.com/embed/track/6LxcPUqx6noURdA5qc4BAT?utm_source=generator",
-      //song_embed
-    }
+    {
+      user: 'Shiba Inu',
+      profile_img: 'url',
+      type: 'favorite-song',
+      title: 'MY FAVORITE SONG',
+      content: {
+        song_title: 'Engagement Party',
+        song_url: 'https://open.spotify.com/track/5PYPCxyWltRIyPkhSsnWIk',
+        song_embed: "https://open.spotify.com/embed/track/6LxcPUqx6noURdA5qc4BAT?utm_source=generator",
+      }
     },
     {
       user: 'Shiba Inu',
       profile_img: 'url',
       type: 'album-review',
       title: 'ALBUM REVIEW',
-      content:{
+      content: {
         album_title: "Short n' Sweet",
         review: "Sabrina Carpenter's latest album, Short n' Sweet, released on August 23, 2024, marks her sixth studio endeavor and showcases a refreshingly lighthearted and cheeky approach to pop music. The album has been lauded for its cleverness and effortless execution, setting a high bar for contemporary pop.",
       }
@@ -81,88 +58,70 @@ export class ProfileComponent implements OnInit {
       profile_img: 'url',
       type: 'playlist',
       title: 'MY NEW PLAYLIST',
-      content:{
+      content: {
         playlist_title: "Study playlist",
         playlist_url: "https://open.spotify.com/playlist/1yJb4XCnM4KfeO2UkMAYnp?si=945e25fe87034d38",
         playlist_embed: "https://open.spotify.com/embed/playlist/1yJb4XCnM4KfeO2UkMAYnp?utm_source=generator",
       }
     },
   ];
+
+  // Static friends list
   friends = [
-    {
-      name: 'Katie'
-    },
-    {
-      name: 'Mary'
-    }
+    { name: 'Katie' },
+    { name: 'Mary' }
   ];
+
+  // Initial profile placeholder, it will be updated once user data is fetched
   profiles = [
     {
       name: 'Shibaaaaaa Inu',
       username: '@shiba',
       currentFavType: 'Current Favorite Artist',
-      currentFav: 'COIN',
-      genres: {one:'indie',two:'pop',three:'hyperpop'},
-      topSong: "stupid horse",
-      topArtist: "100 gecs",
+      currentFav: '',
+      genres: { one: 'indie', two: 'pop', three: 'hyperpop' },
+      topSong: '',
+      topArtist: '',
     }
   ];
 
-}
+  constructor(private profileService: ProfileService) {}
 
-// export class ProfileComponent {
-//   posts = [
-//     {
-//       user: 'Shiba Inu',
-//       profile_img: 'url',
-//       type: 'favorite-song',
-//       title: 'MY FAVORITE SONG',
-//       content:{
-//         song_title: 'Engagement Party',
-//         song_url: 'https://open.spotify.com/track/5PYPCxyWltRIyPkhSsnWIk',
-//         song_embed: "https://open.spotify.com/embed/track/6LxcPUqx6noURdA5qc4BAT?utm_source=generator",
-//         //song_embed
-//       }
-//     },
-//     {
-//       user: 'Shiba Inu',
-//       profile_img: 'url',
-//       type: 'album-review',
-//       title: 'ALBUM REVIEW',
-//       content:{
-//         album_title: "Short n' Sweet",
-//         review: "Sabrina Carpenter's latest album, Short n' Sweet, released on August 23, 2024, marks her sixth studio endeavor and showcases a refreshingly lighthearted and cheeky approach to pop music. The album has been lauded for its cleverness and effortless execution, setting a high bar for contemporary pop.",
-//       }
-//     },
-//     {
-//       user: 'Shiba Inu',
-//       profile_img: 'url',
-//       type: 'playlist',
-//       title: 'MY NEW PLAYLIST',
-//       content:{
-//         playlist_title: "Study playlist",
-//         playlist_url: "https://open.spotify.com/playlist/1yJb4XCnM4KfeO2UkMAYnp?si=945e25fe87034d38",
-//         playlist_embed: "https://open.spotify.com/embed/playlist/1yJb4XCnM4KfeO2UkMAYnp?utm_source=generator",
-//       }
-//     },
-//   ];
-//   friends = [
-//     {
-//       name: 'Katie'
-//     },
-//     {
-//       name: 'Mary'
-//     }
-//   ];
-//   profiles = [
-//     {
-//       name: 'Shiba Inu',
-//       username: '@shiba',
-//       currentFavType: 'Current Favorite Artist',
-//       currentFav: 'COIN',
-//       genres: {one:'indie',two:'pop',three:'hyperpop'},
-//       topSong: "stupid horse",
-//       topArtist: "100 gecs",
-//     }
-//   ];
-// }
+  ngOnInit(): void {
+    this.profileService.getUserProfile(this.userID).subscribe({
+      next: (data) => {
+        console.log('Data from API:', data); // Log to check if the data looks correct
+        this.user = data;
+        console.log('User Info:', this.user);
+        if (this.user && this.user.topSong) {
+          console.log("Cam's top Song:", this.user.topSong);  // Should log 'Sweet Caroline'
+        } else {
+          console.log("topSong is missing or undefined");
+        }
+
+        // After user data is fetched, update profiles
+        this.updateProfiles();
+      },
+      error: (error) => {
+        console.error('Error fetching user data:', error);
+      }
+    });
+  }
+
+  updateProfiles() {
+    if (this.user) {
+      // Update the profiles array after the user data is available
+      this.profiles = [
+        {
+          name: 'Shibaaaaaa Inu',
+          username: '@shiba',
+          currentFavType: 'Current Favorite Artist',
+          currentFav: this.user.topArtist, // Now this is updated correctly
+          genres: { one: 'indie', two: 'pop', three: 'hyperpop' },
+          topSong: this.user.topSong, // Now this is updated correctly
+          topArtist: this.user.topArtist, // Now this is updated correctly
+        }
+      ];
+    }
+  }
+}
