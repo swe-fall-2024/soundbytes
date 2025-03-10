@@ -1,34 +1,47 @@
 <!-- PROFILE -->
-<div *ngFor="let profile of profiles">
-  <app-bio [profile]="profile" [me]="me" [following]="following"></app-bio>
+<div *ngIf="profiles && profiles.length > 0; else noProfiles">
+  <div *ngFor="let profile of profiles">
+    <app-bio [profile]="profile" [me]="me" [following]="following"></app-bio>
   </div>
+</div>
+<ng-template #noProfiles>
+  <p>No profiles found.</p>
+</ng-template>
 
 <div class="container">
   <br>
-    <!-- POSTS -->
-    <mat-card class="example-card left-card" appearance="outlined">
-      <mat-card-header>
-        <mat-card-title>Your Posts</mat-card-title>
-      </mat-card-header>
+  <!-- POSTS -->
+  <mat-card class="example-card left-card" appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>Your Posts</mat-card-title>
+    </mat-card-header>
+    <div *ngIf="posts && posts.length > 0; else noPosts">
       <div *ngFor="let post of posts">
         <app-song-card *ngIf="post.type === 'favorite-song'" [post]="post"></app-song-card>
         <app-review-card *ngIf="post.type === 'album-review'" [post]="post"></app-review-card>
         <app-playlist-card *ngIf="post.type === 'playlist'" [post]="post"></app-playlist-card>
       </div>
-    
-      <br>
-    </mat-card>
-  
-    <!-- FRIENDS -->
-    <mat-card class="example-card" appearance="outlined">
-      <mat-card-header>
-        <mat-card-title>Your Friends</mat-card-title>
-      </mat-card-header>
-      <mat-list>
-          <div *ngFor="let friend of friends">
-            <app-friends [friend]="friend"></app-friends>
-          </div>
-      </mat-list>
-    </mat-card>
+    </div>
+    <ng-template #noPosts>
+      <p>No posts found.</p>
+    </ng-template>
+    <br>
+  </mat-card>
+
+  <!-- FRIENDS -->
+  <mat-card class="example-card" appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>Your Friends</mat-card-title>
+    </mat-card-header>
+    <mat-list>
+      <div *ngIf="friends && friends.length > 0; else noFriends">
+        <div *ngFor="let friend of friends">
+          <app-friends [friend]="friend"></app-friends>
+        </div>
+      </div>
+    </mat-list>
+    <ng-template #noFriends>
+      <p>No friends found.</p>
+    </ng-template>
+  </mat-card>
 </div>
-  

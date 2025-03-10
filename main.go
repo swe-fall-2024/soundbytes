@@ -60,26 +60,39 @@ type Friend struct {
 
 // Post struct
 type Post struct {
-	PostID    primitive.ObjectID `bson:"_id,omitempty" json:"post_id"`
-	PostType  string             `bson:"post_type" json:"post_type"`
-	Link      string             `bson:"link" json:"link"`
-	Title     string             `bson:"title" json:"title"`
-	Content   string             `bson:"content" json:"content"`
-	LikeCount int                `bson:"like_count" json:"like_count"`
+	PostID        primitive.ObjectID `bson:"_id,omitempty" json:"post_id"`
+	User          string             `bson:"user" json:"user"`
+	Profile_Image string             `bson:"profile_img" json:"profile_img"`
+	Type          string             `bson:"type" json:"type"`
+	Title         string             `bson:"title" json:"title"`
+	Content       PostContent        `bson:"content" json:"content"`
+	LikeCount     int                `bson:"like_count" json:"like_count"`
+}
+
+type PostContent struct {
+	SongTitle     string `bson:"song_title,omitempty" json:"song_title,omitempty"`
+	SongURL       string `bson:"song_url,omitempty" json:"song_url,omitempty"`
+	SongEmbed     string `bson:"song_embed,omitempty" json:"song_embed,omitempty"`
+	AlbumTitle    string `bson:"album_title,omitempty" json:"album_title,omitempty"`
+	Review        string `bson:"review,omitempty" json:"review,omitempty"`
+	PlaylistTitle string `bson:"playlist_title,omitempty" json:"playlist_title,omitempty"`
+	PlaylistURL   string `bson:"playlist_url,omitempty" json:"playlist_url,omitempty"`
+	PlaylistEmbed string `bson:"playlist_embed,omitempty" json:"playlist_embed,omitempty"`
 }
 
 // User struct
 type User struct {
-	UserID    primitive.ObjectID `bson:"_id,omitempty" json:"user_id"`
-	Username  string             `bson:"username" json:"username"`
-	Password  string             `json:"password"`
-	TopArtist string             `bson:"top_artist" json:"top_artist"`
-	TopSong   string             `bson:"top_song" json:"top_song"`
-	FavSongs  []string           `bson:"favorite_songs" json:"favorite_songs"`
-	FavGenres []string           `bson:"favorite_genres" json:"favorite_genres"`
-	Posts     []Post             `bson:"posts" json:"posts"`
-	Following []string           `json:"following"` // List of usernames the user follows
-
+	UserID                primitive.ObjectID `bson:"_id,omitempty" json:"user_id"`
+	Username              string             `bson:"username" json:"username"`
+	Password              string             `json:"password"`
+	CurrentFavoriteArtist string             `bson:"current_favorite_artist" json:"current_favorite_artist"`
+	CurrentFavoriteSong   string             `bson:"current_favorite_song" json:"current_favorite_song"`
+	CurrentFavoriteGenre  string             `bson:"current_favorite_genre" json:"current_favorite_genre"`
+	Top3Genres            []string           `bson:"top_3_genres" json:"top_3_genres"`
+	AllTimeFavoriteSong   string             `bson:"all_time_favorite_song" json:"all_time_favorite_song"`
+	AllTimeFavoriteArtist string             `bson:"all_time_favorite_artist" json:"all_time_favorite_artist"`
+	Posts                 []Post             `bson:"posts" json:"posts"`
+	Following             []string           `json:"following"`
 }
 
 // JWT Claims
@@ -152,6 +165,7 @@ func addFriend(w http.ResponseWriter, r *http.Request) {
 
 // Function to create a new post
 func addPost(w http.ResponseWriter, r *http.Request) {
+
 	postCollection := client.Database(dbName).Collection("posts") // Use := to define a new variable
 
 	var post Post
@@ -162,7 +176,7 @@ func addPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check for required fields in the post (assuming title and content are required)
-	if post.Title == "" || post.Content == "" {
+	if post.Title == "" {
 		http.Error(w, "Title and content are required", http.StatusBadRequest)
 		return
 	}
@@ -291,7 +305,6 @@ func httpHandler() http.Handler {
 
 	router := mux.NewRouter()
 
-	// ✅ Define /api/message endpoint
 	router.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
@@ -304,6 +317,8 @@ func httpHandler() http.Handler {
 	router.HandleFunc("/postAlbum", registerAlbumHandler).Methods("POST")
 	router.HandleFunc("/postSong", registerSongHandler).Methods("POST")
 	router.HandleFunc("/setUpProfile", setUpProfile).Methods("PUT")
+	router.HandleFunc("/getProfile/{username}", getProfileHandler).Methods("GET")
+	router.HandleFunc("/getPosts/{username}", getPostsHandler).Methods("GET")
 
 	// Follow Friends routes
 	router.HandleFunc("/follow", followUserHandler).Methods("POST")
@@ -565,13 +580,13 @@ func setUpProfile(w http.ResponseWriter, r *http.Request) {
 
 	// Decode request body
 	var request struct {
-		Name             string   `json:"name"`
-		TopArtist        string   `json:"top_artist"`
-		TopSong          string   `json:"top_song"`
-		TopGenre         string   `json:"top_genre"`
-		Top3Genres       []string `json:"top_3_genres"`
-		AllTimeFavSong   string   `json:"all_time_fav_song"`
-		AllTimeFavArtist string   `json:"all_time_fav_artist"`
+		Name                  string   `json:"name"`
+		CurrentFavoriteArtist string   `json:"current_favorite_artist"`
+		CurrentFavoriteSong   string   `json:"current_favorite_song"`
+		CurrentFavoriteGenre  string   `json:"current_favorite_genre"`
+		Top3Genres            []string `json:"top_3_genres"`
+		AllTimeFavoriteSong   string   `json:"all_time_favorite_song"`
+		AllTimeFavoriteArtist string   `json:"all_time_favorite_artist"`
 	}
 
 	err := json.NewDecoder(r.Body).Decode(&request)
@@ -587,13 +602,13 @@ func setUpProfile(w http.ResponseWriter, r *http.Request) {
 	// Define update operation (set new values)
 	update := bson.M{
 		"$set": bson.M{
-			"name":                request.Name,
-			"top_artist":          request.TopArtist,
-			"top_song":            request.TopSong,
-			"top_genre":           request.TopGenre,
-			"top_3_genres":        request.Top3Genres,
-			"all_time_fav_song":   request.AllTimeFavSong,
-			"all_time_fav_artist": request.AllTimeFavArtist,
+			"name":                     request.Name,
+			"current_favorite_artist":  request.CurrentFavoriteArtist,
+			"current_favorite_song":    request.CurrentFavoriteSong,
+			"current_favorite_genre":   request.CurrentFavoriteGenre,
+			"top_3_genres":             request.Top3Genres,
+			"all_time_favorite_song":   request.AllTimeFavoriteSong,
+			"all_time_favorite_artist": request.AllTimeFavoriteArtist,
 		},
 	}
 
@@ -616,6 +631,8 @@ func getProfileHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	username := vars["username"]
 
+	username = "testuser"
+
 	// Find user
 	var user User
 	err := userCollection.FindOne(context.TODO(), bson.M{"username": username}).Decode(&user)
@@ -624,9 +641,51 @@ func getProfileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Println("User: Helooooooooooooooo")
+
+	log.Println(user)
+
 	// Return the user's profile
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(user)
+}
+
+func getPostsHandler(w http.ResponseWriter, r *http.Request) {
+	// Use a different collection for posts
+	postCollection := client.Database(dbName).Collection("posts")
+
+	// Extract username from URL parameters
+	vars := mux.Vars(r)
+	user := vars["username"]
+
+	// You can remove the fixed "testuser" assignment if you need to pass the username dynamically
+	user = "testuser"
+
+	// Find posts by the username
+	cursor, err := postCollection.Find(context.TODO(), bson.M{"user": user})
+
+	if err != nil {
+		http.Error(w, "Posts not found", http.StatusNotFound)
+		return
+	}
+	defer cursor.Close(context.TODO())
+
+	var posts []Post
+
+	for cursor.Next(context.TODO()) {
+		var post Post
+		if err := cursor.Decode(&post); err != nil {
+			http.Error(w, "Error decoding post", http.StatusInternalServerError)
+			return
+		}
+		posts = append(posts, post)
+	}
+
+	log.Println(posts)
+
+	// Return the user's posts
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(posts)
 }
 
 func registerHandlerForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Client, userCollection *mongo.Collection) {
