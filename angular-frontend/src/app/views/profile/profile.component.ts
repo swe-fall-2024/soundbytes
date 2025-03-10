@@ -28,7 +28,7 @@ import { Profile } from '../../models/profile.model';  // Import the User interf
 
 export class ProfileComponent implements OnInit {
   user: Profile | null = null;
-  userID = 'camerons3700@gmail.com'; // Example user ID (Replace with dynamic value)
+  userID = 'cam123@gmail.com'; // Example user ID (Replace with dynamic value)
 
   // Static data for posts and friends
   posts = [
@@ -79,7 +79,7 @@ export class ProfileComponent implements OnInit {
       username: '@shiba',
       currentFavType: 'Current Favorite Artist',
       currentFav: '',
-      genres: { one: 'indie', two: 'pop', three: 'hyperpop' },
+      genres: ['indie', 'pop', 'hyperpop'],
       topSong: '',
       topArtist: '',
     }
@@ -101,6 +101,7 @@ export class ProfileComponent implements OnInit {
 
         // After user data is fetched, update profiles
         this.updateProfiles();
+        this.updateFriends();
       },
       error: (error) => {
         console.error('Error fetching user data:', error);
@@ -114,14 +115,20 @@ export class ProfileComponent implements OnInit {
       this.profiles = [
         {
           name: 'Shibaaaaaa Inu',
-          username: '@shiba',
+          username: this.user.username,
           currentFavType: 'Current Favorite Artist',
           currentFav: this.user.topArtist, // Now this is updated correctly
-          genres: { one: 'indie', two: 'pop', three: 'hyperpop' },
+          genres: this.user.favGenres,
           topSong: this.user.topSong, // Now this is updated correctly
           topArtist: this.user.topArtist, // Now this is updated correctly
         }
       ];
     }
   }
+  updateFriends() {
+    if (this.user) {
+      console.log("friends: ", this.friends)
+      this.friends = this.user.following?.map((name: string) => ({ name })) || [];    }
+      console.log("friends: ", this.friends)
+    }
 }

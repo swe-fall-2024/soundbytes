@@ -23,20 +23,32 @@
                 <input matInput placeholder={{bio.currentFav}} value={{bio.currentFav}}>
                 </mat-form-field>
 
-                <table class="example-full-width" cellspacing="0"><tr>
-                <td><mat-form-field class="example-full-width">
-                    <mat-label>First Genre</mat-label>
-                    <input matInput placeholder={{bio.genres.one}} value={{bio.genres.one}}>
-                </mat-form-field></td>
-                <td><mat-form-field class="example-full-width">
-                    <mat-label>Second Genre</mat-label>
-                    <input matInput placeholder={{bio.genres.two}} value={{bio.genres.two}}>
-                </mat-form-field></td>
-                <td><mat-form-field class="example-full-width">
-                    <mat-label>Third Genre</mat-label>
-                    <input matInput placeholder={{bio.genres.three}} value={{bio.genres.three}}>
-                </mat-form-field></td>
-                </tr></table>
+                <table class="example-full-width" cellspacing="0">
+                    <tr>
+                      <td>
+                        <mat-form-field class="example-full-width">
+                          <mat-label>First Genre</mat-label>
+                          <!-- Binding to the first genre in the array -->
+                          <input matInput placeholder="{{bio.genres[0]}}" [(ngModel)]="bio.genres[0]">
+                        </mat-form-field>
+                      </td>
+                      <td>
+                        <mat-form-field class="example-full-width">
+                          <mat-label>Second Genre</mat-label>
+                          <!-- Binding to the second genre in the array -->
+                          <input matInput placeholder="{{bio.genres[1]}}" [(ngModel)]="bio.genres[1]">
+                        </mat-form-field>
+                      </td>
+                      <td>
+                        <mat-form-field class="example-full-width">
+                          <mat-label>Third Genre</mat-label>
+                          <!-- Binding to the third genre in the array -->
+                          <input matInput placeholder="{{bio.genres[2]}}" [(ngModel)]="bio.genres[2]">
+                        </mat-form-field>
+                      </td>
+                    </tr>
+                  </table>
+                  
 
                 <mat-form-field class="example-full-width">
                 <mat-label>All-Time Favorite Song</mat-label>

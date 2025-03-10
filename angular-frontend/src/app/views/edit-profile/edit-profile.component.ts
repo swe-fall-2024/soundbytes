@@ -20,7 +20,7 @@ export class EditProfileComponent {
       username: '@shiba',
       currentFavType: 'Current Favorite Artist',
       currentFav: 'COIN',
-      genres: {one:'indie',two:'pop',three:'hyperpop'},
+      genres: ['indie','pop', 'hyperpop'],
       topSong: "stupid horse",
       topArtist: "100 gecs",
     }

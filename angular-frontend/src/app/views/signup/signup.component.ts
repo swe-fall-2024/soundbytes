@@ -59,7 +59,12 @@ export class SignupComponent {
       const user = {
         username: this.email.value,
         password: this.password.value,
+        favSongs: [],  // Default empty array for favSongs
+        favGenres: [],  // Default empty array for favGenres
+        posts: [],      // Default empty array for posts
+        following: [],  // Default empty array for following
       };
+  
 
       this.http.post('http://127.0.0.1:4201/register', user).subscribe({
         next: (response) => {

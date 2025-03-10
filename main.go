@@ -81,6 +81,24 @@ type User struct {
 	Following []string           `json:"following"` // List of usernames the user follows
 }
 
+
+// Initialize the User struct
+func createUser(user *User) {
+	// Set default values for empty slices
+	if user.FavSongs == nil {
+		user.FavSongs = []string{}
+	}
+	if user.FavGenres == nil {
+		user.FavGenres = []string{}
+	}
+	if user.Posts == nil {
+		user.Posts = []Post{}
+	}
+	if user.Following == nil {
+		user.Following = []string{}
+	}
+}
+
 // JWT Claims
 type Claims struct {
 	Username string `json:"username"`
@@ -343,6 +361,9 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 	var user User
 	json.NewDecoder(r.Body).Decode(&user)
 
+	// Ensure that fields with slices are initialized
+	createUser(&user)
+	
 	// Hash password
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	user.Password = string(hashedPassword)
