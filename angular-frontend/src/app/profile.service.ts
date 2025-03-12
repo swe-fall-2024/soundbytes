@@ -24,5 +24,15 @@ export class ProfileService {
       })
     );
   }
+
+  updateUserProfile(userID: string, updatedProfile: Profile): Observable<Profile> {
+    return this.http.put<Profile>(`${this.apiUrl}?userId=${userID}`, updatedProfile).pipe(
+      tap((data) => console.log('Profile updated successfully:', data)),
+      catchError((error) => {
+        console.error('Error updating profile:', error);
+        return throwError(error);
+      })
+    );
+  }
   
 }
