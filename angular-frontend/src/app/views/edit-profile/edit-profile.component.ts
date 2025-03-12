@@ -84,7 +84,7 @@ export class EditProfileComponent implements OnInit {
       username: this.profile.username,
       password: '',
       topArtist: this.profile.topArtist,
-      topSong: "Temp value i typed in",
+      topSong: this.profile.topSong,
       favSongs: [],
       favGenres: this.profile.genres,
       posts: [],

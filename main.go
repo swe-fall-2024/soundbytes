@@ -354,6 +354,7 @@ func httpHandler() http.Handler {
 	router.HandleFunc("/addFriend", addFriend).Methods("POST")
 	router.HandleFunc("/addPost", addPost).Methods("POST")
 	router.HandleFunc("/profile", getUserProfile).Methods("GET")
+	router.HandleFunc("/profile", updateUserProfile).Methods("PUT")
 
 	// Protect this route with JWT middleware
 	router.HandleFunc("/protected", jwtMiddleware(protectedHandler)).Methods("GET")
