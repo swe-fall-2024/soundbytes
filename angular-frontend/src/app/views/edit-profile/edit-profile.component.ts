@@ -82,13 +82,13 @@ export class EditProfileComponent implements OnInit {
     const updatedProfile: Profile = {
       userID: this.userID,
       username: this.profile.username,
-      password: '',
+      password: this.user.password,
       topArtist: this.profile.topArtist,
       topSong: this.profile.topSong,
-      favSongs: [],
+      favSongs: this.user.favSongs,
       favGenres: this.profile.genres,
-      posts: [],
-      following: []
+      posts: this.user.posts,
+      following: this.user.following
     };
 
     this.profileService.updateUserProfile(this.userID, updatedProfile).subscribe({
