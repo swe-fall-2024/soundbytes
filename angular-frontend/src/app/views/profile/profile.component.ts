@@ -106,7 +106,7 @@ export class ProfileComponent implements OnInit {
     }
   fetchPosts() {
 
-    this.http.get<any[]>('http://127.0.0.1:4201/getPosts/testuser').subscribe(
+    this.http.get<any[]>('http://127.0.0.1:4201/getPosts/cam123@gmail.com').subscribe(
       (data) => {
         this.posts = data; // Store the posts data in the component
         //alert(`${this.posts.length} posts fetched`); 

@@ -97,14 +97,13 @@ type User struct {
 	UserID    string   `bson:"_id,omitempty" json:"userID"` // Change to match Angular `userID`
 	Username  string   `bson:"username" json:"username"`
 	Password  string   `json:"password"`
-	TopArtist string   `bson:"top_artist" json:"topArtist"` // Match Angular `topArtist`
-	TopSong   string   `bson:"top_song" json:"topSong"`     // Match Angular `topSong`
-	FavSongs  []string `bson:"favorite_songs" json:"favSongs"` // Match Angular `favSongs`
+	TopArtist string   `bson:"top_artist" json:"topArtist"`      // Match Angular `topArtist`
+	TopSong   string   `bson:"top_song" json:"topSong"`          // Match Angular `topSong`
+	FavSongs  []string `bson:"favorite_songs" json:"favSongs"`   // Match Angular `favSongs`
 	FavGenres []string `bson:"favorite_genres" json:"favGenres"` // Match Angular `favGenres`
 	Posts     []Post   `bson:"posts" json:"posts"`
 	Following []string `json:"following"`
 }
-
 
 // Initialize the User struct
 func createUser(user *User) {
@@ -355,6 +354,7 @@ func httpHandler() http.Handler {
 	router.HandleFunc("/addPost", addPost).Methods("POST")
 	router.HandleFunc("/profile", getUserProfile).Methods("GET")
 	router.HandleFunc("/profile", updateUserProfile).Methods("PUT")
+	router.HandleFunc("/getPosts/{username}", getPostsHandler).Methods("GET")
 
 	// Protect this route with JWT middleware
 	router.HandleFunc("/protected", jwtMiddleware(protectedHandler)).Methods("GET")
@@ -389,7 +389,6 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Ensure that fields with slices are initialized
 	createUser(&user)
-
 
 	// Hash password
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
@@ -512,7 +511,6 @@ func followUserHandler(w http.ResponseWriter, r *http.Request) {
 func getFollowingHandler(w http.ResponseWriter, r *http.Request) {
 	userCollection = client.Database(dbName).Collection(userCollectionName)
 
-
 	// Extract username from URL parameters
 	vars := mux.Vars(r)
 	username := vars["username"]
@@ -531,83 +529,82 @@ func getFollowingHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateUserProfile(w http.ResponseWriter, r *http.Request) {
-    // Get the userID from query parameters
-    userID := r.URL.Query().Get("userId")  // Extract userId from query string
+	// Get the userID from query parameters
+	userID := r.URL.Query().Get("userId") // Extract userId from query string
 
-    // Ensure userID is provided
-    if userID == "" {
-        fmt.Println("Error: No userID provided")  // Log if no userID is provided
-        http.Error(w, "User ID is required", http.StatusBadRequest)
-        return
-    }
+	// Ensure userID is provided
+	if userID == "" {
+		fmt.Println("Error: No userID provided") // Log if no userID is provided
+		http.Error(w, "User ID is required", http.StatusBadRequest)
+		return
+	}
 
-    userCollection := client.Database(dbName).Collection(userCollectionName)
+	userCollection := client.Database(dbName).Collection(userCollectionName)
 
-    fmt.Println("Received userID:", userID) // Log the user ID to check if it's passed correctly
+	fmt.Println("Received userID:", userID) // Log the user ID to check if it's passed correctly
 
-    // Log the request details
-    fmt.Println("Request Body:", r.Body)
+	// Log the request details
+	fmt.Println("Request Body:", r.Body)
 
-    var updatedUser User
-    if err := json.NewDecoder(r.Body).Decode(&updatedUser); err != nil {
-        fmt.Println("Error decoding request body:", err) // Log the error message
-        http.Error(w, "Invalid input", http.StatusBadRequest)
-        return
-    }
-    fmt.Println("Decoded user data:", updatedUser) // Log the decoded user data
+	var updatedUser User
+	if err := json.NewDecoder(r.Body).Decode(&updatedUser); err != nil {
+		fmt.Println("Error decoding request body:", err) // Log the error message
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+		return
+	}
+	fmt.Println("Decoded user data:", updatedUser) // Log the decoded user data
 
-    // Prepare the update data
-    updateData := bson.M{
-        "$set": bson.M{
-            "username":  updatedUser.Username,
-            "password":  updatedUser.Password,  // Ensure this is a hashed password
-            "top_artist": updatedUser.TopArtist,
-            "top_song":   updatedUser.TopSong,
-            "favorite_songs":  updatedUser.FavSongs,
-            "favorite_genres": updatedUser.FavGenres,
-            "posts":     updatedUser.Posts, // Ensure that posts are handled correctly (null or empty array)
-            "following": updatedUser.Following, // Ensure that following is handled correctly (null or empty array)
-        },
-    }
+	// Prepare the update data
+	updateData := bson.M{
+		"$set": bson.M{
+			"username":        updatedUser.Username,
+			"password":        updatedUser.Password, // Ensure this is a hashed password
+			"top_artist":      updatedUser.TopArtist,
+			"top_song":        updatedUser.TopSong,
+			"favorite_songs":  updatedUser.FavSongs,
+			"favorite_genres": updatedUser.FavGenres,
+			"posts":           updatedUser.Posts,     // Ensure that posts are handled correctly (null or empty array)
+			"following":       updatedUser.Following, // Ensure that following is handled correctly (null or empty array)
+		},
+	}
 
-    // If any of the fields are null or empty, handle them appropriately
-    if updatedUser.FavSongs == nil {
-        updateData["$set"].(bson.M)["favorite_songs"] = []string{}
-    }
-    if updatedUser.FavGenres == nil {
-        updateData["$set"].(bson.M)["favorite_genres"] = []string{}
-    }
-    if updatedUser.Posts == nil {
-        updateData["$set"].(bson.M)["posts"] = []interface{}{}
-    }
-    if updatedUser.Following == nil {
-        updateData["$set"].(bson.M)["following"] = []string{}
-    }
+	// If any of the fields are null or empty, handle them appropriately
+	if updatedUser.FavSongs == nil {
+		updateData["$set"].(bson.M)["favorite_songs"] = []string{}
+	}
+	if updatedUser.FavGenres == nil {
+		updateData["$set"].(bson.M)["favorite_genres"] = []string{}
+	}
+	if updatedUser.Posts == nil {
+		updateData["$set"].(bson.M)["posts"] = []interface{}{}
+	}
+	if updatedUser.Following == nil {
+		updateData["$set"].(bson.M)["following"] = []string{}
+	}
 
-    // Log the update data for debugging
-    fmt.Println("Update data for MongoDB:", updateData)
+	// Log the update data for debugging
+	fmt.Println("Update data for MongoDB:", updateData)
 
-    // Update the user in the database
-    filter := bson.M{"username": userID} // Use the userID to find the user
+	// Update the user in the database
+	filter := bson.M{"username": userID} // Use the userID to find the user
 
-    result, err := userCollection.UpdateOne(context.TODO(), filter, updateData)
-    if err != nil {
-        fmt.Println("Error updating profile:", err) // Log the error if update fails
-        http.Error(w, "Failed to update profile", http.StatusInternalServerError)
-        return
-    }
+	result, err := userCollection.UpdateOne(context.TODO(), filter, updateData)
+	if err != nil {
+		fmt.Println("Error updating profile:", err) // Log the error if update fails
+		http.Error(w, "Failed to update profile", http.StatusInternalServerError)
+		return
+	}
 
-    if result.MatchedCount == 0 {
-        fmt.Println("No matching user found for update") // Log if no match was found
-        http.Error(w, "Failed to update profile", http.StatusInternalServerError)
-        return
-    }
+	if result.MatchedCount == 0 {
+		fmt.Println("No matching user found for update") // Log if no match was found
+		http.Error(w, "Failed to update profile", http.StatusInternalServerError)
+		return
+	}
 
-    fmt.Println("Profile updated successfully") // Log if update is successful
-    w.WriteHeader(http.StatusOK)
-    json.NewEncoder(w).Encode(map[string]string{"message": "Profile updated successfully"})
+	fmt.Println("Profile updated successfully") // Log if update is successful
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Profile updated successfully"})
 }
-
 
 // Handler to fetch user profile by ID
 func getUserProfile(w http.ResponseWriter, r *http.Request) {
@@ -661,7 +658,7 @@ func getPostsHandler(w http.ResponseWriter, r *http.Request) {
 	user := vars["username"]
 
 	// You can remove the fixed "testuser" assignment if you need to pass the username dynamically
-	user = "testuser"
+	user = "cam123@gmail.com"
 
 	// Find posts by the username
 	cursor, err := postCollection.Find(context.TODO(), bson.M{"user": user})
