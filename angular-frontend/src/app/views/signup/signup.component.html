@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <mat-card class="profile-card">
   <mat-card-header>
     <mat-card-title>SoundBytes</mat-card-title>
@@ -28,3 +29,38 @@
   </mat-card-content>
 </mat-card>
 <router-outlet></router-outlet>
+=======
+<mat-card class="profile-card">
+  <mat-card-header>
+    <mat-card-title>SoundBytes</mat-card-title>
+  </mat-card-header>
+  <br>
+  <mat-card-content>
+    <form class="example-form">
+      <div class="example-container">
+        <mat-form-field>
+          <mat-label>Enter your email</mat-label>
+          <input matInput placeholder="email@example.com" [formControl]="email" (blur)="updateErrorMessage()" required />
+          @if (email.invalid) {
+            <mat-error>{{errorMessage()}}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <mat-form-field>
+        <mat-label>Enter your password</mat-label>
+        <input matInput [type]="hide() ? 'password' : 'text'" required [formControl]="password" />
+        @if (password.invalid) {
+          <mat-error>{{errorMessage()}}</mat-error>
+        }
+      </mat-form-field>
+    </form>
+
+    <div class="wrapper">
+      <button class="btn btn-outline-success search-button" type="button" (click)="signUp()">Sign Up</button>
+    </div>
+    <br>
+    <p>Already have an account? <a routerLink="/login">Login</a></p>
+  </mat-card-content>
+</mat-card>
+>>>>>>> mary-frontend
