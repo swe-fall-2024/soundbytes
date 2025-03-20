@@ -15,16 +15,10 @@ export const routes: Routes = [
   { path: 'signup', component: SignupComponent}, 
   { path: '', component: FeedComponent}, 
   { path: 'profile', component: ProfileComponent }, 
-<<<<<<< HEAD
   { path: 'edit-profile', component: EditProfileComponent}, 
   { path: 'post', component: PostCreationComponent},
   { path: 'friend-profile', component: FriendProfileComponent},
   { path: '**', redirectTo: '', pathMatch: 'full' }
-=======
-  { path: 'edit-profile', component: EditProfileComponent }, 
-  { path: 'post', component: PostCreationComponent },
-  //{ path: '', redirectTo: '', pathMatch: 'full' }
->>>>>>> mary-frontend
 ];
 
 //if logged out -> redirect to login for base path, prevent access to other paths like feed

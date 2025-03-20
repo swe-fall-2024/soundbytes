@@ -6,7 +6,6 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {merge} from 'rxjs';
-<<<<<<< HEAD
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { NgIf } from '@angular/common';
@@ -22,13 +21,6 @@ import {
 @Component({
   selector: 'app-login',
   imports: [MatCardModule, MatInputModule, MatFormFieldModule, FormsModule, ReactiveFormsModule,MatIconModule, NgIf, RouterLink, RouterOutlet],
-=======
-import { RouterLink, RouterOutlet } from '@angular/router';
-
-@Component({
-  selector: 'app-login',
-  imports: [MatCardModule, MatInputModule, MatFormFieldModule, FormsModule, ReactiveFormsModule,MatIconModule, RouterOutlet, RouterLink],
->>>>>>> mary-frontend
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
