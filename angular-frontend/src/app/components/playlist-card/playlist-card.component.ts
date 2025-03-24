@@ -36,6 +36,7 @@ import { RouterModule } from '@angular/router';
     imports: [MatCardModule, MatButtonModule, RouterModule],
     changeDetection: ChangeDetectionStrategy.OnPush,
   })
+
   export class PlaylistCardComponent {
     @Input() post: any;
   }
