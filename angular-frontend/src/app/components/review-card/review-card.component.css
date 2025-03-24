@@ -8,6 +8,13 @@
   background-size: cover;
 }
 
+#user{
+  &:hover{
+    cursor: pointer;
+    color: gray;
+  }
+}
+
 .content{
   display: flex;
   flex-direction: column;

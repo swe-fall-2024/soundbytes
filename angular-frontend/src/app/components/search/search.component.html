@@ -1,0 +1,10 @@
+<div class="search">
+  <input matInput class='search-input' type="text" [(ngModel)]="searchText" placeholder="Search..." />
+  <ul class="options">
+    <li class="option" *ngIf="searchText != '' && filteredItems == null">No results found</li>
+    <li class="option" *ngFor="let item of filteredItems" (click)="navigateToUser(item.username)">{{ item.username }}</li>
+  </ul>
+</div>
+
+
+

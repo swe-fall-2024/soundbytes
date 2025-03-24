@@ -9,18 +9,14 @@
         <mat-form-field>
           <mat-label>Enter your email</mat-label>
           <input matInput placeholder="email@example.com" [formControl]="email" (blur)="updateErrorMessage()" required />
-          @if (email.invalid) {
-            <mat-error>{{errorMessage()}}</mat-error>
-          }
+          <mat-error *ngIf="email.invalid">{{ errorMessage() }}</mat-error>
         </mat-form-field>
       </div>
 
       <mat-form-field>
         <mat-label>Enter your password</mat-label>
         <input matInput [type]="hide() ? 'password' : 'text'" required [formControl]="password" />
-        @if (password.invalid) {
-          <mat-error>{{errorMessage()}}</mat-error>
-        }
+        <mat-error *ngIf="password.invalid">{{errorMessage()}}</mat-error>
       </mat-form-field>
     </form>
 
@@ -31,3 +27,4 @@
     <p>Already have an account? <a routerLink="/login">Login</a></p>
   </mat-card-content>
 </mat-card>
+<router-outlet></router-outlet>

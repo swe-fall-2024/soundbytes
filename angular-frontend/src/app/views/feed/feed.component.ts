@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { SongCardComponent } from '../../components/song-card/song-card.component';
 import { ReviewCardComponent } from '../../components/review-card/review-card.component';
-import { PlaylistCardComponentComponent } from '../../components/playlist-card/playlist-card.component';
+import { PlaylistCardComponent } from '../../components/playlist-card/playlist-card.component';
 import { NgIf, NgFor, CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-feed',
-  imports: [NgIf, NgFor, CommonModule, SongCardComponent, ReviewCardComponent, PlaylistCardComponentComponent],
+  imports: [NgIf, NgFor, CommonModule, SongCardComponent, ReviewCardComponent, PlaylistCardComponent],
   templateUrl: './feed.component.html',
   styleUrl: './feed.component.css'
 })

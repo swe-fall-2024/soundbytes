@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientModule } from '@angular/common/http';
 import { BioComponent } from './bio.component';
 
 describe('BioComponent', () => {
@@ -8,7 +8,7 @@ describe('BioComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BioComponent]
+      imports: [BioComponent, HttpClientModule]
     })
     .compileComponents();
 
