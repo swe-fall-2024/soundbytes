@@ -66,6 +66,9 @@ export class SignupComponent {
 
       this.http.post('http://127.0.0.1:4201/register', user).subscribe({
         next: (response) => {
+          if(user.username != null)
+            localStorage.setItem('username', user.username);
+
           console.log('Registration successful', response);
           alert('Registration successful!');
           this.userService.setUsername(user.username || '');
