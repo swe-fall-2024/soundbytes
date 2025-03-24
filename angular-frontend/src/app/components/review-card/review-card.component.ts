@@ -9,7 +9,7 @@ import { RouterModule } from '@angular/router';
     <mat-card class="example-card" appearance="outlined">
       <mat-card-header>
         <mat-card-title>{{post?.title}}</mat-card-title>
-          <mat-card-subtitle id="user" routerLink="/friend-profile">{{post?.user}}</mat-card-subtitle>
+          <mat-card-subtitle id="user" routerLink="/friend-profile/{{post?.user}}">{{post?.user}}</mat-card-subtitle>
         <div mat-card-avatar class="example-header-image"></div>
       </mat-card-header>
       <mat-card-content>
@@ -40,8 +40,5 @@ import { RouterModule } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReviewCardComponent {
-  constructor() {
-    console.log('myCustomComponent');
-  }
   @Input() post: any;
 }

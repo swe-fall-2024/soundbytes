@@ -1,6 +1,7 @@
 .nav-container{
   background-color: #fff8f8;
   width: 100vw;
+  height: 8vh;
   border: 0px #d6c2c5 solid;
   border-bottom-width: 1px;
   display: flex;

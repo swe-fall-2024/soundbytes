@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {MatChipsModule} from '@angular/material/chips';
@@ -13,6 +13,7 @@ import { NgIf, NgFor, CommonModule } from '@angular/common';
 import { SongCardComponent } from '../components/song-card/song-card.component';
 import { ReviewCardComponent } from '../components/review-card/review-card.component';
 import { PlaylistCardComponent } from '../components/playlist-card/playlist-card.component';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-friend-profile',
@@ -21,7 +22,17 @@ import { PlaylistCardComponent } from '../components/playlist-card/playlist-card
   styleUrl: './friend-profile.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FriendProfileComponent {
+export class FriendProfileComponent implements OnInit {
+  userId: string | null = '';
+
+  constructor(private route: ActivatedRoute) {}
+
+  ngOnInit() {
+    // Access route parameter
+    this.userId = this.route.snapshot.paramMap.get('id');
+    console.log(this.userId)
+  }
+  
   posts = [
     {
       user: 'Shiba Inu',
