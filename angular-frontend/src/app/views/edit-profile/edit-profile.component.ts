@@ -7,6 +7,7 @@ import {CommonModule } from '@angular/common';
 import {MatSelectModule} from '@angular/material/select';
 import { Profile } from '../../models/profile.model';
 import { ProfileService } from '../../profile.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-edit-profile',
@@ -19,11 +20,10 @@ import { ProfileService } from '../../profile.service';
 export class EditProfileComponent implements OnInit {
 
   user: Profile | null = null;
-  userID = 'cam123@gmail.com'; // Example user ID (Replace with dynamic value)
-
+  userID = String(localStorage.getItem('currentUserEmail')); 
 
   profile = {
-      name: 'Shiba Inu',
+      name: ' ',
       username: '@shiba',
       currentFavType: 'Current Favorite Artist',
       currentFav: 'COIN',
@@ -33,7 +33,7 @@ export class EditProfileComponent implements OnInit {
   };
 
 
-  constructor(private profileService: ProfileService) {}
+  constructor(private profileService: ProfileService, private router: Router) {}
   
   ngOnInit(): void {
   this.profileService.getUserProfile(this.userID).subscribe({
@@ -61,7 +61,7 @@ export class EditProfileComponent implements OnInit {
       console.log("update profile method is being fired`")
       // Update the profiles array after the user data is available
       this.profile = {
-          name: 'Shibaaaaaa Inu',
+          name: "",
           username: this.user.username,
           currentFavType: 'Current Favorite Artist',
           currentFav: this.user.topArtist, // Now this is updated correctly
@@ -94,6 +94,9 @@ export class EditProfileComponent implements OnInit {
     this.profileService.updateUserProfile(this.userID, updatedProfile).subscribe({
       next: (response) => {
         console.log('Profile updated successfully:', response);
+        alert("Profile updated successfully:")
+        //route to profile page
+        this.router.navigate([`/profile`]);
       },
       error: (error) => {
         console.error('Error updating profile:', error);

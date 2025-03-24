@@ -55,7 +55,9 @@ export class SignupComponent {
 
   // New method to handle signup
   signUp() {
+
     if (this.email.valid && this.password.valid) {
+
       const user = {
         username: this.email.value,
         password: this.password.value,
@@ -64,13 +66,16 @@ export class SignupComponent {
         posts: [],      // Default empty array for posts
         following: [],  // Default empty array for following
       };
-  
+    
+      localStorage.setItem('currentUserEmail', this.email.value || '');
+
+      alert(localStorage.getItem('currentUserEmail'))
 
       this.http.post('http://127.0.0.1:4201/register', user).subscribe({
         next: (response) => {
           console.log('Registration successful', response);
           alert('Registration successful!');
-          this.router.navigate(['/profile']); 
+          this.router.navigate([`/edit-profile`]);
         },
         error: (error) => {
           console.error('Registration failed', error);
