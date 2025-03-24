@@ -7,6 +7,8 @@ import {CommonModule } from '@angular/common';
 import {MatSelectModule} from '@angular/material/select';
 import { Profile } from '../../models/profile.model';
 import { ProfileService } from '../../profile.service';
+import { UserService } from '../../services/signup.component';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-edit-profile',
@@ -15,6 +17,7 @@ import { ProfileService } from '../../profile.service';
   styleUrl: './edit-profile.component.css',
   changeDetection: ChangeDetectionStrategy.Default,
 })
+
 
 export class EditProfileComponent implements OnInit {
 
@@ -100,5 +103,3 @@ export class EditProfileComponent implements OnInit {
       }
     });
   }
-
-}

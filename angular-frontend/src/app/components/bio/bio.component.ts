@@ -10,11 +10,25 @@ import { RouterModule } from '@angular/router';
   <mat-card class="profile-card" >
     <mat-card-header>
       <div mat-card-avatar class="example-header-image"></div>
-      <mat-card-title>{{profile.name}} {{profile.username}}</mat-card-title>
-      <mat-card-subtitle>{{profile.currentFavType}}: {{profile.currentFav}}</mat-card-subtitle>
+      <mat-card-title>{{profile?.name}} {{profile?.username}}</mat-card-title>
+      <mat-card-subtitle>{{profile?.currentFavType}}: {{profile?.currentFav}}</mat-card-subtitle>
+      @if (me) {
       <mat-card-actions align="end">
             <button class="btn btn-outline-success search-button" routerLink="/edit-profile" type="submit">Edit</button>
       </mat-card-actions>
+      }
+      @else {
+        @if (following) {
+        <mat-card-actions align="end">
+              <button class="btn btn-outline-success search-button" type="submit">Following</button>
+        </mat-card-actions>
+        }
+        @else {
+        <mat-card-actions align="end">
+              <button class="btn btn-outline-success search-button" type="submit">Follow</button>
+        </mat-card-actions>
+        }
+      }
     </mat-card-header>
     <mat-card-content>
       <p>
@@ -28,10 +42,10 @@ import { RouterModule } from '@angular/router';
       <br>
       <div fxLayout="row" fxLayoutAlign="start center">
           <mat-icon>music_note</mat-icon>
-          <span>{{profile.topSong}}</span>
+          <span>{{profile?.topSong}}</span>
           &nbsp;
           <mat-icon>person</mat-icon>
-          <span>{{profile.topArtist}}</span>
+          <span>{{profile?.topArtist}}</span>
         </div>    
     </mat-card-content>
     </mat-card>
@@ -42,4 +56,6 @@ import { RouterModule } from '@angular/router';
 })
 export class BioComponent {
   @Input() profile: any; 
+  @Input() me: boolean | undefined;
+  @Input() following: boolean | undefined;
 }

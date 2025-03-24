@@ -1,1 +1,101 @@
-<p>post-creation works!</p>
+<mat-card class="profile-card" >
+  <mat-card-header>
+    <mat-card-title>Post Creation</mat-card-title>
+  </mat-card-header>
+  <br>
+  <mat-card-content id="page-form">
+      <form class="example-form" >
+          <div class="example-container">
+            <mat-form-field>
+              <mat-label>Select Post Type:</mat-label>
+              <mat-select  [formControl]="selectedType" required>
+                <mat-option>--</mat-option>
+                <mat-option value="favorite-song">Favorite Song</mat-option>
+                <mat-option value="album-review">Album Review</mat-option>
+                <mat-option value="playlist">Playlist</mat-option>
+              </mat-select>
+              @if (selectedType.invalid) {
+                <mat-error>{{errorMessage()}}</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="form" *ngIf="selectedType.value === 'favorite-song'">
+            <mat-form-field>
+              <mat-label>Input Song Title:</mat-label>
+              <input 
+                      matInput
+                      name="songTitle"
+                      required
+                      [formControl]="songTitle"
+                  />
+              <mat-error *ngIf="songTitle.invalid">{{errorMessage()}}</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Input Song Link:</mat-label>
+              <input 
+                      matInput
+                      name="songLink"
+                      required
+                      [formControl]="songLink"
+                  />
+              <mat-error *ngIf="songLink.invalid">{{errorMessage()}}</mat-error>
+                
+            </mat-form-field>
+          </div>
+          
+          <div class="form" *ngIf="selectedType.value === 'playlist'">
+            <mat-form-field>
+              <mat-label>Input Playlist Title:</mat-label>
+              <input 
+                      matInput
+                      name="playlistTitle"
+                      required
+                      [formControl]="playlistTitle"
+                  />
+              <mat-error *ngIf="playlistTitle.invalid">{{errorMessage()}}</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Input Playlist Link:</mat-label>
+              <input 
+                      matInput
+                      name="playlistLink"
+                      required
+                      [formControl]="playlistLink"
+                  />
+              <mat-error *ngIf="playlistLink.invalid">{{errorMessage()}}</mat-error>
+            </mat-form-field>
+
+          </div>
+          
+
+          <div class="form" *ngIf="selectedType.value === 'album-review'">
+            <mat-form-field>
+              <mat-label>Input Album Title:</mat-label>
+              <input 
+                      matInput
+                      name="reviewTitle"
+                      required
+                      [formControl]="reviewTitle"
+                  />
+              <mat-error *ngIf="reviewTitle.invalid">{{errorMessage()}}</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Write your review!</mat-label>
+              <textarea matInput cdkTextareaAutosize name="review" [formControl]="review"></textarea>
+              <mat-error *ngIf="review.invalid">{{errorMessage()}}</mat-error>
+            </mat-form-field>
+
+          </div>
+          
+
+        </form>
+    
+          <div class="wrapper">
+              <button class="btn btn-outline-success search-button" type="button" (click)="submit()">Post</button>
+          </div>
+      <br>
+      
+  </mat-card-content>
+</mat-card>
+

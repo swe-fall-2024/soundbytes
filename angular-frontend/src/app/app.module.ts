@@ -11,6 +11,9 @@ import { SignupComponent } from './views/signup/signup.component';
 import { ProfileComponent } from './views/profile/profile.component';
 import { PostCreationComponent } from './views/post-creation/post-creation.component';
 import { provideRouter, RouterModule } from '@angular/router';
+import { FriendProfileComponent } from './friend-profile/friend-profile.component';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //import { ApiService } from './api.service'; // ✅ Import service
 
 @NgModule({
@@ -21,12 +24,13 @@ import { provideRouter, RouterModule } from '@angular/router';
     LoginComponent,
     SignupComponent,
     ProfileComponent,
-    PostCreationComponent
+    PostCreationComponent,
+    FriendProfileComponent,
   ],
-  imports: [BrowserModule, RouterModule ], 
+  imports: [BrowserModule, RouterModule,  BrowserAnimationsModule], 
   providers: [provideHttpClient(),
-              provideHttpClientTesting(),
-  ], // ✅ Use `provideHttpClient()`
+              provideHttpClientTesting()
+  ], 
   bootstrap: [AppComponent],
 })
 export class AppModule {}

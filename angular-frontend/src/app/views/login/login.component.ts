@@ -6,11 +6,21 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {merge} from 'rxjs';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { NgIf } from '@angular/common';
+import {
+  trigger,
+  state,
+  style,
+  animate,
+  transition,
+  // ...
+} from '@angular/animations';
 
 @Component({
   selector: 'app-login',
-  imports: [MatCardModule, MatInputModule, MatFormFieldModule, FormsModule, ReactiveFormsModule,MatIconModule, RouterOutlet, RouterLink],
+  imports: [MatCardModule, MatInputModule, MatFormFieldModule, FormsModule, ReactiveFormsModule,MatIconModule, NgIf, RouterLink, RouterOutlet],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,8 +30,9 @@ export class LoginComponent {
   readonly password = new FormControl('', );
 
   errorMessage = signal('');
+  isLoggedIn = '';
 
-  constructor() {
+  constructor(private http: HttpClient, private router: Router) {
     merge(this.email.statusChanges, this.email.valueChanges)
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.updateErrorMessage());
@@ -50,5 +61,34 @@ export class LoginComponent {
     console.log("on submit i guess")
     this.hide.set(!this.hide());
     event.stopPropagation();
+  }
+
+
+  // New method to handle login
+  login() {
+    if (this.email.valid && this.password.valid) {
+      const user = {
+        username: this.email.value,
+        password: this.password.value,
+      };
+
+      this.http.post('http://127.0.0.1:4201/login', user).subscribe({
+        next: (response) => {
+          if(user.username != null)
+            localStorage.setItem('username', user.username);
+
+          console.log('Login successful', response);
+          alert('Login successful!');
+          this.isLoggedIn = 'Login successful!';
+          this.router.navigate(['/profile']);
+        },
+        error: (error) => {
+          console.error('Registration failed', error);
+          this.errorMessage.set('Registration failed. Please try again.');
+        }
+      });
+    } else {
+      this.updateErrorMessage();
+    }
   }
 }

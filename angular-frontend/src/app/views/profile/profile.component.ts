@@ -8,7 +8,7 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import {MatListModule} from '@angular/material/list';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatToolbarModule} from '@angular/material/toolbar';
-import { PlaylistCardComponentComponent } from '../../components/playlist-card/playlist-card.component';
+import { PlaylistCardComponent } from '../../components/playlist-card/playlist-card.component';
 import { ReviewCardComponent } from '../../components/review-card/review-card.component';
 import { SongCardComponent } from '../../components/song-card/song-card.component';
 import { NgIf, NgFor, CommonModule } from '@angular/common';
@@ -20,7 +20,7 @@ import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-profile',
-  imports: [BioComponent, FriendsComponent, NgIf, NgFor, CommonModule, SongCardComponent, ReviewCardComponent, PlaylistCardComponentComponent, MatToolbarModule, MatDividerModule, MatListModule, MatCardModule, MatButtonModule, MatChipsModule, MatProgressBarModule, MatIconModule, MatGridListModule],
+  imports: [BioComponent, FriendsComponent, NgIf, NgFor, CommonModule, SongCardComponent, ReviewCardComponent, PlaylistCardComponent, MatToolbarModule, MatDividerModule, MatListModule, MatCardModule, MatButtonModule, MatChipsModule, MatProgressBarModule, MatIconModule, MatGridListModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
   changeDetection: ChangeDetectionStrategy.Default
@@ -52,6 +52,7 @@ export class ProfileComponent implements OnInit {
       topArtist: '',
     }
   ];
+
 
   constructor(private profileService: ProfileService, private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
@@ -118,4 +119,8 @@ export class ProfileComponent implements OnInit {
     );
   
   }
+
+  me = true;
+  following = false;
+
 }
