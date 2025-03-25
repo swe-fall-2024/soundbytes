@@ -22,7 +22,7 @@ import { HttpClient } from '@angular/common/http';
 export class EditProfileComponent implements OnInit {
 
   user: Profile | null = null;
-  userID = 'cam123@gmail.com'; // Example user ID (Replace with dynamic value)
+  userID = 'test@mail.com'; // Example user ID (Replace with dynamic value)
 
 
   profile = {
@@ -76,6 +76,7 @@ export class EditProfileComponent implements OnInit {
   }
 
   saveProfile() {
+    console.log("in save profile")
     if (!this.user) {
       console.error('No user data to save');
       return;
