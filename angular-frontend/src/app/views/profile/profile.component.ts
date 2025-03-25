@@ -17,10 +17,11 @@ import { BioComponent } from '../../components/bio/bio.component';
 import { ProfileService } from '../../profile.service';
 import { Profile } from '../../models/profile.model';  // Import the User interface from profile.model.ts
 import { HttpClient } from '@angular/common/http';
+import { NavbarComponent } from '../../components/navbar/navbar.component';
 
 @Component({
   selector: 'app-profile',
-  imports: [BioComponent, FriendsComponent, NgIf, NgFor, CommonModule, SongCardComponent, ReviewCardComponent, PlaylistCardComponent, MatToolbarModule, MatDividerModule, MatListModule, MatCardModule, MatButtonModule, MatChipsModule, MatProgressBarModule, MatIconModule, MatGridListModule],
+  imports: [BioComponent, FriendsComponent, NavbarComponent, NgIf, NgFor, CommonModule, SongCardComponent, ReviewCardComponent, PlaylistCardComponent, MatToolbarModule, MatDividerModule, MatListModule, MatCardModule, MatButtonModule, MatChipsModule, MatProgressBarModule, MatIconModule, MatGridListModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
   changeDetection: ChangeDetectionStrategy.Default
