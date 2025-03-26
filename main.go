@@ -355,6 +355,7 @@ func httpHandler() http.Handler {
 	router.HandleFunc("/profile", getUserProfile).Methods("GET")
 	router.HandleFunc("/profile", updateUserProfile).Methods("PUT")
 	router.HandleFunc("/getPosts/{username}", getPostsHandler).Methods("GET")
+	router.HandleFunc("/getFeed/{username}", getFeed).Methods("GET")
 
 	// Protect this route with JWT middleware
 	router.HandleFunc("/protected", jwtMiddleware(protectedHandler)).Methods("GET")
@@ -686,6 +687,57 @@ func getPostsHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println(fmt.Sprintf("Posts %v", posts))
 
 	// Return the user's posts
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(posts)
+}
+
+// Get Feed by searching for each email that's in user's following array and getting each of the posts that each of those
+// email users have and returning them
+func getFeed(w http.ResponseWriter, r *http.Request) {
+
+	userCollection := client.Database(dbName).Collection("users")
+	postCollection := client.Database(dbName).Collection("posts")
+
+	// Get the username from the request URL
+	vars := mux.Vars(r)
+	username := vars["username"]
+
+	// Ensure the username is provided
+	if username == "" {
+		http.Error(w, "Username is required", http.StatusBadRequest)
+		return
+	}
+
+	// Find the user by username
+	var user User
+	err := userCollection.FindOne(context.TODO(), bson.M{"username": username}).Decode(&user)
+	if err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	// Get posts from all users the current user is following
+	var posts []Post
+	for _, following := range user.Following {
+		cursor, err := postCollection.Find(context.TODO(), bson.M{"user": following})
+		if err != nil {
+			http.Error(w, "Error fetching posts", http.StatusInternalServerError)
+			return
+		}
+
+		defer cursor.Close(context.TODO())
+
+		for cursor.Next(context.TODO()) {
+			var post Post
+			if err := cursor.Decode(&post); err != nil {
+				http.Error(w, "Error decoding post", http.StatusInternalServerError)
+				return
+			}
+			posts = append(posts, post)
+		}
+	}
+
+	// Return the feed posts
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(posts)
 }
