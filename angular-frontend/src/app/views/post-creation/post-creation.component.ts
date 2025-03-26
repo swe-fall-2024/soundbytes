@@ -43,15 +43,19 @@ export class PostCreationComponent {
   errorMessage = signal('');
 
   constructor(private http: HttpClient, private router: Router) {
+
     merge(this.selectedType.statusChanges, this.selectedType.valueChanges)
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.updateErrorMessage());
+
   }
 
   updateErrorMessage() {
+
     if (this.selectedType.hasError('required')) {
       this.errorMessage.set('You must enter a value');
     } 
+
   }
 
   hide = signal(true);
@@ -62,6 +66,71 @@ export class PostCreationComponent {
 
   
   submit(){
-    console.log(this.selectedType.value);
+
+    let content: any = {};
+
+    // Check the selected type and populate the content object accordingly
+    if (this.selectedType.value === 'favorite-song') {
+      content = {
+        song_title: this.songTitle.value || '',
+        song_url: this.songLink.value || '',
+        song_embed: 'sample',
+      };
+    } 
+    
+    else if (this.selectedType.value === 'album-review') {
+      content = {
+        album_title: this.reviewTitle.value || '',
+        review: this.review.value || '',
+      };
+    } 
+    
+    else if (this.selectedType.value === 'playlist') {
+      content = {
+        playlist_title: this.playlistTitle.value || '',
+        playlist_url: this.playlistLink.value || '',
+        playlist_embed: '',
+      };
+    }
+
+    alert('New Post!');
+    alert(`THIS IS A SIGN ${this.selectedType.value}`);
+    alert(`Song Title: ${this.songTitle.value}`);
+    alert(`Song Link: ${this.songLink.value}`);
+
+    const post = {
+      post_id: Math.floor(Math.random() * 200001),
+      user: String(localStorage.getItem('currentUserEmail')), 
+      profile_img: "",
+      type: (this.selectedType.value) || '',
+      title: (this.songTitle.value) || '',
+      content: {
+        song_title: this.songTitle.value || '',
+        song_url: this.songLink.value || '',
+        song_embed: '',
+        album_title: this.reviewTitle.value || '',
+        review: this.review.value || '',
+        playlist_title: this.playlistTitle.value || '',
+        playlist_url: this.playlistLink.value || '',
+        playlist_embed: '',
+      },
+      like_count: 0
+    };
+
+
+    this.http.post('http://127.0.0.1:4201/addPost', post).subscribe({
+
+      next: (response) => {
+        console.log('Posts created successfully', response);
+        alert('New Post!');
+        this.router.navigate([`/profile`]);
+
+      },
+      error: (error) => {
+        alert(`Error: ${JSON.stringify(error)}`);
+        console.error('Registration failed', error);
+        this.errorMessage.set('Registration failed. Please try again.');
+      }
+    });
   }
 }

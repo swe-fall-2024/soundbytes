@@ -30,7 +30,7 @@ import { NavbarComponent } from '../../components/navbar/navbar.component';
 
 export class ProfileComponent implements OnInit {
   user: Profile | null = null;
-  userID = 'cam123@gmail.com'; // Example user ID (Replace with dynamic value)
+  userID = String(localStorage.getItem('currentUserEmail'))
 
   // Static data for posts and friends
   posts: any[] = [];
@@ -108,7 +108,7 @@ export class ProfileComponent implements OnInit {
     }
   fetchPosts() {
 
-    this.http.get<any[]>('http://127.0.0.1:4201/getPosts/cam123@gmail.com').subscribe(
+    this.http.get<any[]>(`http://127.0.0.1:4201/getPosts/${localStorage.getItem('currentUserEmail')}`).subscribe(
       (data) => {
         this.posts = data; // Store the posts data in the component
         //alert(`${this.posts.length} posts fetched`); 

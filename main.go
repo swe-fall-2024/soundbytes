@@ -60,13 +60,13 @@ type Friend struct {
 
 // Post struct
 type Post struct {
-	PostID        primitive.ObjectID `bson:"_id,omitempty" json:"post_id"`
-	User          string             `bson:"user" json:"user"`
-	Profile_Image string             `bson:"profile_img" json:"profile_img"`
-	Type          string             `bson:"type" json:"type"`
-	Title         string             `bson:"title" json:"title"`
-	Content       PostContent        `bson:"content" json:"content"`
-	LikeCount     int                `bson:"like_count" json:"like_count"`
+	PostID        int         `bson:"_id,omitempty" json:"post_id"`
+	User          string      `bson:"user" json:"user"`
+	Profile_Image string      `bson:"profile_img" json:"profile_img"`
+	Type          string      `bson:"type" json:"type"`
+	Title         string      `bson:"title" json:"title"`
+	Content       PostContent `bson:"content" json:"content"`
+	LikeCount     int         `bson:"like_count" json:"like_count"`
 }
 
 type PostContent struct {
@@ -193,7 +193,7 @@ func addFriend(w http.ResponseWriter, r *http.Request) {
 // Function to create a new post
 func addPost(w http.ResponseWriter, r *http.Request) {
 
-	postCollection := client.Database(dbName).Collection("posts") // Use := to define a new variable
+	postCollection := client.Database(dbName).Collection("posts")
 
 	var post Post
 	// Decode the request body into the Post struct
@@ -653,12 +653,15 @@ func getPostsHandler(w http.ResponseWriter, r *http.Request) {
 	// Use a different collection for posts
 	postCollection := client.Database(dbName).Collection("posts")
 
-	// Extract username from URL parameters
+	// Get the username from the request URL
 	vars := mux.Vars(r)
 	user := vars["username"]
 
-	// You can remove the fixed "testuser" assignment if you need to pass the username dynamically
-	user = "cam123@gmail.com"
+	// Ensure the username is provided
+	if user == "" {
+		http.Error(w, "Username is required", http.StatusBadRequest)
+		return
+	}
 
 	// Find posts by the username
 	cursor, err := postCollection.Find(context.TODO(), bson.M{"user": user})
@@ -680,7 +683,7 @@ func getPostsHandler(w http.ResponseWriter, r *http.Request) {
 		posts = append(posts, post)
 	}
 
-	log.Println(posts)
+	log.Println(fmt.Sprintf("Posts %v", posts))
 
 	// Return the user's posts
 	w.WriteHeader(http.StatusOK)
