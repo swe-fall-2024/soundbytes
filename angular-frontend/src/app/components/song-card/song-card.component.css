@@ -3,6 +3,13 @@
   margin: 10px;
 }
 
+#user{
+  &:hover{
+    cursor: pointer;
+    color: gray;
+  }
+}
+
 .example-header-image {
   background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
   background-size: cover;

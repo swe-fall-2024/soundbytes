@@ -1,1 +1,45 @@
-<p>login works!</p>
+<mat-card class="profile-card" >
+    <mat-card-header>
+      <mat-card-title>SoundBytes</mat-card-title>
+    </mat-card-header>
+    <br>
+    <mat-card-content>
+        <form class="example-form">
+            <div class="example-container">
+                <mat-form-field>
+                  <mat-label>Enter your email</mat-label>
+                  <input
+                    matInput
+                    placeholder="email@example.com"
+                    [formControl]="email"
+                    name="email"
+                    (blur)="updateErrorMessage()"
+                    required
+                  />
+                  <mat-error *ngIf="email.invalid">{{ errorMessage() }}</mat-error>
+                </mat-form-field>
+              </div>
+
+              <mat-form-field>
+                <mat-label>Enter your password</mat-label>
+                <input 
+                    matInput
+                    [type]="hide() ? 'password' : 'text'"
+                    name="password"
+                    required
+                    [formControl]="password"
+                />
+                <mat-error *ngIf="password.invalid">{{errorMessage()}}</mat-error>
+              </mat-form-field>
+
+            </form>
+      
+            <div class="wrapper">
+                <button class="btn btn-outline-success search-button" type="submit" (click)="login()">Login</button>
+            </div>
+        <br>
+        <p>Don't have an account? <a routerLink="/signup">Sign Up</a></p>
+
+    </mat-card-content>
+</mat-card>
+<router-outlet></router-outlet>

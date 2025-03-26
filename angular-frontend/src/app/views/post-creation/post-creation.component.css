@@ -1,0 +1,10 @@
+.form{
+  display: flex;
+  flex-direction: column;
+  height: 40vh;
+  width: 40vw;
+}
+.page-form{
+  height: 60vh;
+  width: 60vw;
+}

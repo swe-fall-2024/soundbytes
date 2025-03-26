@@ -1,25 +1,13 @@
 import { Component } from '@angular/core';
 import { SongCardComponent } from '../../components/song-card/song-card.component';
 import { ReviewCardComponent } from '../../components/review-card/review-card.component';
-import { PlaylistCardComponentComponent } from '../../components/playlist-card/playlist-card.component';
+import { PlaylistCardComponent } from '../../components/playlist-card/playlist-card.component';
 import { NgIf, NgFor, CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-feed',
-  imports: [NgIf, NgFor, CommonModule, SongCardComponent, ReviewCardComponent, PlaylistCardComponentComponent],
-  template: `
-  <div class="page-container"> 
-    <div class="feed-container">
-      <div *ngFor="let post of posts";let myProfile = even">
-        <app-song-card *ngIf="post.type === 'favorite-song'" [post]="post"></app-song-card>
-        <app-review-card *ngIf="post.type === 'album-review'" [post]="post"></app-review-card>
-        <app-playlist-card *ngIf="post.type === 'playlist'" [post]="post"></app-playlist-card>
-      </div>
-      
-    </div>
-  </div>
-  `,
-  //templateUrl: './feed.component.html',
+  imports: [NgIf, NgFor, CommonModule, SongCardComponent, ReviewCardComponent, PlaylistCardComponent],
+  templateUrl: './feed.component.html',
   styleUrl: './feed.component.css'
 })
 export class FeedComponent {

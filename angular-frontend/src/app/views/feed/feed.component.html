@@ -1,7 +1,10 @@
 <div class="page-container"> 
   <div class="feed-container">
-    <app-card [post]="post1"></app-card>
-    <app-card [post]="post2"></app-card>
+    <div *ngFor="let post of posts">
+      <app-song-card *ngIf="post.type === 'favorite-song'" [post]="post"></app-song-card>
+      <app-review-card *ngIf="post.type === 'album-review'" [post]="post"></app-review-card>
+      <app-playlist-card *ngIf="post.type === 'playlist'" [post]="post"></app-playlist-card>
+    </div>
   </div>
 </div>
 

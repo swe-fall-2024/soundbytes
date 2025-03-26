@@ -1,9 +1,12 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './app/app.component';
 import { provideHttpClient } from '@angular/common/http';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { appConfig } from './app/app.config';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+
 
 bootstrapApplication(AppComponent, {
-  providers: [provideHttpClient(), provideAnimationsAsync()]
+  providers: [...appConfig.providers,provideHttpClient(), provideAnimations(), provideNoopAnimations()]
 })
   .catch(err => console.error('Bootstrap error:', err));

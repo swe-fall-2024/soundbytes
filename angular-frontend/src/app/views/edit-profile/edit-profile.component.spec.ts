@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientModule } from '@angular/common/http';
 import { EditProfileComponent } from './edit-profile.component';
 
 describe('EditProfileComponent', () => {
@@ -8,7 +8,7 @@ describe('EditProfileComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EditProfileComponent]
+      imports: [EditProfileComponent, HttpClientModule]
     })
     .compileComponents();
 
