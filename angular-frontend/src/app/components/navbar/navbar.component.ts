@@ -9,5 +9,18 @@ import { SearchComponent } from '../search/search.component';
   styleUrl: './navbar.component.css'
 })
 export class NavbarComponent {
+  out = true;
+  in = false;
+
+  updateNavbar(){
+    if(String(localStorage.getItem('currentUserEmail')) != null) {
+      this.out = false;
+      this.in = true;
+    }
+    else {
+      this.out = true;
+      this.in = false;
+    }
+  }
 
 }

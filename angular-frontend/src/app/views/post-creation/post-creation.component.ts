@@ -11,10 +11,11 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { NgIf } from '@angular/common';
+import { NavbarComponent } from '../../components/navbar/navbar.component';
 
 @Component({
   selector: 'app-post-creation',
-  imports: [MatCardModule, MatInputModule, MatFormFieldModule, FormsModule, ReactiveFormsModule,MatIconModule, MatSelect, MatOption, NgIf],
+  imports: [MatCardModule, MatInputModule, NavbarComponent, MatFormFieldModule, FormsModule, ReactiveFormsModule,MatIconModule, MatSelect, MatOption, NgIf],
   templateUrl: './post-creation.component.html',
   styleUrl: './post-creation.component.css'
 })

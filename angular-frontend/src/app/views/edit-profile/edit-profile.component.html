@@ -1,48 +1,81 @@
-<form #profileForm="ngForm" (ngSubmit)="saveProfile()">
-  <mat-card>
+<mat-card class="profile-card" >
+  <mat-card-header>
     <mat-card-title>Edit Profile</mat-card-title>
-    <mat-card-content>
-      <mat-form-field>
+  </mat-card-header>
+  <br>
+  <mat-card-content>
+    <form class="example-form" #profileForm="ngForm" (ngSubmit)="saveProfile()">
+  
+      <mat-form-field class="example-full-width">
+        <mat-label>Name</mat-label>
         <input matInput placeholder="Enter name" [(ngModel)]="profile.name" name="name" required>
       </mat-form-field>
 
-      <mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>Enter Username</mat-label>
         <input matInput placeholder="Enter username" [(ngModel)]="profile.username" name="username" required>
       </mat-form-field>
 
-      <mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>Select an option</mat-label>
         <mat-select [(ngModel)]="profile.currentFavType" name="favType">
-          <mat-option value="song">Song</mat-option>
-          <mat-option value="artist">Artist</mat-option>
+          <mat-option value="song">Current Favorite Song</mat-option>
+          <mat-option value="artist">Current Favorite Artist</mat-option>
+          <mat-option value="genre">Current Favorite Genre</mat-option>
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>Enter Favorite</mat-label>
         <input matInput placeholder="Enter favorite" [(ngModel)]="profile.currentFav" name="currentFav">
       </mat-form-field>
 
-      <mat-form-field>
-        <input matInput placeholder="Genre 1" [(ngModel)]="profile.genres[0]" name="genre1">
-      </mat-form-field>
+      <table class="example-full-width" cellspacing="0">
+        <tr>
+          <td>
+            <mat-form-field class="example-full-width">
+              <mat-label>First Genre</mat-label>
+              <input matInput placeholder="Genre 1" [(ngModel)]="profile.genres[0]" name="genre1">
+            </mat-form-field>
+          </td>
 
-      <mat-form-field>
-        <input matInput placeholder="Genre 2" [(ngModel)]="profile.genres[1]" name="genre2">
-      </mat-form-field>
+          <td>
+            <mat-form-field class="example-full-width">
+              <mat-label>Second Genre</mat-label>
+              <input matInput placeholder="Genre 2" [(ngModel)]="profile.genres[1]" name="genre2">
+            </mat-form-field>
+          </td>
 
-      <mat-form-field>
-        <input matInput placeholder="Genre 3" [(ngModel)]="profile.genres[2]" name="genre3">
-      </mat-form-field>
+          <td>
+            <mat-form-field class="example-full-width">
+              <mat-label>Third Genre</mat-label>
+              <input matInput placeholder="Genre 3" [(ngModel)]="profile.genres[2]" name="genre3">
+            </mat-form-field>
+          </td>
 
-      <mat-form-field>
+        </tr>
+      </table>
+
+      
+
+      <mat-form-field class="example-full-width">
+        <mat-label>All-Time Favorite Song</mat-label>
         <input matInput placeholder="Favorite Song" [(ngModel)]="profile.topSong" name="topSong">
       </mat-form-field>
 
-      <mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>All-Time Favorite Artist</mat-label>
         <input matInput placeholder="Favorite Artist" [(ngModel)]="profile.topArtist" name="topArtist">
       </mat-form-field>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-button type="submit" [disabled]="!profileForm.form.valid">Save</button>
-    </mat-card-actions>
-  </mat-card>
-</form>
+
+      <mat-card-actions>
+        <button mat-button type="submit" [disabled]="!profileForm.form.valid">Save</button>
+      </mat-card-actions>
+    </form>
+
+    
+    
+
+  </mat-card-content>
+</mat-card>
+

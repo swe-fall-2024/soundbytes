@@ -76,6 +76,7 @@ export class EditProfileComponent implements OnInit {
   }
 
   saveProfile() {
+    console.log("in save profile")
     if (!this.user) {
       console.error('No user data to save');
       return;
