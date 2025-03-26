@@ -65,7 +65,11 @@ export class SignupComponent {
         username: this.email.value,
         password: this.password.value,
       };
-    
+      
+      if(localStorage.getItem('currentUserEmail') != null) {
+        localStorage.removeItem('currentUserEmail')
+      }
+
       localStorage.setItem('currentUserEmail', this.email.value || '');
 
       alert(localStorage.getItem('currentUserEmail'))

@@ -75,7 +75,7 @@ export class LoginComponent {
       this.http.post('http://127.0.0.1:4201/login', user).subscribe({
         next: (response) => {
           if(user.username != null)
-            localStorage.setItem('username', user.username);
+            localStorage.setItem('currentUserEmail', user.username);
 
           console.log('Login successful', response);
           alert('Login successful!');

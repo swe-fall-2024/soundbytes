@@ -80,5 +80,5 @@ export class FriendProfileComponent implements OnInit {
     }
   ];
   me = false;
-  following = false;
+  following = true;
 }
