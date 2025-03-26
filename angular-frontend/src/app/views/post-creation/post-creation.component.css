@@ -8,3 +8,11 @@
   height: 60vh;
   width: 60vw;
 }
+.page{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height:92vh;
+}
