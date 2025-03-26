@@ -11,7 +11,11 @@ import { RouterLink } from '@angular/router';
   <mat-list-item>
         <div fxLayout="row" fxLayoutAlign="start center" class="icon-text">
           <ul class="navbar-nav mr-auto">
-          <li class="nav-item"><a  class="nav-link" routerLink="/friend-profile" >{{friend?.name}}</a></li> 
+          <li class="nav-item">
+            <a class="nav-link" [routerLink]="['/friend-profile', friend?.name]">
+              {{ friend?.name }}
+            </a>
+          </li> 
           </ul>
         </div>
       </mat-list-item>

@@ -11,7 +11,7 @@ import { SignupComponent } from './views/signup/signup.component';
 import { ProfileComponent } from './views/profile/profile.component';
 import { PostCreationComponent } from './views/post-creation/post-creation.component';
 import { provideRouter, RouterModule } from '@angular/router';
-import { FriendProfileComponent } from './friend-profile/friend-profile.component';
+import { FriendProfileComponent } from './views/friend-profile/friend-profile.component';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //import { ApiService } from './api.service'; // ✅ Import service

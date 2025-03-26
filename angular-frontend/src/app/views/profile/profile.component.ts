@@ -89,7 +89,7 @@ export class ProfileComponent implements OnInit {
       // Update the profiles array after the user data is available
       this.profiles = [
         {
-          name: 'Shibaaaaaa Inu',
+          name: this.user.name,
           username: this.user.username,
           currentFavType: 'Current Favorite Artist',
           currentFav: this.user.topArtist, // Now this is updated correctly

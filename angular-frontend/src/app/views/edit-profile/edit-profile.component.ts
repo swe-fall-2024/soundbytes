@@ -64,7 +64,7 @@ export class EditProfileComponent implements OnInit {
       console.log("update profile method is being fired`")
       // Update the profiles array after the user data is available
       this.profile = {
-          name: "",
+          name: this.user.name,
           username: this.user.username,
           currentFavType: 'Current Favorite Artist',
           currentFav: this.user.topArtist, // Now this is updated correctly
@@ -86,13 +86,14 @@ export class EditProfileComponent implements OnInit {
     const updatedProfile: Profile = {
       userID: this.userID,
       username: this.profile.username,
+      name: this.profile.name,
       password: this.user.password,
       topArtist: this.profile.topArtist,
       topSong: this.profile.topSong,
       favSongs: this.user.favSongs,
       favGenres: this.profile.genres,
       posts: this.user.posts,
-      following: this.user.following
+      following: this.user.following,
     };
 
     this.profileService.updateUserProfile(this.userID, updatedProfile).subscribe({

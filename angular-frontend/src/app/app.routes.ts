@@ -6,7 +6,7 @@ import { SignupComponent } from './views/signup/signup.component';
 import { ProfileComponent } from './views/profile/profile.component';
 import { PostCreationComponent } from './views/post-creation/post-creation.component';
 import { LandingPageComponent } from './views/landing-page/landing-page.component';
-import { FriendProfileComponent } from './friend-profile/friend-profile.component';
+import { FriendProfileComponent } from './views/friend-profile/friend-profile.component';
 import { AuthGuard } from './services/guard.component';
 
 export const routes: Routes = [
@@ -17,7 +17,7 @@ export const routes: Routes = [
   { path: 'profile', component: ProfileComponent }, 
   { path: 'edit-profile', component: EditProfileComponent}, 
   { path: 'post', component: PostCreationComponent},
-  { path: 'friend-profile', component: FriendProfileComponent},
+  { path: 'friend-profile/:id', component: FriendProfileComponent},
   { path: '**', redirectTo: '', pathMatch: 'full' }
 ];
 
