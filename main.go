@@ -307,7 +307,7 @@ func registerSongHandler(w http.ResponseWriter, r *http.Request) {
 
 	song1.Artist = song.Artists[0].Name
 	song1.Name = song.Name
-	song1.Popularity = string(song.Popularity)
+	song1.Popularity = string(rune(song.Popularity))
 
 	// Store user in MongoDB
 	_, err1 := userCollection.InsertOne(context.TODO(), song1)
@@ -355,6 +355,7 @@ func httpHandler() http.Handler {
 	router.HandleFunc("/profile", getUserProfile).Methods("GET")
 	router.HandleFunc("/profile", updateUserProfile).Methods("PUT")
 	router.HandleFunc("/getPosts/{username}", getPostsHandler).Methods("GET")
+	router.HandleFunc("/getFeed/{username}", getFeed).Methods("GET")
 
 	// Protect this route with JWT middleware
 	router.HandleFunc("/protected", jwtMiddleware(protectedHandler)).Methods("GET")
@@ -690,6 +691,57 @@ func getPostsHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(posts)
 }
 
+// Get Feed by searching for each email that's in user's following array and getting each of the posts that each of those
+// email users have and returning them
+func getFeed(w http.ResponseWriter, r *http.Request) {
+
+	userCollection := client.Database(dbName).Collection("users")
+	postCollection := client.Database(dbName).Collection("posts")
+
+	// Get the username from the request URL
+	vars := mux.Vars(r)
+	username := vars["username"]
+
+	// Ensure the username is provided
+	if username == "" {
+		http.Error(w, "Username is required", http.StatusBadRequest)
+		return
+	}
+
+	// Find the user by username
+	var user User
+	err := userCollection.FindOne(context.TODO(), bson.M{"username": username}).Decode(&user)
+	if err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	// Get posts from all users the current user is following
+	var posts []Post
+	for _, following := range user.Following {
+		cursor, err := postCollection.Find(context.TODO(), bson.M{"user": following})
+		if err != nil {
+			http.Error(w, "Error fetching posts", http.StatusInternalServerError)
+			return
+		}
+
+		defer cursor.Close(context.TODO())
+
+		for cursor.Next(context.TODO()) {
+			var post Post
+			if err := cursor.Decode(&post); err != nil {
+				http.Error(w, "Error decoding post", http.StatusInternalServerError)
+				return
+			}
+			posts = append(posts, post)
+		}
+	}
+
+	// Return the feed posts
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(posts)
+}
+
 // Reverse proxy for Angular app
 func getOrigin() *url.URL {
 	origin, err := url.Parse("http://localhost:4200")
@@ -697,6 +749,363 @@ func getOrigin() *url.URL {
 		log.Fatalf("Failed to parse origin URL: %v", err)
 	}
 	return origin
+}
+
+func getProfileHandlerForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Client, userCollection *mongo.Collection) {
+
+	userCollection = client.Database(dbName).Collection(userCollectionName)
+
+	username := r.URL.Query().Get("username")
+	if username == "" {
+		http.Error(w, "Username is required", http.StatusBadRequest)
+		return
+	}
+
+	// Find user in MongoDB
+	var user struct {
+		Username  string   `bson:"username" json:"username"`
+		Name      string   `json:"name"`
+		TopArtist string   `bson:"top_artist" json:"topArtist"`
+		TopSong   string   `bson:"top_song" json:"topSong"`
+		FavSongs  []string `bson:"favorite_songs" json:"favSongs"`
+		FavGenres []string `bson:"favorite_genres" json:"favGenres"`
+	}
+
+	err := userCollection.FindOne(context.TODO(), bson.M{"username": username}).Decode(&user)
+	if err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	// Return the user's profile
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(user)
+}
+
+func registerSongHandlerForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Client, userCollection *mongo.Collection) {
+
+	userCollection = client.Database(dbName).Collection(songCollectionName)
+
+	authConfig := &clientcredentials.Config{
+		ClientID:     "3bd23353135d447b80b5e0c9d70775dc",
+		ClientSecret: "05454a9a1a2b48a19769e51b025798c4",
+		TokenURL:     spotify.TokenURL,
+	}
+
+	accessToken, err := authConfig.Token(context.Background())
+	if err != nil {
+		log.Fatalf("error retrieve access token: %v", err)
+	}
+
+	client1 := spotify.Authenticator{}.NewClient(accessToken)
+
+	var song1 Song
+
+	json.NewDecoder(r.Body).Decode(&song1)
+
+	log.Println(song1.Id)
+
+	songID := spotify.ID(song1.Id)
+
+	song, err := client1.GetTrack(songID)
+
+	if err != nil {
+		log.Fatalf("error retrieve playlist data: %v", err)
+	}
+
+	song1.Artist = song.Artists[0].Name
+	song1.Name = song.Name
+	song1.Popularity = string(rune(song.Popularity))
+
+	// Store user in MongoDB
+	_, err1 := userCollection.InsertOne(context.TODO(), song1)
+
+	if err1 != nil {
+		http.Error(w, "Error registering user", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+
+	json.NewEncoder(w).Encode(map[string]string{"message": "Song Post registered successfully"})
+
+	log.Println("Song ID: ", song.ID)
+	log.Println("Song Name: ", song.Name)
+	log.Println("Song Artist: ", song.Artists)
+}
+
+func registerAlbumHandlerForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Client, userCollection *mongo.Collection) {
+
+	userCollection = client.Database(dbName).Collection(albumCollectionName)
+
+	authConfig := &clientcredentials.Config{
+		ClientID:     "3bd23353135d447b80b5e0c9d70775dc",
+		ClientSecret: "05454a9a1a2b48a19769e51b025798c4",
+		TokenURL:     spotify.TokenURL,
+	}
+
+	accessToken, err := authConfig.Token(context.Background())
+	if err != nil {
+		log.Fatalf("error retrieve access token: %v", err)
+	}
+
+	client1 := spotify.Authenticator{}.NewClient(accessToken)
+
+	var album1 Album
+
+	json.NewDecoder(r.Body).Decode(&album1)
+
+	albumID := spotify.ID(album1.Id)
+
+	album, err := client1.GetAlbum(albumID)
+
+	if err != nil {
+		log.Fatalf("error retrieve playlist data: %v", err)
+	}
+
+	album1.Artist = album.Artists[0].Name
+	album1.Name = album.Name
+	//album1.Genre = album.Genres[0]
+	album1.ReleaseDate = album.ReleaseDate
+
+	// Store user in MongoDB
+	_, err1 := userCollection.InsertOne(context.TODO(), album1)
+
+	if err1 != nil {
+		http.Error(w, "Error registering user", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+
+	json.NewEncoder(w).Encode(map[string]string{"message": "Album Post registered successfully"})
+
+	log.Println("Album ID: ", album.ID)
+	log.Println("Album Name: ", album.Name)
+	log.Println("Artist: ", album.Artists)
+	log.Println("Genre: ", album.Genres)
+	log.Println("Cover Art: ", album.Images)
+	log.Println("Release Date: ", album.ReleaseDate)
+
+}
+
+func registerHandlerForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Client, userCollection *mongo.Collection) {
+
+	userCollection = client.Database(dbName).Collection(userCollectionName)
+
+	var user User
+
+	json.NewDecoder(r.Body).Decode(&user)
+
+	// Hash password
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	user.Password = string(hashedPassword)
+
+	// Store user in MongoDB
+	_, err := userCollection.InsertOne(context.TODO(), user)
+
+	if err != nil {
+		http.Error(w, "Error registering user", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+
+	json.NewEncoder(w).Encode(map[string]string{"message": "User registered successfully"})
+
+}
+
+// Login handler
+func loginHandlerForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Client, userCollection *mongo.Collection) {
+
+	userCollection = client.Database(dbName).Collection(userCollectionName)
+
+	var user User
+	json.NewDecoder(r.Body).Decode(&user)
+
+	// Fetch user from MongoDB
+	var foundUser User
+	err := userCollection.FindOne(context.TODO(), bson.M{"username": user.Username}).Decode(&foundUser)
+	if err != nil {
+		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
+		return
+	}
+
+	// Compare password
+	err = bcrypt.CompareHashAndPassword([]byte(foundUser.Password), []byte(user.Password))
+	if err != nil {
+		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
+		return
+	}
+
+	// Generate JWT token
+	token := generateJWT(user.Username)
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"token": token})
+}
+
+func followUserHandlerForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Client, userCollection *mongo.Collection) {
+
+	userCollection = client.Database(dbName).Collection(userCollectionName)
+
+	// Decode request body
+	var request struct {
+		Follower string `json:"follower"`
+		Followee string `json:"followee"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&request)
+
+	if err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	// Update the follower's document in MongoDB to add the followee to the "Following" list
+	filter := bson.M{"username": request.Follower}
+	update := bson.M{"$addToSet": bson.M{"following": request.Followee}} // Ensure no duplicates
+
+	_, err = userCollection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		http.Error(w, "Error updating follow list", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "User followed successfully"})
+
+}
+func setUpProfileForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Client, userCollection *mongo.Collection) {
+
+	userCollection = client.Database(dbName).Collection(userCollectionName)
+
+	// Decode request body
+	var request struct {
+		Username  string   `bson:"username" json:"username"`
+		Name      string   `json:"name"`
+		TopArtist string   `bson:"top_artist" json:"topArtist"`
+		TopSong   string   `bson:"top_song" json:"topSong"`
+		FavSongs  []string `bson:"favorite_songs" json:"favSongs"`
+		FavGenres []string `bson:"favorite_genres" json:"favGenres"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&request)
+
+	if err != nil {
+
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+
+	}
+
+	filter := bson.M{"username": request.Username}
+
+	// Define update operation (set new values)
+	update := bson.M{
+		"$set": bson.M{
+			"name":            request.Name,
+			"top_artist":      request.TopArtist,
+			"top_song":        request.TopSong,
+			"favorite_songs":  request.FavSongs,
+			"favorite_genres": request.FavGenres,
+		},
+	}
+
+	// Perform the update
+	_, err = userCollection.UpdateOne(context.TODO(), filter, update)
+
+	if err != nil {
+		http.Error(w, "Error updating profile", http.StatusInternalServerError)
+		return
+	}
+
+	// Send success response
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Profile updated successfully"})
+
+}
+
+func unfollowUserHandlerForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Client, userCollection *mongo.Collection) {
+
+	userCollection = client.Database(dbName).Collection(userCollectionName)
+
+	// Decode request body
+	var request struct {
+		Follower string `json:"follower"`
+		Followee string `json:"followee"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&request)
+
+	if err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	// Update the follower's document in MongoDB to add the followee to the "Following" list
+	filter := bson.M{"username": request.Follower}
+
+	update := bson.M{"$pull": bson.M{"following": request.Followee}} // Ensure no duplicates
+
+	_, err = userCollection.UpdateOne(context.TODO(), filter, update)
+
+	if err != nil {
+		http.Error(w, "Error updating follow list", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "User unfollowed successfully"})
+
+}
+
+func getFeedForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Client, userCollection *mongo.Collection, postCollection *mongo.Collection) {
+
+	userCollection = client.Database(dbName).Collection(userCollectionName)
+	postCollection = client.Database(dbName).Collection("posts")
+
+	username := r.URL.Query().Get("username")
+
+	// Ensure the username is provided
+	if username == "" {
+		http.Error(w, "Username is required", http.StatusBadRequest)
+		return
+	}
+
+	// Find the user by username
+	var user User
+	err := userCollection.FindOne(context.TODO(), bson.M{"username": username}).Decode(&user)
+	if err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	// Get posts from all users the current user is following
+	var posts []Post
+	for _, following := range user.Following {
+		cursor, err := postCollection.Find(context.TODO(), bson.M{"user": following})
+		if err != nil {
+			http.Error(w, "Error fetching posts", http.StatusInternalServerError)
+			return
+		}
+
+		defer cursor.Close(context.TODO())
+
+		for cursor.Next(context.TODO()) {
+			var post Post
+			if err := cursor.Decode(&post); err != nil {
+				http.Error(w, "Error decoding post", http.StatusInternalServerError)
+				return
+			}
+			posts = append(posts, post)
+		}
+	}
+
+	// Return the feed posts
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(posts)
+
 }
 
 var origin = getOrigin()
