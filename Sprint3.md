@@ -17,7 +17,6 @@ On the frontend, we improved interactivity, personalization, and routing:
 - **Routing and Navigation**: Refined the navbar and page routing for smoother and more predictable navigation.  
 
 ## Backend Unit Tests  
-Implemented using Go’s `testing` package and `github.com/stretchr/testify/assert`, the following backend functionalities were rigorously tested:  
 
 ### TestRegisterHandler  
 - Tests user registration and ensures the password is hashed.  
@@ -54,4 +53,59 @@ Implemented using Go’s `testing` package and `github.com/stretchr/testify/asse
 
 ### TestGetFeedHandler  
 - Tests retrieving posts from followed users for a given user.  
-- Confirms the feed is returned successfully with **HTTP 200 OK**.  
+- Confirms the feed is returned successfully with **HTTP 200 OK**.
+
+# Backend API Documentation
+
+The backend API includes the following endpoints:  
+
+## Authentication  
+
+### `POST /register`  
+Registers a new user.  
+
+### `POST /login`  
+Authenticates a user.  
+
+## User Management  
+
+### `POST /follow`  
+Allows a user to follow another user.  
+
+### `POST /unfollow`  
+Allows a user to unfollow another user.  
+
+### `PUT /setUpProfile`  
+Creates or updates a user profile.  
+
+### `GET /getProfile`  
+Retrieves user profile information.  
+
+### `PUT /editProfile`  
+Updates a user’s profile with new information.  
+
+## Posts Management  
+
+### `POST /registerSong`  
+Registers a song post.  
+
+### `POST /addPost`  
+Adds a post.  
+
+### `PUT /updatePost/{post_id}`  
+Updates a post.  
+
+### `DELETE /deletePost/{post_id}`  
+Deletes a post.  
+
+### `GET /getPost/{post_id}`  
+Gets a post.  
+
+## User Feed  
+
+### `GET /feed?username={username}`  
+Retrieves posts from users that the specified user is following.  
+
+**Query Parameter:**  
+- `username` – the username of the current user.  
+
