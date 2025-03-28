@@ -115,6 +115,6 @@ export class FriendProfileComponent implements OnInit {
     
     }
   
-    me = true;
-    following = false;
+    me = false;
+    following = true;
   }
