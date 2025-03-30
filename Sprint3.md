@@ -19,6 +19,61 @@ On the frontend, we improved interactivity, personalization, and routing:
 ## Youtube Demo
 https://youtu.be/93jt3K3rwqQ
 
+## Unit Tests for Frontend
+Below is the list of unit tests implemented for frontend functionality, implemented using jasmine and karma:
+
+### AppComponent
+- ensures that the component is created and launched successfully
+- validates that the title in the component is correct
+- checks that the navbar component is rendered within it
+
+### SignupComponent
+- Ensures that the signup page is created and launched successfully
+
+### LoginComponent
+- Ensures that the login page is created and launched successfully
+
+### PostCreationComponent
+-  Ensures that post creation page has no errors and is deployed fully
+
+### ProfileComponent
+- Verifies that the profile is fully functional
+
+### FeedComponent
+- Ensures that the feed component works and is created
+
+### EditProfileComponent
+- Ensures that the edit profile component is fully correct and can be launched
+  
+### FriendProfileComponent
+-  Ensures that the friend profile page has no errors and is created
+
+### BioComponent
+- Verifies that the bio component is correct and has no errors on creation
+
+### FriendsComponent
+- Ensures that the friends component is created and can be used successfully
+
+### NavBarComponent
+- Ensures that the navbar is created without errors
+
+### PlaylistCardComponent
+- Ensures that the playlist card is successfully created to be displayed in other components
+  
+### ReviewCardComponent
+- Ensures that the review card is successfully created to be displayed in other components
+  
+### SongCardComponent
+- Ensures that the navbar is created without errors
+
+## Cypress Test for Frontend
+
+### Test1: Login form
+- Navigates to login page
+- Fills in the input for email and password
+- Clicks the button to submit
+- Checks for an alert to say 'Login Successful'
+
 ## Backend Unit Tests  
 
 ### TestRegisterHandler  
