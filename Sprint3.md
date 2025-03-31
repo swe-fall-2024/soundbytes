@@ -15,6 +15,7 @@ On the frontend, we improved interactivity, personalization, and routing:
 - **User State Management**: Dynamically stored the logged-in user and made the data accessible throughout the site.  
 - **Post Songs Page UI**: Improved form design and made the experience more intuitive for users.  
 - **Routing and Navigation**: Refined the navbar and page routing for smoother and more predictable navigation.
+- **Search Functionality**: Added search bar to navbar that dynamically routes to other users' profiles
 
 ## Youtube Demo
 https://youtu.be/93jt3K3rwqQ
@@ -65,6 +66,12 @@ Below is the list of unit tests implemented for frontend functionality, implemen
   
 ### SongCardComponent
 - Ensures that the navbar is created without errors
+
+### SearchComponent
+- Ensures that the review card is successfully created to be displayed in other components
+  
+### ProfileService
+- Ensures that the profile service that updates a user's profile is functioning properly
 
 ## Cypress Test for Frontend
 
