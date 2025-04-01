@@ -359,6 +359,9 @@ func httpHandler() http.Handler {
 	// Protect this route with JWT middleware
 	router.HandleFunc("/protected", jwtMiddleware(protectedHandler)).Methods("GET")
 
+	// Search Bar Handler
+	router.HandleFunc("/searchUsers", searchUsersHandler).Methods("GET")
+
 	// Serve Angular app
 	router.PathPrefix("/").Handler(AngularHandler).Methods("GET")
 
@@ -1022,4 +1025,47 @@ func unfollowUserHandlerForTesting(w http.ResponseWriter, r *http.Request, clien
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"message": "User unfollowed successfully"})
 
+}
+
+func searchUsersHandler(w http.ResponseWriter, r *http.Request) {
+    userCollection = client.Database(dbName).Collection(userCollectionName)
+
+    // Get the search query from the URL parameters
+    query := r.URL.Query().Get("q")
+    if query == "" {
+        http.Error(w, "Query parameter 'q' is required", http.StatusBadRequest)
+        return
+    }
+
+    // Use a regex search to find users whose usernames start with the query string
+    filter := bson.M{"username": bson.M{"$regex": "^" + query, "$options": "i"}} // Case-insensitive search
+    options := options.Find().SetLimit(3) // Limit results to 3
+
+    cursor, err := userCollection.Find(context.TODO(), filter, options)
+    if err != nil {
+        http.Error(w, "Error fetching users", http.StatusInternalServerError)
+        return
+    }
+    defer cursor.Close(context.TODO())
+
+    // Collect the results
+    var users []User
+    for cursor.Next(context.TODO()) {
+        var user User
+        if err := cursor.Decode(&user); err != nil {
+            http.Error(w, "Error decoding user", http.StatusInternalServerError)
+            return
+        }
+        users = append(users, user)
+    }
+
+    // Extract only the usernames
+    var usernames []string
+    for _, user := range users {
+        usernames = append(usernames, user.Username)
+    }
+
+    // Respond with the JSON list of usernames
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(usernames)
 }

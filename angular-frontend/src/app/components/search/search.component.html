@@ -1,4 +1,25 @@
-<div class="search">
+<div class="search"> 
+  <input 
+    matInput 
+    class="search-input" 
+    type="text" 
+    [(ngModel)]="searchText" 
+    (input)="filterUsers()" 
+    placeholder="Search..." 
+  />
+
+  <ul class="options" *ngIf="searchText.trim() !== ''">
+    <li class="option" *ngIf="filteredItems?.length === 0">No results found</li>
+    <li class="option" *ngFor="let item of filteredItems" (click)="navigateToUser(item.username)">
+      {{ item.username }}
+    </li>
+  </ul>
+</div>
+
+
+
+
+<!-- <div class="search">
   <input matInput class='search-input' type="text" [(ngModel)]="searchText" placeholder="Search..." />
   <ul class="options">
     <li class="option" *ngIf="searchText != '' && filteredItems == null">No results found</li>
@@ -7,4 +28,4 @@
 </div>
 
 
-
+ -->
