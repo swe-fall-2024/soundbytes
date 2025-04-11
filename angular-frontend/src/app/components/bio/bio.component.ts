@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, ElementRef, Input, Renderer2} from '@angular/core';
 import {MatIconModule} from '@angular/material/icon';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatCardModule} from '@angular/material/card';
@@ -58,4 +58,13 @@ export class BioComponent {
   @Input() profile: any; 
   @Input() me: boolean | undefined;
   @Input() following: boolean | undefined;
+
+  imageUrl: string = '/4.jpg';
+
+  constructor(private el: ElementRef, private renderer: Renderer2) {}
+
+  ngAfterViewInit(): void {
+    const divElement = this.el.nativeElement.querySelector('.example-header-image');
+    this.renderer.setStyle(divElement, 'background-image', `url(${this.imageUrl})`);
+  }
 }
