@@ -8,6 +8,7 @@ interface Post {
 
 export interface Profile {
   userID: string;  // Corresponding to the Go field `UserID`
+  email: string;
   username: string;
   password: string;
   topArtist: string;

@@ -26,7 +26,7 @@ export class EditProfileComponent implements OnInit {
   userID = String(localStorage.getItem('currentUserEmail')); 
 
   profile = {
-      name: ' ',
+      email: ' ',
       username: '@shiba',
       currentFavType: 'Current Favorite Artist',
       currentFav: 'COIN',
@@ -64,7 +64,7 @@ export class EditProfileComponent implements OnInit {
       console.log("update profile method is being fired`")
       // Update the profiles array after the user data is available
       this.profile = {
-          name: "",
+          email: this.user.email,
           username: this.user.username,
           currentFavType: 'Current Favorite Artist',
           currentFav: this.user.topArtist, // Now this is updated correctly
@@ -84,6 +84,7 @@ export class EditProfileComponent implements OnInit {
     // Prepare the updated user profile data
     const updatedProfile: Profile = {
       userID: this.userID,
+      email: this.profile.email, 
       username: this.profile.username,
       password: this.user.password,
       topArtist: this.profile.topArtist,
