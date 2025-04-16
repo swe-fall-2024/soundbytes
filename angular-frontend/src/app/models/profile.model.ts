@@ -17,4 +17,5 @@ export interface Profile {
   favGenres: string[]; // List of favorite genres
   posts: Post[]; // List of posts (you can adjust the `Post` interface as needed)
   following: string[]; // List of usernames the user is following
+  pic: string;
 }

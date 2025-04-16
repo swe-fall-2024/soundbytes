@@ -58,13 +58,13 @@ export class BioComponent {
   @Input() profile: any; 
   @Input() me: boolean | undefined;
   @Input() following: boolean | undefined;
-
-  imageUrl: string = '/4.jpg';
+  @Input() pfp: string | undefined;
 
   constructor(private el: ElementRef, private renderer: Renderer2) {}
 
   ngAfterViewInit(): void {
+    console.log(this.profile.pic);
     const divElement = this.el.nativeElement.querySelector('.example-header-image');
-    this.renderer.setStyle(divElement, 'background-image', `url(${this.imageUrl})`);
+    this.renderer.setStyle(divElement, 'background-image', `url(${this.profile.pic})`);
   }
 }
