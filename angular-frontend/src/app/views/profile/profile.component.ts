@@ -35,6 +35,8 @@ export class ProfileComponent implements OnInit {
   // Static data for posts and friends
   posts: any[] = [];
 
+  pfp: string | undefined;
+
   // Static friends list
   friends = [
     { name: 'Katie' },
@@ -51,6 +53,7 @@ export class ProfileComponent implements OnInit {
       genres: ['indie', 'pop', 'hyperpop'],
       topSong: '',
       topArtist: '',
+      pic: '/4.jpg'
     }
   ];
 
@@ -87,6 +90,7 @@ export class ProfileComponent implements OnInit {
   updateProfiles() {
     if (this.user) {
       // Update the profiles array after the user data is available
+      console.log(this.user.topArtist);
       this.profiles = [
         {
           name: this.user.name,
@@ -96,8 +100,11 @@ export class ProfileComponent implements OnInit {
           genres: this.user.favGenres,
           topSong: this.user.topSong, // Now this is updated correctly
           topArtist: this.user.topArtist, // Now this is updated correctly
+          pic: this.user.pic,
         }
       ];
+      this.pfp = this.user.pic;
+
     }
   }
   updateFriends() {

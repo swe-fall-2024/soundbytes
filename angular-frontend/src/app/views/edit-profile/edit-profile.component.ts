@@ -25,6 +25,25 @@ export class EditProfileComponent implements OnInit {
   user: Profile | null = null;
   userID = String(localStorage.getItem('currentUserEmail')); 
 
+
+  profileImages: string[] = [
+    '/1.jpg',
+    '/2.jpg',
+    '/3.jpg',
+    '/4.jpg',
+    '/5.jpg',
+    '/6.jpg',
+    '/7.jpg',
+    '/8.jpg',
+    '/9.jpg',
+    '/10.jpg',
+    '/11.jpg',
+    '/12.jpg'
+  ];
+
+  randomIndex = Math.floor(Math.random() * this.profileImages.length);
+  im!: string;
+
   profile = {
       name: ' ',
       username: '@shiba',
@@ -33,6 +52,7 @@ export class EditProfileComponent implements OnInit {
       genres: ['indie','pop', 'hyperpop'],
       topSong: "stupid horse",
       topArtist: "100 gecs",
+      pic: this.profileImages.at(this.randomIndex)
   };
 
 
@@ -46,8 +66,17 @@ export class EditProfileComponent implements OnInit {
       console.log('User Info:', this.user);
       if (this.user && this.user.topSong) {
         console.log("Cameron's top Song:", this.user.topSong);  // Should log 'Sweet Caroline'
-      } else {
+      }
+      else {
         console.log("THE TOP SONG is missing or undefined");
+      }
+      console.log("HERE");
+      if (this.user.pic == ""){
+        this.im = this.profileImages.at(this.randomIndex)!;
+        console.log(this.im);
+      } 
+      else {
+        this.im = this.user.pic;
       }
 
       // After user data is fetched, update profiles
@@ -71,7 +100,10 @@ export class EditProfileComponent implements OnInit {
           genres: this.user.favGenres,
           topSong: this.user.topSong, // Now this is updated correctly
           topArtist: this.user.topArtist, // Now this is updated correctly
+          pic: this.im
         };
+        console.log('this is profile pic: ', this.profile.pic);
+        console.log(this.im);
     }
   }
 
@@ -81,7 +113,7 @@ export class EditProfileComponent implements OnInit {
       console.error('No user data to save');
       return;
     }
-
+    
     // Prepare the updated user profile data
     const updatedProfile: Profile = {
       userID: this.userID,
@@ -94,6 +126,7 @@ export class EditProfileComponent implements OnInit {
       favGenres: this.profile.genres,
       posts: this.user.posts,
       following: this.user.following,
+      pic: this.im
     };
 
     this.profileService.updateUserProfile(this.userID, updatedProfile).subscribe({

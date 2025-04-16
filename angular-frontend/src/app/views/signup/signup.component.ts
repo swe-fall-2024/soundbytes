@@ -10,6 +10,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { UserService } from '../../services/signup.component'; // Import the service
 import { NgIf } from '@angular/common';
+import { profile } from 'node:console';
 
 @Component({
   selector: 'app-signup',
@@ -56,32 +57,14 @@ export class SignupComponent {
     event.stopPropagation();
   }
 
-  profileImages: string[] = [
-    '/1.jpg',
-    '/2.jpg',
-    '/3.jpg',
-    '/4.jpg',
-    '/5.jpg',
-    '/6.jpg',
-    '/7.jpg',
-    '/8.jpg',
-    '/9.jpg',
-    '/10.jpg',
-    '/11.jpg',
-    '/12.jpg'
-  ];
-
-
   // New method to handle signup
   signUp() {
 
     if (this.email.valid && this.password.valid) {
 
-      const randomIndex = Math.floor(Math.random() * this.profileImages.length);
-
       const user = {
         username: this.email.value,
-        password: this.password.value
+        password: this.password.value,
       };
       
       if(localStorage.getItem('currentUserEmail') != null) {
