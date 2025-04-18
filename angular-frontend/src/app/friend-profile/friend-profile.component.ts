@@ -35,7 +35,7 @@ export class FriendProfileComponent implements OnInit {
   
   posts = [
     {
-      user: 'Shiba Inu',
+      user: 'Cameron Santiago',
       profile_img: 'url',
       type: 'favorite-song',
       title: 'MY FAVORITE SONG',
@@ -47,13 +47,13 @@ export class FriendProfileComponent implements OnInit {
       }
     },
     {
-      user: 'Shiba Inu',
+      user: 'Cameron Santiago',
       profile_img: 'url',
       type: 'album-review',
       title: 'ALBUM REVIEW',
       content:{
-        album_title: "Short n' Sweet",
-        review: "Sabrina Carpenter's latest album, Short n' Sweet, released on August 23, 2024, marks her sixth studio endeavor and showcases a refreshingly lighthearted and cheeky approach to pop music. The album has been lauded for its cleverness and effortless execution, setting a high bar for contemporary pop.",
+        album_title: "Cats in the Cradle",
+        review: "Harry Chapin’s iconic ballad Cats in the Cradle, released in 1974 on his Verities & Balderdash album, remains one of the most poignant reflections on fatherhood and the passage of time. Framed through deceptively simple lyrics and a memorable acoustic melody, the song captures the emotional distance that can grow between parents and children. Its timeless message about missed moments and generational echoes has resonated with listeners for decades, cementing its place as a powerful staple in American folk-rock storytelling.",
       }
     },
     {
@@ -62,7 +62,7 @@ export class FriendProfileComponent implements OnInit {
       type: 'playlist',
       title: 'MY NEW PLAYLIST',
       content:{
-        playlist_title: "Study playlist",
+        playlist_title: "Rap playlist",
         playlist_url: "https://open.spotify.com/playlist/1yJb4XCnM4KfeO2UkMAYnp?si=945e25fe87034d38",
         playlist_embed: "https://open.spotify.com/embed/playlist/1yJb4XCnM4KfeO2UkMAYnp?utm_source=generator",
       }
@@ -70,13 +70,13 @@ export class FriendProfileComponent implements OnInit {
   ];
   profiles = [
     {
-      name: 'Shiba Inu',
-      username: '@shiba',
+      name: 'Cameron Santiago',
+      username: '@camsanti37',
       currentFavType: 'Current Favorite Artist',
-      currentFav: 'COIN',
-      genres: {one:'indie',two:'pop',three:'hyperpop'},
-      topSong: "stupid horse",
-      topArtist: "100 gecs",
+      currentFav: 'Nirvana',
+      genres: {one:'rap',two:'pop',three:'rock'},
+      topSong: "Teenage Spirit",
+      topArtist: "Harry Chaplin",
     }
   ];
   me = false;

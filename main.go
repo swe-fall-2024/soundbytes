@@ -424,15 +424,23 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Fetch user from MongoDB
 	var foundUser User
+	fmt.Println("Username: ", user.Username) // Log if no userID is provided
+	fmt.Println("Password: ", user.Password) // Log if no userID is provided
+
 	err := userCollection.FindOne(context.TODO(), bson.M{"username": user.Username}).Decode(&foundUser)
 	if err != nil {
-		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
+		fmt.Println("failed early: ", user.Password) // Log if no userID is provided
+
+		http.Error(w, "Invalid credentialssssss", http.StatusUnauthorized)
 		return
 	}
 
 	// Compare password
 	err = bcrypt.CompareHashAndPassword([]byte(foundUser.Password), []byte(user.Password))
 	if err != nil {
+		fmt.Println("fawiled ttttt: ", user.Password) // Log if no userID is provided
+		fmt.Println("fawiled wewewe: ", foundUser.Password) // Log if no userID is provided
+
 		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
 		return
 	}
@@ -882,7 +890,6 @@ func registerHandlerForTesting(w http.ResponseWriter, r *http.Request, client *m
 	w.WriteHeader(http.StatusCreated)
 
 	json.NewEncoder(w).Encode(map[string]string{"message": "User registered successfully"})
-
 }
 
 // Login handler
