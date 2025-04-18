@@ -53,7 +53,7 @@ export class SearchComponent {
   }
 
   // Navigate to the user's profile page
-  navigateToUser(userID: string) {
+  navigateToUser(userID: any) {
     console.log("Navigating to user:", userID);
     this.searchText = '';  // Clear the search text after navigation
     this.router.navigate(['/friend-profile', userID]);  // Use Angular Router for navigation

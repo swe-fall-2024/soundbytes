@@ -1,19 +1,24 @@
-.search{
+.search {
   display: flex;
   flex-direction: column;
   width: fit-content;
   position: absolute;
   right: 10px;
+  top: 10px; /* Adjust the vertical positioning (you can change this value as needed) */
+  z-index: 9999; /* Ensure it appears above other content */
 }
-.search-input{
+
+.search-input {
   width: 20vw;
   border-radius: 5px;
   border: 1px solid gray;
 }
-.search-button{
+
+.search-button {
   border-radius: 0px 5px 5px 0px;
 }
-.options{
+
+.options {
   background-color: white;
   z-index: 1;
   border-radius: 5px;
@@ -21,19 +26,25 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  list-style-type: none;
   margin: 0;
   padding: 0;
-
+  position: absolute; /* Position it below the input field */
+  top: 100%;
+  left: 0;
 }
-.option{
+
+.option {
   display: flex;
   justify-content: center;
   align-items: center;
   border: 1px solid gray;
   width: 100%;
-  &:hover{
-    cursor: pointer;
-    background-color: rgb(253, 218, 224);
-  }
+  padding: 10px;
+  color: black; /* Ensure text color is black */
+}
+
+.option:hover {
+  cursor: pointer;
+  background-color: rgb(253, 218, 224);
+  color: black; /* Optionally change text color on hover */
 }
