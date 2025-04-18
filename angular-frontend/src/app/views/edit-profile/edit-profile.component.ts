@@ -75,6 +75,10 @@ export class EditProfileComponent implements OnInit {
 
       if(localStorage.getItem('count') != null) {
         this.randomIndex = parseInt(localStorage.getItem('count')!);
+        if(this.randomIndex > 11) {
+          localStorage.setItem('count', '0');
+          this.randomIndex = parseInt(localStorage.getItem('count')!);
+        }
       }
 
       if (this.user.pic == ""){
