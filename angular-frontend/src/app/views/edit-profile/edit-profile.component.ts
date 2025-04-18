@@ -41,8 +41,9 @@ export class EditProfileComponent implements OnInit {
     '/12.jpg'
   ];
 
-  randomIndex = Math.floor(Math.random() * this.profileImages.length);
+
   im!: string;
+  randomIndex = 11;
 
   profile = {
       name: ' ',
@@ -71,6 +72,11 @@ export class EditProfileComponent implements OnInit {
         console.log("THE TOP SONG is missing or undefined");
       }
       console.log("HERE");
+
+      if(localStorage.getItem('count') != null) {
+        this.randomIndex = parseInt(localStorage.getItem('count')!);
+      }
+
       if (this.user.pic == ""){
         this.im = this.profileImages.at(this.randomIndex)!;
         console.log(this.im);

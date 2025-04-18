@@ -73,6 +73,13 @@ export class SignupComponent {
 
       localStorage.setItem('currentUserEmail', this.email.value || '');
 
+      if(localStorage.getItem('count') != null) {
+        localStorage.setItem('count', String(parseInt(localStorage.getItem('count')!)+1));
+      }
+      else {
+        localStorage.setItem('count', '0');
+      }
+
       alert(localStorage.getItem('currentUserEmail'))
 
       this.http.post('http://127.0.0.1:4201/register', user).subscribe({
