@@ -9,6 +9,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -357,6 +358,7 @@ func httpHandler() http.Handler {
 	router.HandleFunc("/profile", updateUserProfile).Methods("PUT")
 	router.HandleFunc("/getPosts/{username}", getPostsHandler).Methods("GET")
 	router.HandleFunc("/getFeed/{username}", getFeed).Methods("GET")
+	router.HandleFunc("/likePost/{post_id}", likePostHandler).Methods("GET")
 
 	// Protect this route with JWT middleware
 	router.HandleFunc("/protected", jwtMiddleware(protectedHandler)).Methods("GET")
@@ -740,9 +742,59 @@ func getFeed(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// Get your own posts as well
+
+	cursor1, err := postCollection.Find(context.TODO(), bson.M{"user": username})
+	if err != nil {
+		http.Error(w, "Error fetching posts", http.StatusInternalServerError)
+		return
+	}
+	defer cursor1.Close(context.TODO())
+
+	for cursor1.Next(context.TODO()) {
+		var post1 Post
+		if err := cursor1.Decode(&post1); err != nil {
+			http.Error(w, "Error decoding post", http.StatusInternalServerError)
+			return
+		}
+		posts = append(posts, post1)
+	}
+
 	// Return the feed posts
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(posts)
+}
+
+func likePostHandler(w http.ResponseWriter, r *http.Request) {
+
+	postCollection := client.Database(dbName).Collection("posts")
+
+	// Get the post ID from the request URL
+	vars := mux.Vars(r)
+	postIDStr := vars["post_id"]
+
+	print("Post ID: ", postIDStr)
+
+	postID, err1 := strconv.Atoi(postIDStr)
+
+	if err1 != nil {
+		http.Error(w, "Invalid post ID", http.StatusBadRequest)
+		return
+	}
+
+	// Increment the like count for the post
+	filter := bson.M{"_id": postID}
+	update := bson.M{"$inc": bson.M{"like_count": 1}}
+
+	_, err := postCollection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		http.Error(w, "Error liking post", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Post liked successfully"})
+
 }
 
 // Reverse proxy for Angular app

@@ -39,6 +39,7 @@ export class FeedComponent implements OnInit {
     );
 
   }
+
 }
 
 /* we can embed tracks and playlists from spotify:
