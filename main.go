@@ -569,7 +569,7 @@ func updateUserProfile(w http.ResponseWriter, r *http.Request) {
 			"favorite_genres": updatedUser.FavGenres,
 			"posts":           updatedUser.Posts,     // Ensure that posts are handled correctly (null or empty array)
 			"following":       updatedUser.Following, // Ensure that following is handled correctly (null or empty array)
-			"pic": 			   updatedUser.Pic,
+			"pic":             updatedUser.Pic,
 		},
 	}
 
@@ -648,7 +648,7 @@ func getUserProfile(w http.ResponseWriter, r *http.Request) {
 		"favGenres": user["favorite_genres"], // rename favorite_genres to favGenres
 		"posts":     user["posts"],           // posts can stay the same
 		"following": user["following"],       // following can stay the same
-		"pic":  	 user["pic"],
+		"pic":       user["pic"],
 	}
 
 	// Encode the response and send it to the client
@@ -824,7 +824,7 @@ func getProfileHandlerForTesting(w http.ResponseWriter, r *http.Request, client 
 		TopSong   string   `bson:"top_song" json:"topSong"`
 		FavSongs  []string `bson:"favorite_songs" json:"favSongs"`
 		FavGenres []string `bson:"favorite_genres" json:"favGenres"`
-		Pic 	  string `bson:"pic" json:"pic"`
+		Pic       string   `bson:"pic" json:"pic"`
 	}
 
 	err := userCollection.FindOne(context.TODO(), bson.M{"username": username}).Decode(&user)
@@ -1161,6 +1161,27 @@ func getFeedForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Cli
 	// Return the feed posts
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(posts)
+
+}
+
+func likePostHandlerForTesting(w http.ResponseWriter, r *http.Request, client *mongo.Client, postCollection *mongo.Collection) {
+
+	print("inside of likePostHandlerForTesting")
+
+	postCollection = client.Database(dbName).Collection("posts")
+
+	// Increment the like count for the post
+	filter := bson.M{"_id": 92842}
+	update := bson.M{"$inc": bson.M{"like_count": 1}}
+
+	_, err := postCollection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		http.Error(w, "Error liking post", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Post liked successfully"})
 
 }
 

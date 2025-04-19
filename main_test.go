@@ -468,3 +468,47 @@ func TestGetFeedHandler(t *testing.T) {
 	// Check the response status code
 	assert.Equal(t, http.StatusOK, w.Code)
 }
+
+func TestLikePost(t *testing.T) {
+	// Setup the test environment
+	setup()
+
+	testUserCollection = testClient.Database("testdb").Collection("posts")
+
+	// Decode request body
+	var request struct {
+		PostID string `json:"post_id"`
+	}
+
+	request.PostID = "92842"
+
+	// Convert testUser to JSON
+	requestJSON, err := json.Marshal(request)
+
+	println(string(requestJSON))
+
+	if err != nil {
+
+		t.Fatalf("Failed to marshal test user: %v", err)
+	}
+
+	// Create a new HTTP POST request with the test user data
+
+	req := httptest.NewRequest(http.MethodPost, "/likePost/92842", bytes.NewReader(requestJSON))
+
+	println(req)
+
+	w := httptest.NewRecorder()
+
+	println(w)
+
+	// Call the register handler
+	likePostHandlerForTesting(w, req, testClient, testUserCollection)
+
+	// Check the response status code
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	// Check the response body message
+	expectedMessage := `{"message": "Post liked successfully"}`
+	assert.JSONEq(t, expectedMessage, w.Body.String())
+}
