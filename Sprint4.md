@@ -120,7 +120,7 @@ Below is the list of unit tests implemented for frontend functionality, implemen
 - Simulates sending a like request for a post with ID `"92842"`.  
 - Verifies that the server responds with **HTTP 200 OK**.  
 - Confirms the response body contains the message: `{"message": "Post liked successfully"}`.
-- 
+  
 # Backend API Documentation
 
 The backend API includes the following endpoints:  
@@ -175,3 +175,5 @@ Retrieves posts from users that the specified user is following.
 **Query Parameter:**  
 - `username` – the username of the current user.  
 
+### `GET /likePost/{post_id}` 
+Update's Post Profile increasing its like count by 1
