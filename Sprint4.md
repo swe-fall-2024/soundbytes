@@ -10,8 +10,8 @@ During Sprint 4, the backend was enhanced with new functionalities that elevate 
 
 ### Frontend  
 - **Profile Pictures**: Added functionality to assign different user profile picture to each user.
-- **Post Creation Formatting**: 
-- **Updated Frontend Tests**: 
+- **Post Creation Formatting**: Formatted the page more intuitively with better alignment where the user can enlarge text boxes if needed.
+- **Updated Frontend Unit Tests**: Fixed the animation error in change-detection form tests and added paramMap functionality to friend-profile spec.
 
 ## Youtube Demo
 
