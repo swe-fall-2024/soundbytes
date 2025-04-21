@@ -9,6 +9,9 @@ During Sprint 4, the backend was enhanced with new functionalities that elevate 
 - **Search For Users To Follow**: Enabled users to search for and follow others, fostering a more connected user experience.   
 
 ### Frontend  
+- **Profile Pictures**: Added functionality to assign different user profile picture to each user.
+- **Post Creation Formatting**: 
+- **Updated Frontend Tests**: 
 
 ## Youtube Demo
 
