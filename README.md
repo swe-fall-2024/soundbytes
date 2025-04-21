@@ -14,3 +14,34 @@ Popular music apps allow a user to listen to music and sometimes follow friends,
 - apple music
 - amazon music
 - ticketmaster
+
+#User Manual
+
+Soundbytes is an angular-go web application. It runs on localhost in any browser, but since testing utilized chrome, chrome is the preferred platform.
+
+## Access the Web App
+
+1) git clone this repository, soundbytes, into a desired directory through the terminal
+2) cd into this repository from the terminal
+   
+## Run SoundBytes
+
+### Required Dependencies:
+- Go: ensure your system has go installed to run the backend api
+- mongodb: ensure mongodb is installed and running for the backend's connection
+- node, npm, & ng: to install all necessary dependencies npm install will need to be called
+
+Run Frontend
+1) Navigate to the soundbytes directory and then to angular-frontend in the terminal
+2) Once cded into angular-frontend, run npm install
+3) With all dependencies installed, run ng serve
+4) The above command should provide you with a link to the application running on your localhost at port 4200
+5) Navigate to http://localhost:4200/ to view the soundbytes application!
+
+**The defualt port for angular applications is 4200, but it may be different so follow the link specifically provided by ng serve**
+
+Run Backend
+1) In a separate terminal tab or window, navigate to the soundbytes directory
+2) Once cded into soundbytes, run go run main.go
+3) This should automatically connect to the mongodb connection (ensure mongodb is running and open to connections)
+4) With that, the app is ready to be used! **Note that both backend and frontend commands must be running at the same time**
