@@ -7,8 +7,8 @@
     <br>
     <mat-card-content id="page-form">
         <form class="example-form" >
-            <div class="example-container">
-              <mat-form-field>
+            <div class="form">
+              <mat-form-field style="width: 40vw">
                 <mat-label>Select Post Type:</mat-label>
                 <mat-select  [formControl]="selectedType" required>
                   <mat-option>--</mat-option>
@@ -23,7 +23,7 @@
             </div>
   
             <div class="form" *ngIf="selectedType.value === 'favorite-song'">
-              <mat-form-field>
+              <mat-form-field style="width: 40vw">
                 <mat-label>Input Song Title:</mat-label>
                 <input 
                         matInput
@@ -33,7 +33,7 @@
                     />
                 <mat-error *ngIf="songTitle.invalid">{{errorMessage()}}</mat-error>
               </mat-form-field>
-              <mat-form-field>
+              <mat-form-field style="width: 40vw">
                 <mat-label>Input Song Link:</mat-label>
                 <input 
                         matInput
@@ -47,7 +47,7 @@
             </div>
             
             <div class="form" *ngIf="selectedType.value === 'playlist'">
-              <mat-form-field>
+              <mat-form-field style="width: 40vw">
                 <mat-label>Input Playlist Title:</mat-label>
                 <input 
                         matInput
@@ -57,7 +57,7 @@
                     />
                 <mat-error *ngIf="playlistTitle.invalid">{{errorMessage()}}</mat-error>
               </mat-form-field>
-              <mat-form-field>
+              <mat-form-field style="width: 40vw">
                 <mat-label>Input Playlist Link:</mat-label>
                 <input 
                         matInput
@@ -72,7 +72,7 @@
             
   
             <div class="form" *ngIf="selectedType.value === 'album-review'">
-              <mat-form-field>
+              <mat-form-field style="width: 40vw">
                 <mat-label>Input Album Title:</mat-label>
                 <input 
                         matInput
@@ -82,9 +82,9 @@
                     />
                 <mat-error *ngIf="reviewTitle.invalid">{{errorMessage()}}</mat-error>
               </mat-form-field>
-              <mat-form-field>
+              <mat-form-field style="width: 40vw">
                 <mat-label>Write your review!</mat-label>
-                <textarea matInput cdkTextareaAutosize name="review" [formControl]="review"></textarea>
+                <textarea matInput name="review" [formControl]="review"></textarea>
                 <mat-error *ngIf="review.invalid">{{errorMessage()}}</mat-error>
               </mat-form-field>
   
