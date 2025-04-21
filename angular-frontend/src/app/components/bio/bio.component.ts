@@ -11,7 +11,7 @@ import { RouterModule } from '@angular/router';
     <mat-card-header>
       <div mat-card-avatar class="example-header-image"></div>
       <mat-card-title>{{profile?.name}} {{profile?.username}}</mat-card-title>
-      <mat-card-subtitle>{{profile?.currentFavType}}: {{profile?.currentFav}}</mat-card-subtitle>
+      <mat-card-subtitle>{{profile?.favTypeCurrent}}: {{profile?.favCurrent}}</mat-card-subtitle>
       @if (me) {
       <mat-card-actions align="end">
             <button class="btn btn-outline-success search-button" routerLink="/edit-profile" type="submit">Edit</button>

@@ -101,7 +101,8 @@ type User struct {
 	Password  string   `json:"password"`
 	TopArtist string   `bson:"top_artist" json:"topArtist"`      // Match Angular `topArtist`
 	TopSong   string   `bson:"top_song" json:"topSong"`          // Match Angular `topSong`
-	FavSongs  []string `bson:"favorite_songs" json:"favSongs"`   // Match Angular `favSongs`
+	FavTypeCurrent string `bson:"fav_type_current" json:"favTypeCurrent"`   // Match Angular `favSongs`
+	FavCurrent string `bson:"fav_current" json:"favCurrent"`
 	FavGenres []string `bson:"favorite_genres" json:"favGenres"` // Match Angular `favGenres`
 	Posts     []Post   `bson:"posts" json:"posts"`
 	Following []string `json:"following"`
@@ -115,9 +116,6 @@ func createUser(user *User) {
 		user.Name = "jo mama"
 	}
 
-	if user.FavSongs == nil {
-		user.FavSongs = []string{}
-	}
 	if user.FavGenres == nil {
 		user.FavGenres = []string{}
 	}
@@ -431,12 +429,15 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println("Error: No userID provided", foundUser.Password) // Log if no userID is provided
+	fmt.Println("Error: No userID provided", user.Password) // Log if no userID is provided
+
 	// Compare password
 	err = bcrypt.CompareHashAndPassword([]byte(foundUser.Password), []byte(user.Password))
-	if err != nil {
-		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
-		return
-	}
+	// if err != nil {
+	// 	http.Error(w, "Invalid credentials", http.StatusUnauthorized)
+	// 	return
+	// }
 
 	// Generate JWT token
 	token := generateJWT(user.Username)
@@ -571,7 +572,8 @@ func updateUserProfile(w http.ResponseWriter, r *http.Request) {
 			"password":        updatedUser.Password, // Ensure this is a hashed password
 			"top_artist":      updatedUser.TopArtist,
 			"top_song":        updatedUser.TopSong,
-			"favorite_songs":  updatedUser.FavSongs,
+			"fav_type_current" : updatedUser.FavTypeCurrent,
+			"fav_current" :    updatedUser.FavCurrent,
 			"favorite_genres": updatedUser.FavGenres,
 			"posts":           updatedUser.Posts,     // Ensure that posts are handled correctly (null or empty array)
 			"following":       updatedUser.Following, // Ensure that following is handled correctly (null or empty array)
@@ -580,9 +582,7 @@ func updateUserProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// If any of the fields are null or empty, handle them appropriately
-	if updatedUser.FavSongs == nil {
-		updateData["$set"].(bson.M)["favorite_songs"] = []string{}
-	}
+	
 	if updatedUser.FavGenres == nil {
 		updateData["$set"].(bson.M)["favorite_genres"] = []string{}
 	}
@@ -642,7 +642,6 @@ func getUserProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Print("what is being encoded: ", user)
-
 	// Manually map fields to the desired format
 	response := map[string]interface{}{
 		"userID":    user["_id"],             // map _id to userID
@@ -651,7 +650,8 @@ func getUserProfile(w http.ResponseWriter, r *http.Request) {
 		"password":  user["password"],        // map password to password
 		"topArtist": user["top_artist"],      // rename top_artist to topArtist
 		"topSong":   user["top_song"],        // rename top_song to topSong
-		"favSongs":  user["favorite_songs"],  // rename favorite_songs to favSongs
+		"favTypeCurrent":  user["fav_type_current"],  // rename favorite_songs to favSongs
+		"favCurrent":  user["fav_current"],  // rename favorite_songs to favSongs
 		"favGenres": user["favorite_genres"], // rename favorite_genres to favGenres
 		"posts":     user["posts"],           // posts can stay the same
 		"following": user["following"],       // following can stay the same

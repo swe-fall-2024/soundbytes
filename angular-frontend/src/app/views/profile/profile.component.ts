@@ -48,8 +48,8 @@ export class ProfileComponent implements OnInit {
     {
       name: 'Shibaaaaaa Inu',
       username: '@shiba',
-      currentFavType: 'Current Favorite Artist',
-      currentFav: '',
+      favTypeCurrent: 'Current Favorite Artist',
+      favCurrent: '',
       genres: ['indie', 'pop', 'hyperpop'],
       topSong: '',
       topArtist: '',
@@ -64,7 +64,7 @@ export class ProfileComponent implements OnInit {
 
     this.profileService.getUserProfile(this.userID).subscribe({
       next: (data) => {
-        console.log('Data from API:', data); // Log to check if the data looks correct
+        console.log('Data from API...:', data); // Log to check if the data looks correct
         this.user = data;
         console.log('User Info:', this.user);
         if (this.user && this.user.topSong) {
@@ -90,13 +90,16 @@ export class ProfileComponent implements OnInit {
   updateProfiles() {
     if (this.user) {
       // Update the profiles array after the user data is available
-      console.log(this.user.topArtist);
+      console.log('favCurretype', this.user.favTypeCurrent);
+      console.log('favCurrent', this.user.favCurrent);
+      console.log('user topSong', this.user.topSong);
+
       this.profiles = [
         {
           name: this.user.name,
           username: this.user.username,
-          currentFavType: 'Current Favorite Artist',
-          currentFav: this.user.topArtist, // Now this is updated correctly
+          favTypeCurrent: this.user.favTypeCurrent,
+          favCurrent: this.user.favCurrent, // Now this is updated correctly
           genres: this.user.favGenres,
           topSong: this.user.topSong, // Now this is updated correctly
           topArtist: this.user.topArtist, // Now this is updated correctly
@@ -130,5 +133,4 @@ export class ProfileComponent implements OnInit {
 
   me = true;
   following = false;
-
 }

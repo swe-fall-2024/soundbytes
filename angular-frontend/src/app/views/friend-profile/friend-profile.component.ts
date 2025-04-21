@@ -45,8 +45,8 @@ export class FriendProfileComponent implements OnInit {
       {
         name: 'Shibaaaaaa Inu',
         username: '@shiba',
-        currentFavType: 'Current Favorite Artist',
-        currentFav: '',
+        favTypeCurrent: 'Current Favorite Artist',
+        favCurrent: '',
         genres: ['indie', 'pop', 'hyperpop'],
         topSong: '',
         topArtist: '',
@@ -61,7 +61,7 @@ export class FriendProfileComponent implements OnInit {
 
       this.profileService.getUserProfile(this.userID).subscribe({
         next: (data) => {
-          console.log('Data from API:', data); // Log to check if the data looks correct
+          console.log('Data from API..:', data); // Log to check if the data looks correct
           this.user = data;
           console.log('User Info:', this.user);
           if (this.user && this.user.topSong) {
@@ -90,8 +90,8 @@ export class FriendProfileComponent implements OnInit {
           {
             name: this.user.name,
             username: this.user.username,
-            currentFavType: 'Current Favorite Artist',
-            currentFav: this.user.topArtist, // Now this is updated correctly
+            favTypeCurrent: this.user.favTypeCurrent,
+            favCurrent: this.user.favCurrent, // Now this is updated correctly
             genres: this.user.favGenres,
             topSong: this.user.topSong, // Now this is updated correctly
             topArtist: this.user.topArtist, // Now this is updated correctly

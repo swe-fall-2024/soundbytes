@@ -48,8 +48,8 @@ export class EditProfileComponent implements OnInit {
   profile = {
       name: ' ',
       username: '@shiba',
-      currentFavType: 'Current Favorite Artist',
-      currentFav: 'COIN',
+      favTypeCurrent: 'Current Favorite Artist',
+      favCurrent: 'COIN',
       genres: ['indie','pop', 'hyperpop'],
       topSong: "stupid horse",
       topArtist: "100 gecs",
@@ -62,7 +62,7 @@ export class EditProfileComponent implements OnInit {
   ngOnInit(): void {
   this.profileService.getUserProfile(this.userID).subscribe({
     next: (data) => {
-      console.log('Data from API:', data); // Log to check if the data looks correct
+      console.log('Data from API.:', data); // Log to check if the data looks correct
       this.user = data;
       console.log('User Info:', this.user);
       if (this.user && this.user.topSong) {
@@ -105,8 +105,8 @@ export class EditProfileComponent implements OnInit {
       this.profile = {
           name: this.user.name,
           username: this.user.username,
-          currentFavType: 'Current Favorite Artist',
-          currentFav: this.user.topArtist, // Now this is updated correctly
+          favTypeCurrent: this.user.favTypeCurrent,
+          favCurrent: this.user.favCurrent, // Now this is updated correctly
           genres: this.user.favGenres,
           topSong: this.user.topSong, // Now this is updated correctly
           topArtist: this.user.topArtist, // Now this is updated correctly
@@ -134,7 +134,8 @@ export class EditProfileComponent implements OnInit {
       password: this.user.password,
       topArtist: this.profile.topArtist,
       topSong: this.profile.topSong,
-      favSongs: this.user.favSongs,
+      favTypeCurrent: this.profile.favTypeCurrent,
+      favCurrent: this.profile.favCurrent,     
       favGenres: this.profile.genres,
       posts: this.user.posts,
       following: this.user.following,

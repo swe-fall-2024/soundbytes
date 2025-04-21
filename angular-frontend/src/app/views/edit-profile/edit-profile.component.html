@@ -18,7 +18,7 @@
 
       <mat-form-field class="example-full-width">
         <mat-label>Select an option</mat-label>
-        <mat-select [(ngModel)]="profile.currentFavType" name="favType">
+        <mat-select [(ngModel)]="profile.favTypeCurrent" name="favTypeCurrent">
           <mat-option value="Current Favorite Song">Current Favorite Song</mat-option>
           <mat-option value="Current Favorite Artist">Current Favorite Artist</mat-option>
           <mat-option value="Current Favorite Genre">Current Favorite Genre</mat-option>
@@ -27,7 +27,7 @@
 
       <mat-form-field class="example-full-width">
         <mat-label>Enter Favorite</mat-label>
-        <input matInput placeholder="Enter favorite" [(ngModel)]="profile.currentFav" name="currentFav">
+        <input matInput placeholder="Enter favorite" [(ngModel)]="profile.favCurrent" name="favCurrent">
       </mat-form-field>
 
       <table class="example-full-width" cellspacing="0">
