@@ -18,7 +18,16 @@ describe('FriendProfileComponent', () => {
       providers: [
         {
           provide: ActivatedRoute,
-          useValue: mockActivatedRoute
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: (key: string) => {
+                  if (key === 'id') return '1';
+                  return null;
+                }
+              }
+            }
+          }
         }
       ]
     })

@@ -3,6 +3,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { SignupComponent } from './signup.component';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('SignupComponent', () => {
   let component: SignupComponent;
@@ -10,7 +11,7 @@ describe('SignupComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SignupComponent, HttpClientModule ],
+      imports: [SignupComponent, HttpClientModule, BrowserAnimationsModule ],
       providers: [
         {
           provide: ActivatedRoute,

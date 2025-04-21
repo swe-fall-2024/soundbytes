@@ -35,9 +35,9 @@ import { RouterModule } from '@angular/router';
         
       </p>
       <mat-chip-set>
-        <mat-chip>{{profile.genres[0]}}</mat-chip>
-        <mat-chip>{{profile.genres[1]}}</mat-chip>
-        <mat-chip>{{profile.genres[2]}}</mat-chip>
+        <mat-chip>{{profile?.genres[0]}}</mat-chip>
+        <mat-chip>{{profile?.genres[1]}}</mat-chip>
+        <mat-chip>{{profile?.genres[2]}}</mat-chip>
       </mat-chip-set>
       <br>
       <div fxLayout="row" fxLayoutAlign="start center">
