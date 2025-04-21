@@ -15,7 +15,7 @@ Popular music apps allow a user to listen to music and sometimes follow friends,
 - amazon music
 - ticketmaster
 
-#User Manual
+# User Manual
 
 Soundbytes is an angular-go web application. It runs on localhost in any browser, but since testing utilized chrome, chrome is the preferred platform.
 
