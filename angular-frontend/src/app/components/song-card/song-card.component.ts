@@ -51,12 +51,12 @@ export class SongCardComponent {
   onLike(): void {
     // Call a service to update the like count on the backend
     console.log('Like button clicked for post:', this.post);
-    alert(`I liked a Post! Testing! ${JSON.stringify(this.post.post_id)}`);
+    //alert(`I liked a Post! Testing! ${JSON.stringify(this.post.post_id)}`);
     // Example API call to update like count
-    alert(`Checking Request ${this.post.post_id}`);
+   // alert(`Checking Request ${this.post.post_id}`);
     this.http.get<any[]>(`http://127.0.0.1:4201/likePost/${JSON.stringify(this.post.post_id)}`).subscribe(response => {
-       alert('Post liked successfully!');
-       alert(`Response: ${JSON.stringify(response)}`);
+       //alert('Post liked successfully!');
+       //alert(`Response: ${JSON.stringify(response)}`);
        if (this.post) {
          this.post.like_count = (this.post.like_count || 0) + 1;
        }
