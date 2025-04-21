@@ -44,7 +44,7 @@ func TestRegisterHandler(t *testing.T) {
 
 	// Define the test user
 	testUser := User{
-		Username:  "testuser234",
+		Username:  "testuser@gmail.com",
 		Password:  "testpassword",
 		Following: []string{},
 	}
@@ -105,7 +105,7 @@ func TestLoginHandler(t *testing.T) {
 
 	// Define the test user
 	testUser := User{
-		Username: "testuser",
+		Username: "testuser@gmail.com",
 		Password: "testpassword",
 	}
 
@@ -147,8 +147,8 @@ func TestFollowUserHandler(t *testing.T) {
 		Followee string `json:"followee"`
 	}
 
-	request.Follower = "testuser"
-	request.Followee = "testuser234"
+	request.Follower = "testuser@gmail.com"
+	request.Followee = "juan@ufl.edu"
 
 	// Convert testUser to JSON
 	requestJSON, err := json.Marshal(request)
@@ -187,25 +187,33 @@ func TestSetUpProfileHandler(t *testing.T) {
 
 	testUserCollection = testClient.Database("testdb").Collection("users")
 
-	var request struct {
-		Username         string   `json:"username"`
-		Name             string   `json:"name"`
-		TopArtist        string   `json:"top_artist"`
-		TopSong          string   `json:"top_song"`
-		TopGenre         string   `json:"top_genre"`
-		Top3Genres       []string `json:"top_3_genres"`
-		AllTimeFavSong   string   `json:"all_time_fav_song"`
-		AllTimeFavArtist string   `json:"all_time_fav_artist"`
+	type User struct {
+		UserID    string   `bson:"_id,omitempty" json:"userID"` // Change to match Angular `userID`
+		Username  string   `bson:"username" json:"username"`
+		Password  string   `json:"password"`
+		TopArtist string   `bson:"top_artist" json:"topArtist"`      // Match Angular `topArtist`
+		TopSong   string   `bson:"top_song" json:"topSong"`          // Match Angular `topSong`
+		FavSongs  []string `bson:"favorite_songs" json:"favSongs"`   // Match Angular `favSongs`
+		FavGenres []string `bson:"favorite_genres" json:"favGenres"` // Match Angular `favGenres`
+		Posts     []Post   `bson:"posts" json:"posts"`
+		Following []string `json:"following"`
 	}
 
-	request.Username = "testuser"
-	request.Name = "testname"
+	var request struct {
+		Username  string   `bson:"username" json:"username"`
+		Name      string   `json:"name"`
+		TopArtist string   `bson:"top_artist" json:"topArtist"`
+		TopSong   string   `bson:"top_song" json:"topSong"`
+		FavSongs  []string `bson:"favorite_songs" json:"favSongs"`
+		FavGenres []string `bson:"favorite_genres" json:"favGenres"`
+	}
+
+	request.Username = "testuser@gmail.com"
+	request.Name = "Mr Test"
 	request.TopArtist = "testtopartist"
 	request.TopSong = "testtopsong"
-	request.TopGenre = "testtopgenre"
-	request.Top3Genres = []string{"testtopgenre1", "testtopgenre2", "testtopgenre3"}
-	request.AllTimeFavSong = "testalltimefavsong"
-	request.AllTimeFavArtist = "testalltimefavartist"
+	request.FavSongs = []string{"We are the Champions"}
+	request.FavGenres = []string{"testtopgenre1", "testtopgenre2", "testtopgenre3"}
 
 	// Convert testUser to JSON
 	userJSON, err := json.Marshal(request)
@@ -249,7 +257,7 @@ func TestGetProfileHandler(t *testing.T) {
 	testUserCollection = testClient.Database("testdb").Collection("users")
 
 	// Define the test username
-	testUsername := "testuser"
+	testUsername := "testuser@gmail.com"
 
 	// Create a new HTTP GET request with the username as a query parameter
 	req := httptest.NewRequest(http.MethodGet, "/getProfile?username="+testUsername, nil)
@@ -263,9 +271,17 @@ func TestGetProfileHandler(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 
 	// Check the response body message
-	expectedMessage := `{"username":"testuser","name":"testname","top_artist":"testtopartist","top_song":"testtopsong","top_genre":"testtopgenre","top_3_genres":["testtopgenre1","testtopgenre2","testtopgenre3"],"all_time_fav_song":"testalltimefavsong","all_time_fav_artist":"testalltimefavartist"}`
+	expectedMessage := `{
+	"username":"testuser@gmail.com",
+	"name":"Mr Test",
+	"topArtist":"testtopartist",
+	"topSong":"testtopsong",
+	"favSongs":["We are the Champions"],
+	"favGenres":["testtopgenre1","testtopgenre2","testtopgenre3"]
+	}`
 
 	assert.JSONEq(t, expectedMessage, w.Body.String())
+
 }
 
 func TestRegisterSongHandler(t *testing.T) {
@@ -399,8 +415,8 @@ func TestUnfollowUserHandler(t *testing.T) {
 		Followee string `json:"followee"`
 	}
 
-	request.Follower = "testuser"
-	request.Followee = "testuser234"
+	request.Follower = "testuser@gmail.com"
+	request.Followee = "juan@ufl.edu"
 
 	// Convert testUser to JSON
 	requestJSON, err := json.Marshal(request)
@@ -430,4 +446,69 @@ func TestUnfollowUserHandler(t *testing.T) {
 	expectedMessage := `{"message": "User unfollowed successfully"}`
 	assert.JSONEq(t, expectedMessage, w.Body.String())
 
+}
+
+func TestGetFeedHandler(t *testing.T) {
+
+	setup()
+
+	print("It Reached Here Line 439")
+
+	testUsername := "testuser@gmail.com"
+
+	userCollection := testClient.Database(dbName).Collection("users")
+	postCollection := testClient.Database(dbName).Collection("posts")
+
+	req := httptest.NewRequest(http.MethodGet, "/getFeed?username="+testUsername, nil)
+
+	w := httptest.NewRecorder()
+
+	getFeedForTesting(w, req, testClient, userCollection, postCollection)
+
+	// Check the response status code
+	assert.Equal(t, http.StatusOK, w.Code)
+}
+
+func TestLikePost(t *testing.T) {
+	// Setup the test environment
+	setup()
+
+	testUserCollection = testClient.Database("testdb").Collection("posts")
+
+	// Decode request body
+	var request struct {
+		PostID string `json:"post_id"`
+	}
+
+	request.PostID = "92842"
+
+	// Convert testUser to JSON
+	requestJSON, err := json.Marshal(request)
+
+	println(string(requestJSON))
+
+	if err != nil {
+
+		t.Fatalf("Failed to marshal test user: %v", err)
+	}
+
+	// Create a new HTTP POST request with the test user data
+
+	req := httptest.NewRequest(http.MethodPost, "/likePost/92842", bytes.NewReader(requestJSON))
+
+	println(req)
+
+	w := httptest.NewRecorder()
+
+	println(w)
+
+	// Call the register handler
+	likePostHandlerForTesting(w, req, testClient, testUserCollection)
+
+	// Check the response status code
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	// Check the response body message
+	expectedMessage := `{"message": "Post liked successfully"}`
+	assert.JSONEq(t, expectedMessage, w.Body.String())
 }
