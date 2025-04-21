@@ -96,6 +96,7 @@ type PostContent struct {
 
 type User struct {
 	UserID    string   `bson:"_id,omitempty" json:"userID"` // Change to match Angular `userID`
+	Name     string    `bson:"name" json:"name"`
 	Username  string   `bson:"username" json:"username"`
 	Password  string   `json:"password"`
 	TopArtist string   `bson:"top_artist" json:"topArtist"`      // Match Angular `topArtist`
@@ -110,6 +111,10 @@ type User struct {
 // Initialize the User struct
 func createUser(user *User) {
 	// Set default values for empty slices
+	if user.Name == "" {
+		user.Name = "jo mama"
+	}
+
 	if user.FavSongs == nil {
 		user.FavSongs = []string{}
 	}
@@ -561,6 +566,7 @@ func updateUserProfile(w http.ResponseWriter, r *http.Request) {
 	// Prepare the update data
 	updateData := bson.M{
 		"$set": bson.M{
+			"name":		  	   updatedUser.Name, 
 			"username":        updatedUser.Username,
 			"password":        updatedUser.Password, // Ensure this is a hashed password
 			"top_artist":      updatedUser.TopArtist,
@@ -640,6 +646,7 @@ func getUserProfile(w http.ResponseWriter, r *http.Request) {
 	// Manually map fields to the desired format
 	response := map[string]interface{}{
 		"userID":    user["_id"],             // map _id to userID
+		"name":  user["name"],        // map username to username
 		"username":  user["username"],        // map username to username
 		"password":  user["password"],        // map password to password
 		"topArtist": user["top_artist"],      // rename top_artist to topArtist

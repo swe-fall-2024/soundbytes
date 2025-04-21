@@ -113,6 +113,8 @@ export class EditProfileComponent implements OnInit {
           pic: this.im
         };
         console.log('this is profile pic: ', this.profile.pic);
+        console.log('this is name: ', this.user.name);
+
         console.log(this.im);
     }
   }
@@ -127,8 +129,8 @@ export class EditProfileComponent implements OnInit {
     // Prepare the updated user profile data
     const updatedProfile: Profile = {
       userID: this.userID,
-      username: this.profile.username,
       name: this.profile.name,
+      username: this.profile.username,
       password: this.user.password,
       topArtist: this.profile.topArtist,
       topSong: this.profile.topSong,
