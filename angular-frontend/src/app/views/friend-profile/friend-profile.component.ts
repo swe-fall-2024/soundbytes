@@ -31,6 +31,24 @@ export class FriendProfileComponent implements OnInit {
   user: Profile | null = null;
   userID: string | null = null;
     
+  profileImages: string[] = [
+    '/1.jpg',
+    '/2.jpg',
+    '/3.jpg',
+    '/4.jpg',
+    '/5.jpg',
+    '/6.jpg',
+    '/7.jpg',
+    '/8.jpg',
+    '/9.jpg',
+    '/10.jpg',
+    '/11.jpg',
+    '/12.jpg'
+  ];
+
+  im!: string;
+  randomIndex = 10;
+
     // Static data for posts and friends
     posts: any[] = [];
   
@@ -43,13 +61,14 @@ export class FriendProfileComponent implements OnInit {
     // Initial profile placeholder, it will be updated once user data is fetched
     profiles = [
       {
-        name: 'Shibaaaaaa Inu',
-        username: '@shiba',
+        name: 'Katie',
+        username: '@katie123',
         favTypeCurrent: 'Current Favorite Artist',
-        favCurrent: '',
-        genres: ['indie', 'pop', 'hyperpop'],
-        topSong: '',
-        topArtist: '',
+        favCurrent: 'Sabrina Carpenter',
+        genres: ['rock', 'pop', 'hyperpop'],
+        topSong: 'Bad Reviews',
+        topArtist: 'Sabrina Carpenter',
+        pic: this.profileImages.at(this.randomIndex)
       }
     ];
   
@@ -57,7 +76,7 @@ export class FriendProfileComponent implements OnInit {
     constructor(private route: ActivatedRoute, private profileService: ProfileService, private http: HttpClient, private cdr: ChangeDetectorRef) {}
   
     ngOnInit(): void {
-      this.userID = String(this.route.snapshot.paramMap.get('id'))
+      this.userID = "@katie123" //String(this.route.snapshot.paramMap.get('id'))
 
       this.profileService.getUserProfile(this.userID).subscribe({
         next: (data) => {
@@ -68,6 +87,22 @@ export class FriendProfileComponent implements OnInit {
             console.log("Cam's top Song:", this.user.topSong);  // Should log 'Sweet Caroline'
           } else {
             console.log("topSong is missing or undefined");
+          }
+
+          if(localStorage.getItem('count') != null) {
+            this.randomIndex = parseInt(localStorage.getItem('count')!);
+            if(this.randomIndex > 11) {
+              localStorage.setItem('count', '0');
+              this.randomIndex = parseInt(localStorage.getItem('count')!);
+            }
+          }
+    
+          if (this.user.pic == ""){
+            this.im = this.profileImages.at(this.randomIndex)!;
+            console.log(this.im);
+          } 
+          else {
+            this.im = this.user.pic;
           }
   
           // After user data is fetched, update profiles
@@ -95,6 +130,7 @@ export class FriendProfileComponent implements OnInit {
             genres: this.user.favGenres,
             topSong: this.user.topSong, // Now this is updated correctly
             topArtist: this.user.topArtist, // Now this is updated correctly
+            pic: this.im,
           }
         ];
       }
@@ -102,7 +138,7 @@ export class FriendProfileComponent implements OnInit {
     
     fetchPosts() {
   
-      this.http.get<any[]>(`http://127.0.0.1:4201/getPosts/${localStorage.getItem('currentUserEmail')}`).subscribe(
+      this.http.get<any[]>(`http://127.0.0.1:4201/getPosts/${this.userID}`).subscribe(
         (data) => {
           this.posts = data; // Store the posts data in the component
           //alert(`${this.posts.length} posts fetched`); 

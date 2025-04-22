@@ -121,6 +121,14 @@ export class ProfileComponent implements OnInit {
     this.http.get<any[]>(`http://127.0.0.1:4201/getPosts/${localStorage.getItem('currentUserEmail')}`).subscribe(
       (data) => {
         this.posts = data; // Store the posts data in the component
+        console.log('this is the posts: ', this.posts)
+        this.posts.forEach(post => {
+          post.Profile_Image = this.user?.pic;
+          post.profile_img = this.user?.pic;
+        });
+        
+        console.log('this is the POSTS: ', this.posts)
+
         //alert(`${this.posts.length} posts fetched`); 
         this.cdr.markForCheck();
       },

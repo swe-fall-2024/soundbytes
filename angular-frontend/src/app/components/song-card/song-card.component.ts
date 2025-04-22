@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, Input, Renderer2} from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import { RouterModule } from '@angular/router';
@@ -44,9 +44,18 @@ import { Router } from '@angular/router';
 })
 export class SongCardComponent {
   @Input() post: any;
+  @Input() profile: any; 
+  @Input() me: boolean | undefined;
+  @Input() following: boolean | undefined;
+  @Input() pfp: string | undefined;
 
-  constructor(private http: HttpClient, private router: Router) {}
-  
+  constructor(private http: HttpClient, private router: Router, private el: ElementRef, private renderer: Renderer2) {}
+ 
+  ngAfterViewInit(): void {
+    console.log(this.post.Profile_Image);
+    const divElement = this.el.nativeElement.querySelector('.example-header-image');
+    this.renderer.setStyle(divElement, 'background-image', `url(${this.post.Profile_Image})`);
+  }
 
   onLike(): void {
     // Call a service to update the like count on the backend

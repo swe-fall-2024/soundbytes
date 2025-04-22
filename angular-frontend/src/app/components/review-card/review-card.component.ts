@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, ElementRef, Renderer2 } from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import { RouterModule } from '@angular/router';
@@ -41,4 +41,16 @@ import { RouterModule } from '@angular/router';
 })
 export class ReviewCardComponent {
   @Input() post: any;
+  @Input() profile: any; 
+  @Input() me: boolean | undefined;
+  @Input() following: boolean | undefined;
+  @Input() pfp: string | undefined;
+
+  constructor(private el: ElementRef, private renderer: Renderer2) {}
+
+  ngAfterViewInit(): void {
+    console.log(this.post.Profile_Image);
+    const divElement = this.el.nativeElement.querySelector('.example-header-image');
+    this.renderer.setStyle(divElement, 'background-image', `url(${this.post.Profile_Image})`);
+  }
 }
