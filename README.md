@@ -46,7 +46,7 @@ Run Backend
 3) This should automatically connect to the mongodb connection (ensure mongodb is running and open to connections)
 4) With that, the app is ready to be used! **Note that both backend and frontend commands must be running at the same time**
 
-### Userflow for Application
+Userflow for Application
 1) Start at http://localhost:4200/ the login page
 2) If not signed up, navigate to the signup page through the link on login
 3) If signing up, user is automatically taken to /edit-profile to set up profile
