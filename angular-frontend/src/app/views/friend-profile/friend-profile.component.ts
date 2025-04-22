@@ -62,7 +62,7 @@ export class FriendProfileComponent implements OnInit {
     profiles = [
       {
         name: 'Katie',
-        username: '@katie123',
+        username: 'katie123@gmail.com',
         favTypeCurrent: 'Current Favorite Artist',
         favCurrent: 'Sabrina Carpenter',
         genres: ['rock', 'pop', 'hyperpop'],
@@ -76,7 +76,7 @@ export class FriendProfileComponent implements OnInit {
     constructor(private route: ActivatedRoute, private profileService: ProfileService, private http: HttpClient, private cdr: ChangeDetectorRef) {}
   
     ngOnInit(): void {
-      this.userID = "@katie123" //String(this.route.snapshot.paramMap.get('id'))
+      this.userID = String(this.route.snapshot.paramMap.get('id')) //"katie123@gmail.com" //
 
       this.profileService.getUserProfile(this.userID).subscribe({
         next: (data) => {
@@ -137,6 +137,9 @@ export class FriendProfileComponent implements OnInit {
     }
     
     fetchPosts() {
+      if (this.userID = "Katie") {
+        this.userID = "katie123@gmail.com"
+      }
   
       this.http.get<any[]>(`http://127.0.0.1:4201/getPosts/${this.userID}`).subscribe(
         (data) => {

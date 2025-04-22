@@ -1,61 +1,50 @@
-.search{
+.search {
   display: flex;
   flex-direction: column;
   width: fit-content;
-  height: fit-content;
+  position: absolute;
+  right: 10px;
+  top: 10px; /* Adjust the vertical positioning (you can change this value as needed) */
+  z-index: 9999; /* Ensure it appears above other content */
 }
-.search-input{
-  width: 200px;
-  height: 40px !important;
+
+.search-input {
+  width: 20vw;
   border-radius: 5px;
   border: 1px solid gray;
 }
-.search-button{
+
+.search-button {
   border-radius: 0px 5px 5px 0px;
 }
-.options{
+
+.options {
   background-color: white;
-  z-index: 3;
+  z-index: 1;
   border-radius: 5px;
   list-style: none;
   display: flex;
   flex-direction: column;
   width: 100%;
-  list-style-type: none;
   margin: 0;
   padding: 0;
-
+  position: absolute; /* Position it below the input field */
+  top: 100%;
+  left: 0;
 }
-.option{
+
+.option {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-top: 1px solid gray;
-  height: 30px;
+  border: 1px solid gray;
   width: 100%;
-  border-radius: 5px;
-  &:hover{
-    cursor: pointer;
-    background-color: rgb(253, 218, 224);
-  }
+  padding: 10px;
+  color: black; /* Ensure text color is black */
 }
 
-.search-container {
-  position: absolute;
-}
-
-.search-input {
-  height: 50px;
-  border-radius: 30px;
-  padding-left: 35px;
-  border: none;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.search-icon {
-  position: absolute;
-  top: 50%;
-  left: 15px;
-  transform: translateY(-50%);
-  color: #888;
+.option:hover {
+  cursor: pointer;
+  background-color: rgb(253, 218, 224);
+  color: black; /* Optionally change text color on hover */
 }

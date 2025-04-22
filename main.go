@@ -363,6 +363,9 @@ func httpHandler() http.Handler {
 	router.HandleFunc("/getFeed/{username}", getFeed).Methods("GET")
 	router.HandleFunc("/likePost/{post_id}", likePostHandler).Methods("GET")
 
+	// Search Bar Handler
+	router.HandleFunc("/searchUsers", searchUsersHandler).Methods("GET")
+	
 	// Protect this route with JWT middleware
 	router.HandleFunc("/protected", jwtMiddleware(protectedHandler)).Methods("GET")
 
@@ -385,6 +388,61 @@ func httpHandler() http.Handler {
 }
 
 // TODO: Fix this so it accounts for all of the fields in our USER TABLE
+
+func searchUsersHandler(w http.ResponseWriter, r *http.Request) {
+    userCollection = client.Database(dbName).Collection(userCollectionName)
+
+    // Get the search query from the URL parameters
+    query := r.URL.Query().Get("q")
+	fmt.Println("Query provided", query) // Log if no userID is provided
+
+    if query == "" {
+        http.Error(w, "Query parameter 'q' is required", http.StatusBadRequest)
+        return
+    }
+
+    // Use a regex search to find users whose usernames start with the query string
+	filter := bson.M{
+		"username": primitive.Regex{
+			Pattern: "^" + query,
+			Options: "i",
+		},
+	}
+		findOptions := options.Find().SetLimit(3)
+
+	cursor, err := userCollection.Find(context.TODO(), filter, findOptions)
+
+    if err != nil {
+		fmt.Println("rror fetching users", query) // Log if no userID is provided
+
+        http.Error(w, "Error fetching users", http.StatusInternalServerError)
+        return
+    }
+    defer cursor.Close(context.TODO())
+
+    // Collect the results
+    var users []User
+    for cursor.Next(context.TODO()) {
+        var user User
+        if err := cursor.Decode(&user); err != nil {
+			fmt.Println("rrdddor decoding users", query) // Log if no userID is provided
+
+            http.Error(w, "Error decoding user", http.StatusInternalServerError)
+            return
+        }
+        users = append(users, user)
+    }
+
+    // Extract only the usernames
+    var usernames []string
+    for _, user := range users {
+        usernames = append(usernames, user.Username)
+    }
+
+    // Respond with the JSON list of usernames
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(usernames)
+}
 
 // Register handler
 func registerHandler(w http.ResponseWriter, r *http.Request) {
