@@ -6,7 +6,9 @@
 During Sprint 4, the backend was enhanced with new functionalities that elevate user interaction and social features:  
 
 - **Like Post**: Added functionality to update user profile information such as favorite songs, artists, and genres.  
-- **Search For Users To Follow**: Enabled users to search for and follow others, fostering a more connected user experience.   
+- **Search For Users To Follow**: Enabled users to search for and follow others, fostering a more connected user experience.
+- **Edit Profile**: Enabled users to edit their username, as well as their favorite song/genre/artists.
+- **Images of Profile next to posts**: Displays user img
 
 ### Frontend  
 - **Profile Pictures**: Added functionality to assign different user profile picture to each user.
