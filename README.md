@@ -23,6 +23,7 @@ Soundbytes is an angular-go web application. It runs on localhost in any browser
 
 1) git clone this repository, soundbytes, into a desired directory through the terminal
 2) cd into this repository from the terminal
+3) git checkout merged-frontend (for the most up-to-date functionality)
    
 ## Run SoundBytes
 
@@ -51,4 +52,4 @@ Userflow for Application
 2) If not signed up, navigate to the signup page through the link on login
 3) If signing up, user is automatically taken to /edit-profile to set up profile
 4) Once profile is setup or logged in, the application routes to profile
-5) From profile, user can access post creation, feed, profile, or searching for friends by the navbar 
+5) From profile, user can access post creation, feed, profile, or search by the navbar 
